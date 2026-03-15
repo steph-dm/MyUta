@@ -1,0 +1,14 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Go build artifacts
+*.test
+*.out
+coverage.html
+vendor/
+
+# Local binaries
+*.exe
+server

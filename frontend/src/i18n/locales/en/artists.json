@@ -1,0 +1,42 @@
+{
+    "title": "Artists",
+    "catalog_one": "{{count}} artist in your catalog",
+    "catalog_other": "{{count}} artists in your catalog",
+    "searchPlaceholder": "Search artists...",
+    "empty": {
+        "title": "No songs yet",
+        "description": "No songs available for this artist yet.",
+        "noArtists": "No artists yet",
+        "noArtistsDesc": "Artists will appear here once songs are added.",
+        "noResults": "No matching artists",
+        "noResultsDesc": "Try adjusting your search."
+    },
+    "card": {
+        "songsAvailable_one": "{{count}} song",
+        "songsAvailable_other": "{{count}} songs",
+        "addToFavorites": "Add to favorites",
+        "removeFromFavorites": "Remove from favorites",
+        "editArtist": "Edit artist"
+    },
+    "modal": {
+        "editTitle": "Edit Artist",
+        "editDescription": "Update the artist's name.",
+        "name": "Name",
+        "namePlaceholder": "Artist name...",
+        "save": "Save Changes",
+        "saving": "Saving...",
+        "cancel": "Cancel",
+        "updateSuccess": "Artist updated",
+        "updateFailed": "Couldn't update this artist"
+    },
+    "detail": {
+        "songs": "Songs",
+        "reviews": "Reviews",
+        "averageScore": "Average Score",
+        "totalReviews": "Total Reviews",
+        "noSongs": "No songs yet",
+        "noSongsDesc": "This artist doesn't have any songs yet."
+    },
+    "notFound": "Artist not found",
+    "backToArtists": "Back to Artists"
+}

@@ -1,0 +1,96 @@
+{
+    "title": "曲",
+    "catalog": "{{count}}曲を登録中",
+    "searchPlaceholder": "曲を検索...",
+    "filters": {
+        "allGenres": "すべてのジャンル",
+        "genre": "ジャンル",
+        "favoritesOnly": "お気に入りのみ",
+        "hasReview": "採点済み",
+        "searchGenres": "ジャンルを検索...",
+        "noGenresFound": "ジャンルが見つかりません"
+    },
+    "empty": {
+        "noSongs": "曲がありません",
+        "noSongsDesc": "採点記録と一緒に曲を追加すると、ここに表示されます。",
+        "noResults": "一致する曲がありません",
+        "noResultsDesc": "検索条件やフィルターを変更してみてください。"
+    },
+    "card": {
+        "reviews": "{{count}}回",
+        "bestScore": "最高: {{score}}",
+        "noReviews": "未採点",
+        "addToFavorites": "お気に入りに追加",
+        "removeFromFavorites": "お気に入りから削除",
+        "stop": "停止",
+        "play": "再生",
+        "editSong": "曲を編集"
+    },
+    "detail": {
+        "by": "",
+        "genre": "ジャンル",
+        "addedOn": "{{date}}に追加",
+        "reviewHistory": "採点履歴",
+        "addReview": "採点を追加",
+        "scoreOverTime": "得点の推移",
+        "noReviews": "未採点",
+        "noReviewsDesc": "この曲の上達を記録するには、採点記録を追加してください。",
+        "favorite": "お気に入り",
+        "unfavorite": "お気に入り解除",
+        "dam": "DAM",
+        "joysound": "JOYSOUND",
+        "notFound": "曲が見つかりません",
+        "notFoundDesc": "お探しの曲は存在しません。",
+        "backToSongs": "曲一覧に戻る",
+        "average": "平均",
+        "best": "最高",
+        "trend": "推移",
+        "scoreTimeline": "得点推移",
+        "performanceHistory": "歌唱履歴",
+        "noReviewsYet": "この曲の採点記録はまだありません",
+        "reviewsRecorded": "{{count}}回の採点記録",
+        "reviewsRecorded_one": "{{count}}回の採点記録",
+        "reviewsRecorded_other": "{{count}}回の採点記録"
+    },
+    "editSong": {
+        "title": "曲を編集",
+        "description": "「{{song}}」（{{artist}}）を編集中",
+        "artistLabel": "アーティスト",
+        "artistPlaceholder": "アーティスト名を入力",
+        "cancel": "キャンセル",
+        "submit": "曲を更新",
+        "submitting": "保存中...",
+        "toast": {
+            "saved": "曲を保存しました",
+            "saveFailed": "変更を保存できませんでした",
+            "saveError": "曲を更新できませんでした。もう一度お試しください。"
+        },
+        "validation": {
+            "enterArtist": "アーティスト名を入力してください",
+            "enterTitle": "曲名を入力してください",
+            "selectGenre": "ジャンルを1つ以上選択してください",
+            "invalidYoutube": "有効なYouTube URLを入力してください"
+        }
+    },
+    "form": {
+        "songTitle": "曲名",
+        "enterSongTitle": "曲名を入力",
+        "youtubeUrlOptional": "YouTube URL（任意）",
+        "genres": "ジャンル",
+        "genresRequired": "ジャンル *",
+        "selectGenres": "ジャンルを選択...",
+        "searchGenres": "ジャンルを検索...",
+        "noGenresFound": "ジャンルが見つかりません",
+        "genresSelected": "{{count}}件のジャンルを選択中"
+    },
+    "genreNames": {
+        "POP": "ポップス",
+        "ROCK": "ロック",
+        "HIPHOP": "ヒップホップ",
+        "ELECTRO": "エレクトロ",
+        "JAZZ": "ジャズ",
+        "CLASSICAL": "クラシック",
+        "FOLK": "フォーク",
+        "ANIME": "アニソン"
+    }
+}

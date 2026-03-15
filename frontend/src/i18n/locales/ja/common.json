@@ -1,0 +1,60 @@
+{
+    "nav": {
+        "dashboard": "ダッシュボード",
+        "artists": "アーティスト",
+        "songs": "曲",
+        "reviews": "採点記録"
+    },
+    "actions": {
+        "save": "保存",
+        "cancel": "キャンセル",
+        "delete": "削除",
+        "edit": "編集",
+        "clear": "クリア",
+        "close": "閉じる",
+        "confirm": "確認",
+        "search": "検索",
+        "loading": "読み込み中...",
+        "logout": "ログアウト",
+        "profile": "プロフィール",
+        "back": "戻る",
+        "add": "追加",
+        "export": "エクスポート",
+        "import": "インポート",
+        "closeMenu": "メニューを閉じる",
+        "openMenu": "メニューを開く",
+        "play": "再生",
+        "stop": "停止",
+        "closePlayer": "プレーヤーを閉じる",
+        "toggleTheme": "テーマを切り替える"
+    },
+    "empty": {
+        "noResults": "結果が見つかりません",
+        "tryAdjusting": "検索条件やフィルターを変更してみてください。"
+    },
+    "errors": {
+        "generic": "エラーが発生しました",
+        "unexpectedMessage": "予期しないエラーが発生しました。もう一度お試しください。",
+        "tryAgain": "再試行",
+        "notFound": "ページが見つかりません",
+        "notFoundDesc": "お探しのページは存在しないか、移動されました。",
+        "backHome": "ダッシュボードに戻る",
+        "invalidUrl": "無効なURL"
+    },
+    "confirm": {
+        "deleteTitle": "本当に削除しますか？",
+        "deleteDesc": "この操作は取り消せません。",
+        "bulkDeleteDesc": "{{count}}件の選択項目を削除しますか？この操作は取り消せません。"
+    },
+    "sort": {
+        "aToZ": "あ → ん",
+        "zToA": "ん → あ",
+        "newest": "新しい順",
+        "oldest": "古い順",
+        "highScore": "高得点順",
+        "lowScore": "低得点順"
+    },
+    "showing": "{{total}}件中{{count}}件表示",
+    "itemCount_one": "{{count}}{{item}}",
+    "itemCount_other": "{{count}}{{item}}"
+}

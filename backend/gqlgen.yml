@@ -1,0 +1,98 @@
+# gqlgen configuration — https://gqlgen.com/config/
+schema:
+  - schema.graphql
+
+exec:
+  filename: internal/graph/generated.go
+  package: graph
+
+model:
+  filename: internal/graph/model/models_gen.go
+  package: model
+
+resolver:
+  layout: follow-schema
+  dir: internal/graph
+  package: graph
+  filename_template: "{name}.resolvers.go"
+
+# Map scalars and types to our custom Go types.
+models:
+  ID:
+    model:
+      - github.com/99designs/gqlgen/graphql.ID
+  DateTime:
+    model:
+      - github.com/steph-dm/MyUta/backend/pkg/scalar.DateTime
+  Genre:
+    model:
+      - github.com/steph-dm/MyUta/backend/internal/storage.Genre
+  Issue:
+    model:
+      - github.com/steph-dm/MyUta/backend/internal/storage.Issue
+  MachineType:
+    model:
+      - github.com/steph-dm/MyUta/backend/internal/storage.MachineType
+  User:
+    model:
+      - github.com/steph-dm/MyUta/backend/internal/storage.User
+    fields:
+      reviews:
+        resolver: true
+  AuthPayload:
+    model:
+      - github.com/steph-dm/MyUta/backend/internal/storage.AuthPayload
+  Artist:
+    model:
+      - github.com/steph-dm/MyUta/backend/internal/storage.Artist
+    fields:
+      songs:
+        resolver: true
+      songCount:
+        resolver: true
+      isFavorite:
+        resolver: true
+  Song:
+    model:
+      - github.com/steph-dm/MyUta/backend/internal/storage.Song
+    fields:
+      artist:
+        resolver: true
+      reviews:
+        resolver: true
+      reviewCount:
+        resolver: true
+      isFavorite:
+        resolver: true
+  Review:
+    model:
+      - github.com/steph-dm/MyUta/backend/internal/storage.Review
+    fields:
+      user:
+        resolver: true
+  ReviewWithSong:
+    model:
+      - github.com/steph-dm/MyUta/backend/internal/storage.ReviewWithSong
+    fields:
+      user:
+        resolver: true
+      song:
+        resolver: true
+  YouTubeResult:
+    model:
+      - github.com/steph-dm/MyUta/backend/pkg/youtube.Result
+  ExtractedReview:
+    model:
+      - github.com/steph-dm/MyUta/backend/internal/service.ExtractedReview
+  DashboardStats:
+    model:
+      - github.com/steph-dm/MyUta/backend/internal/storage.DashboardStats
+  MostPracticedSong:
+    model:
+      - github.com/steph-dm/MyUta/backend/internal/storage.MostPracticedSong
+  IssueStat:
+    model:
+      - github.com/steph-dm/MyUta/backend/internal/storage.IssueStat
+  ImportResult:
+    model:
+      - github.com/steph-dm/MyUta/backend/internal/storage.ImportResult

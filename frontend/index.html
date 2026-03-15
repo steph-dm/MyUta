@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/logo192.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
+    <meta name="description" content="マイウタ — Track your karaoke performances and progress">
+    <meta name="application-name" content="マイウタ">
+    <link rel="manifest" href="/manifest.json">
+    <title>マイウタ</title>
+    <script>
+      // Load Umami analytics only if configured
+      (function() {
+        var src = "%VITE_UMAMI_SCRIPT_URL%";
+        var id = "%VITE_UMAMI_WEBSITE_ID%";
+        if (src && id && !src.includes("VITE_")) {
+          var s = document.createElement("script");
+          s.defer = true;
+          s.src = src;
+          s.dataset.websiteId = id;
+          document.head.appendChild(s);
+        }
+      })();
+    </script>
+</head>
+
+<body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/index.tsx"></script>
+</body>
+
+</html>

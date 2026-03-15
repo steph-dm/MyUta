@@ -1,0 +1,99 @@
+{
+    "title": "Songs",
+    "catalog_one": "{{count}} song in your catalog",
+    "catalog_other": "{{count}} songs in your catalog",
+    "searchPlaceholder": "Search songs...",
+    "filters": {
+        "allGenres": "All Genres",
+        "genre": "Genre",
+        "favoritesOnly": "Favorites only",
+        "hasReview": "Has review",
+        "searchGenres": "Search genres...",
+        "noGenresFound": "No genres found."
+    },
+    "empty": {
+        "noSongs": "No songs yet",
+        "noSongsDesc": "Songs will appear here when you add them with your reviews.",
+        "noResults": "No matching songs",
+        "noResultsDesc": "Try adjusting your search or filters."
+    },
+    "card": {
+        "reviews_one": "{{count}} review",
+        "reviews_other": "{{count}} reviews",
+        "bestScore": "Best: {{score}}",
+        "noReviews": "No reviews",
+        "addToFavorites": "Add to favorites",
+        "removeFromFavorites": "Remove from favorites",
+        "stop": "Stop",
+        "play": "Play",
+        "editSong": "Edit song"
+    },
+    "detail": {
+        "by": "by",
+        "genre": "Genre",
+        "addedOn": "Added on {{date}}",
+        "reviewHistory": "Review History",
+        "addReview": "Add Review",
+        "scoreOverTime": "Score over time",
+        "noReviews": "No reviews",
+        "noReviewsDesc": "Add a review to start tracking your progress on this song.",
+        "favorite": "Favorite",
+        "unfavorite": "Unfavorite",
+        "dam": "DAM",
+        "joysound": "JOYSOUND",
+        "notFound": "Song not found",
+        "notFoundDesc": "The song you're looking for doesn't exist.",
+        "backToSongs": "Back to Songs",
+        "average": "Average",
+        "best": "Best",
+        "trend": "Trend",
+        "scoreTimeline": "Score Timeline",
+        "performanceHistory": "Performance History",
+        "noReviewsYet": "No reviews yet for this song",
+        "reviewsRecorded": "{{count}} reviews recorded",
+        "reviewsRecorded_one": "{{count}} review recorded",
+        "reviewsRecorded_other": "{{count}} reviews recorded"
+    },
+    "editSong": {
+        "title": "Edit Song",
+        "description": "Editing \"{{song}}\" by {{artist}}",
+        "artistLabel": "Artist",
+        "artistPlaceholder": "Enter artist name",
+        "cancel": "Cancel",
+        "submit": "Update Song",
+        "submitting": "Saving...",
+        "toast": {
+            "saved": "Song saved",
+            "saveFailed": "Couldn't save changes",
+            "saveError": "Song couldn't be updated. Try again."
+        },
+        "validation": {
+            "enterArtist": "Please enter an artist name",
+            "enterTitle": "Please enter a song title",
+            "selectGenre": "Please select at least one genre",
+            "invalidYoutube": "Please enter a valid YouTube URL"
+        }
+    },
+    "form": {
+        "songTitle": "Song Title",
+        "enterSongTitle": "Enter song title",
+        "youtubeUrlOptional": "YouTube URL (optional)",
+        "genres": "Genres",
+        "genresRequired": "Genres *",
+        "selectGenres": "Select genres...",
+        "searchGenres": "Search genres...",
+        "noGenresFound": "No genres found.",
+        "genresSelected_one": "{{count}} genre selected",
+        "genresSelected_other": "{{count}} genres selected"
+    },
+    "genreNames": {
+        "POP": "Pop",
+        "ROCK": "Rock",
+        "HIPHOP": "Hip-Hop",
+        "ELECTRO": "Electro",
+        "JAZZ": "Jazz",
+        "CLASSICAL": "Classical",
+        "FOLK": "Folk",
+        "ANIME": "Anime"
+    }
+}

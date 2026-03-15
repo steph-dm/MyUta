@@ -1,0 +1,6 @@
+# Build artifacts excluded from Docker context
+.env
+.env.*
+*.md
+Dockerfile
+.dockerignore

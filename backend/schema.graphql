@@ -1,0 +1,228 @@
+scalar DateTime
+
+enum Genre {
+  ANIME
+  CLASSICAL
+  ELECTRO
+  FOLK
+  HIPHOP
+  JAZZ
+  POP
+  ROCK
+}
+
+enum Issue {
+  BRIDGE
+  CHORUS
+  EXPRESSIVENESS
+  INTRO
+  MELODY
+  OUTRO
+  RANGE
+  REVIEW
+  RHYTHM
+  SPEED
+  VERSE
+}
+
+enum MachineType {
+  DAM
+  JOYSOUND
+}
+
+type User {
+  id: ID!
+  email: String!
+  name: String
+  reviews: [Review!]!
+  birthdate: DateTime!
+  isAdmin: Boolean!
+  defaultMachineType: MachineType
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
+type Artist {
+  id: ID!
+  name: String!
+  songs: [Song!]!
+  songCount: Int!
+  isFavorite: Boolean
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Song {
+  id: ID!
+  title: String!
+  artist: Artist!
+  genres: [Genre!]!
+  youtubeUrl: String
+  generatedYoutube: Boolean!
+  reviewCount: Int!
+  reviews: [ReviewWithSong!]!
+  isFavorite: Boolean
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Review {
+  id: ID!
+  date: DateTime!
+  user: User!
+  userId: String!
+  songId: String!
+  score: Float!
+  machineType: MachineType!
+  issues: [Issue!]!
+  notes: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ReviewWithSong {
+  id: ID!
+  date: DateTime!
+  user: User!
+  song: Song!
+  score: Float!
+  machineType: MachineType!
+  issues: [Issue!]!
+  notes: String
+  createdAt: DateTime!
+}
+
+type YouTubeResult {
+  videoId: String!
+  title: String!
+  channelTitle: String!
+  duration: String!
+  thumbnailUrl: String!
+}
+
+type ExtractedReview {
+  songTitle: String!
+  artistName: String!
+  songTitleAlt: String
+  artistNameAlt: String
+  score: Float!
+  date: String!
+  machineType: MachineType!
+  notes: String
+  genres: [Genre!]!
+  issues: [Issue!]!
+}
+
+type DashboardStats {
+  totalReviews: Int!
+  damAvgScore: Float
+  joysoundAvgScore: Float
+  sessionsThisMonth: Int!
+  sessionsPrevMonth: Int!
+  mostPracticed: MostPracticedSong
+  commonIssues: [IssueStat!]!
+}
+
+type MostPracticedSong {
+  songId: ID!
+  title: String!
+  artistName: String!
+  count: Int!
+}
+
+type IssueStat {
+  issue: Issue!
+  count: Int!
+}
+
+type ImportResult {
+  reviewsImported: Int!
+  reviewsSkipped: Int!
+  errors: [String!]!
+}
+
+type Query {
+  me: User
+
+  users: [User!]!
+  user(id: ID!): User
+
+  artists(take: Int, skip: Int): [Artist!]!
+  artist(id: ID!): Artist
+  songs(take: Int, skip: Int): [Song!]!
+  song(id: ID!): Song
+
+  reviews: [Review!]!
+  review(id: ID!): Review
+  myReviews(userId: ID!): [ReviewWithSong!]!
+  reviewsBySong(songId: ID!): [ReviewWithSong!]!
+  recentReviews(days: Int = 7): [ReviewWithSong!]!
+  searchYoutube(artist: String!, song: String!): [YouTubeResult!]!
+  songWithReviews(id: ID!): Song
+  myFavorites: [Song!]!
+  myFavoriteArtists: [Artist!]!
+  exportData: String!
+  dashboardStats: DashboardStats!
+}
+
+type Mutation {
+  register(
+    email: String!
+    password: String!
+    name: String!
+    birthdate: DateTime!
+  ): AuthPayload!
+
+  login(email: String!, password: String!): AuthPayload!
+
+  logout: Boolean!
+
+  refreshToken: AuthPayload!
+
+  updateUser(
+    id: ID!
+    email: String
+    name: String
+    birthdate: DateTime
+    defaultMachineType: MachineType
+  ): User!
+
+  upsertArtist(name: String!): Artist!
+
+  updateArtist(id: ID!, name: String!): Artist!
+
+  upsertSong(
+    id: ID
+    title: String!
+    artistId: ID!
+    genres: [Genre!]!
+    youtubeUrl: String
+    generatedYoutube: Boolean
+  ): Song!
+
+  upsertReview(
+    id: ID
+    songId: ID!
+    date: DateTime!
+    score: Float!
+    machineType: MachineType!
+    issues: [Issue!]!
+    notes: String
+  ): Review!
+
+  deleteSong(id: ID!): Song
+  deleteArtist(id: ID!): Artist
+  deleteReview(id: ID!): Review
+  toggleFavorite(songId: ID!): Boolean!
+  toggleFavoriteArtist(artistId: ID!): Boolean!
+  changePassword(currentPassword: String!, newPassword: String!): Boolean!
+  deleteReviews(ids: [ID!]!): Int!
+  deleteAccount(password: String!): Boolean!
+  extractReviewFromImage(imageBase64: String!): ExtractedReview!
+  importData(jsonData: String!): ImportResult!
+}

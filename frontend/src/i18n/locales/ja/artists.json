@@ -1,0 +1,40 @@
+{
+    "title": "アーティスト",
+    "catalog": "{{count}}人のアーティストを登録中",
+    "searchPlaceholder": "アーティストを検索...",
+    "empty": {
+        "title": "曲がまだありません",
+        "description": "このアーティストにはまだ曲がありません。",
+        "noArtists": "アーティストがいません",
+        "noArtistsDesc": "曲を追加すると、アーティストがここに表示されます。",
+        "noResults": "一致するアーティストがいません",
+        "noResultsDesc": "検索条件を変更してみてください。"
+    },
+    "card": {
+        "songsAvailable": "{{count}}曲",
+        "addToFavorites": "お気に入りに追加",
+        "removeFromFavorites": "お気に入りから削除",
+        "editArtist": "アーティストを編集"
+    },
+    "modal": {
+        "editTitle": "アーティストを編集",
+        "editDescription": "アーティスト名を変更します。",
+        "name": "名前",
+        "namePlaceholder": "アーティスト名...",
+        "save": "変更を保存",
+        "saving": "保存中...",
+        "cancel": "キャンセル",
+        "updateSuccess": "アーティストを更新しました",
+        "updateFailed": "アーティストの更新に失敗しました"
+    },
+    "detail": {
+        "songs": "曲",
+        "reviews": "採点記録",
+        "averageScore": "平均点",
+        "totalReviews": "採点回数",
+        "noSongs": "曲がありません",
+        "noSongsDesc": "このアーティストにはまだ曲がありません。"
+    },
+    "notFound": "アーティストが見つかりません",
+    "backToArtists": "アーティスト一覧に戻る"
+}

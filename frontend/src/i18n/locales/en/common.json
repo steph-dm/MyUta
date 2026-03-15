@@ -1,0 +1,60 @@
+{
+    "nav": {
+        "dashboard": "Dashboard",
+        "artists": "Artists",
+        "songs": "Songs",
+        "reviews": "Reviews"
+    },
+    "actions": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "clear": "Clear",
+        "close": "Close",
+        "confirm": "Confirm",
+        "search": "Search",
+        "loading": "Loading...",
+        "logout": "Logout",
+        "profile": "Profile",
+        "back": "Back",
+        "add": "Add",
+        "export": "Export",
+        "import": "Import",
+        "closeMenu": "Close menu",
+        "openMenu": "Open menu",
+        "play": "Play",
+        "stop": "Stop",
+        "closePlayer": "Close player",
+        "toggleTheme": "Toggle theme"
+    },
+    "empty": {
+        "noResults": "No results found",
+        "tryAdjusting": "Try adjusting your search or filters."
+    },
+    "errors": {
+        "generic": "Something went wrong",
+        "unexpectedMessage": "An unexpected error occurred. Please try again.",
+        "tryAgain": "Try Again",
+        "notFound": "Page not found",
+        "notFoundDesc": "The page you're looking for doesn't exist or has been moved.",
+        "backHome": "Back to Dashboard",
+        "invalidUrl": "Invalid URL"
+    },
+    "confirm": {
+        "deleteTitle": "Are you sure?",
+        "deleteDesc": "This action cannot be undone.",
+        "bulkDeleteDesc": "Delete {{count}} selected items? This action cannot be undone."
+    },
+    "sort": {
+        "aToZ": "A to Z",
+        "zToA": "Z to A",
+        "newest": "Newest first",
+        "oldest": "Oldest first",
+        "highScore": "Highest score",
+        "lowScore": "Lowest score"
+    },
+    "showing": "Showing {{count}} of {{total}}",
+    "itemCount_one": "{{count}} {{item}}",
+    "itemCount_other": "{{count}} {{item}}"
+}
