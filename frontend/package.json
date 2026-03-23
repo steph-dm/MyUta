@@ -4,7 +4,7 @@
   "private": true,
   "description": "Frontend for MyUta — a karaoke session and score tracking application",
   "author": "steph-dm",
-  "license": "MIT",
+  "license": "SEE LICENSE IN ../LICENSE",
   "repository": {
     "type": "git",
     "url": "https://github.com/steph-dm/MyUta.git",

@@ -31,19 +31,11 @@ Thumbs.db
 *.swo
 *~
 
-*.tgz
-
-*.sqlite
-*.sqlite3
-*.db
-
-*.backup
-*.bak
-
 .claude
 .gemini
 
 # Go binaries
+backend/bin/
 backend/myuta
 backend/*.exe
 vendor/
