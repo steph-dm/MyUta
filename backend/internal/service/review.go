@@ -108,7 +108,7 @@ func (s *ReviewService) UpsertReview(ctx context.Context, userID string, id *str
 	if err := validator.ReviewScore(score); err != nil {
 		return nil, err
 	}
-	if _, err := validator.ReviewDate(date.Time.Format(time.RFC3339)); err != nil {
+	if _, err := validator.ReviewDate(date.Format(time.RFC3339)); err != nil {
 		return nil, err
 	}
 	if err := validator.MachineType(machineType); err != nil {

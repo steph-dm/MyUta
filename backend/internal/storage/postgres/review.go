@@ -136,7 +136,7 @@ func (s *Store) scanReviewsWithSong(ctx context.Context, query string, args ...a
 	if err != nil {
 		return nil, fmt.Errorf("can't query reviews with song: %w", err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	var results []*storage.ReviewWithSong
 	for rows.Next() {
@@ -278,7 +278,7 @@ func (s *Store) GetDashboardStats(ctx context.Context, userID string) (*storage.
 		if err != nil {
 			return fmt.Errorf("can't get common issues: %w", err)
 		}
-		defer rows.Close()
+		defer func() { _ = rows.Close() }()
 
 		for rows.Next() {
 			var is storage.IssueStat

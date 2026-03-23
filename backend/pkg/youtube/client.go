@@ -61,7 +61,7 @@ func (c *Client) Search(ctx context.Context, artist, song string) ([]*Result, er
 			} `json:"id"`
 		} `json:"items"`
 	}
-	defer searchResp.Body.Close()
+	defer func() { _ = searchResp.Body.Close() }()
 	if err := json.NewDecoder(searchResp.Body).Decode(&searchData); err != nil {
 		return nil, fmt.Errorf("can't decode search response: %w", err)
 	}
@@ -84,7 +84,7 @@ func (c *Client) Search(ctx context.Context, artist, song string) ([]*Result, er
 	if err != nil {
 		return nil, fmt.Errorf("can't get video details: %w", err)
 	}
-	defer videosResp.Body.Close()
+	defer func() { _ = videosResp.Body.Close() }()
 
 	var videosData struct {
 		Items []struct {
@@ -132,7 +132,7 @@ func (c *Client) doGet(ctx context.Context, rawURL string) (*http.Response, erro
 		return nil, fmt.Errorf("can't execute request: %w", err)
 	}
 	if resp.StatusCode != http.StatusOK {
-		resp.Body.Close()
+		_ = resp.Body.Close()
 		return nil, fmt.Errorf("unexpected status %d", resp.StatusCode)
 	}
 	return resp, nil

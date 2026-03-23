@@ -56,7 +56,7 @@ func (dt DateTime) Value() (driver.Value, error) {
 
 func MarshalDateTime(t DateTime) graphql.Marshaler {
 	return graphql.WriterFunc(func(w io.Writer) {
-		io.WriteString(w, strconv.Quote(t.Format(time.RFC3339)))
+		_, _ = io.WriteString(w, strconv.Quote(t.Format(time.RFC3339)))
 	})
 }
 

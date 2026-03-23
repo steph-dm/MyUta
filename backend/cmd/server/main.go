@@ -169,7 +169,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	db.Close()
+	if err := db.Close(); err != nil {
+		slog.Error("closing database", "error", err)
+	}
 	slog.Info("server stopped cleanly")
 }
 

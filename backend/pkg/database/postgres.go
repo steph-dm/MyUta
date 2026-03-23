@@ -24,7 +24,7 @@ func Connect(ctx context.Context, databaseURL string) (*bun.DB, error) {
 	db := bun.NewDB(sqldb, pgdialect.New())
 
 	if err := db.PingContext(ctx); err != nil {
-		db.Close()
+		_ = db.Close()
 		return nil, fmt.Errorf("can't connect to database: %w", err)
 	}
 

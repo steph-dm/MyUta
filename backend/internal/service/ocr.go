@@ -137,7 +137,7 @@ func (c *ClaudeOCR) ExtractReview(ctx context.Context, imageBase64 string) (*Ext
 	if err != nil {
 		return nil, fmt.Errorf("OCR service unavailable")
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode == 429 {
 		return nil, fmt.Errorf("OCR service rate limited, try again later")
