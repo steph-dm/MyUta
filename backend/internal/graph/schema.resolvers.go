@@ -219,6 +219,9 @@ func (r *mutationResolver) DeleteAccount(ctx context.Context, password string) (
 	if err != nil {
 		return false, err
 	}
+	if err := r.RateLimiter.Check("delacc:"+userID, 3, 3600); err != nil {
+		return false, apperror.Forbidden(err.Error())
+	}
 	return r.AuthService.DeleteAccount(ctx, userID, password)
 }
 
@@ -248,6 +251,9 @@ func (r *mutationResolver) ImportData(ctx context.Context, jsonData string) (*st
 	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
 	if err != nil {
 		return nil, err
+	}
+	if err := r.RateLimiter.Check("import:"+userID, 5, 3600); err != nil {
+		return nil, apperror.Forbidden(err.Error())
 	}
 	if err := validator.ImportSize(jsonData); err != nil {
 		return nil, err
