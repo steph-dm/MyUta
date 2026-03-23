@@ -156,30 +156,30 @@ func TestLogin(t *testing.T) {
 		{
 			name:      "valid credentials",
 			email:     "test@example.com",
-			password:  "ValidP@ss1",
-			setup:     func(s *mockUserStore) { seedUser(t, s, "user-1", "test@example.com", "ValidP@ss1") },
+			password:  "V@lidPass1234",
+			setup:     func(s *mockUserStore) { seedUser(t, s, "user-1", "test@example.com", "V@lidPass1234") },
 			wantToken: true,
 		},
 		{
 			name:     "wrong password",
 			email:    "test@example.com",
-			password: "WrongP@ss1",
-			setup:    func(s *mockUserStore) { seedUser(t, s, "user-1", "test@example.com", "ValidP@ss1") },
+			password: "Wr0ngP@ss123!",
+			setup:    func(s *mockUserStore) { seedUser(t, s, "user-1", "test@example.com", "V@lidPass1234") },
 			wantErr:  true,
 		},
 		{
 			name:     "unknown email",
 			email:    "nobody@example.com",
-			password: "ValidP@ss1",
+			password: "V@lidPass1234",
 			setup:    func(_ *mockUserStore) {},
 			wantErr:  true,
 		},
 		{
 			name:     "deleted account",
 			email:    "deleted@example.com",
-			password: "ValidP@ss1",
+			password: "V@lidPass1234",
 			setup: func(s *mockUserStore) {
-				u := seedUser(t, s, "user-2", "deleted@example.com", "ValidP@ss1")
+				u := seedUser(t, s, "user-2", "deleted@example.com", "V@lidPass1234")
 				now := scalar.Now()
 				u.DeletedAt = &now
 			},
@@ -298,31 +298,31 @@ func TestChangePassword(t *testing.T) {
 		{
 			name:        "valid change",
 			userID:      "user-1",
-			currentPass: "OldP@ssw0rd",
-			newPass:     "NewP@ssw0rd",
-			setup:       func(s *mockUserStore) { seedUser(t, s, "user-1", "test@example.com", "OldP@ssw0rd") },
+			currentPass: "OldP@ssw0rd!!",
+			newPass:     "NewP@ssw0rd!!",
+			setup:       func(s *mockUserStore) { seedUser(t, s, "user-1", "test@example.com", "OldP@ssw0rd!!") },
 		},
 		{
 			name:        "wrong current password",
 			userID:      "user-1",
-			currentPass: "WrongP@ss1",
-			newPass:     "NewP@ssw0rd",
-			setup:       func(s *mockUserStore) { seedUser(t, s, "user-1", "test@example.com", "OldP@ssw0rd") },
+			currentPass: "Wr0ngP@ss123!",
+			newPass:     "NewP@ssw0rd!!",
+			setup:       func(s *mockUserStore) { seedUser(t, s, "user-1", "test@example.com", "OldP@ssw0rd!!") },
 			wantErr:     true,
 		},
 		{
 			name:        "weak new password",
 			userID:      "user-1",
-			currentPass: "OldP@ssw0rd",
+			currentPass: "OldP@ssw0rd!!",
 			newPass:     "weak",
-			setup:       func(s *mockUserStore) { seedUser(t, s, "user-1", "test@example.com", "OldP@ssw0rd") },
+			setup:       func(s *mockUserStore) { seedUser(t, s, "user-1", "test@example.com", "OldP@ssw0rd!!") },
 			wantErr:     true,
 		},
 		{
 			name:        "unknown user",
 			userID:      "nonexistent",
-			currentPass: "Something1!",
-			newPass:     "NewP@ssw0rd",
+			currentPass: "Something1!!",
+			newPass:     "NewP@ssw0rd!!",
 			setup:       func(_ *mockUserStore) {},
 			wantErr:     true,
 		},
@@ -371,20 +371,20 @@ func TestDeleteAccount(t *testing.T) {
 		{
 			name:     "valid deletion",
 			userID:   "user-1",
-			password: "ValidP@ss1",
-			setup:    func(s *mockUserStore) { seedUser(t, s, "user-1", "test@example.com", "ValidP@ss1") },
+			password: "V@lidPass1234",
+			setup:    func(s *mockUserStore) { seedUser(t, s, "user-1", "test@example.com", "V@lidPass1234") },
 		},
 		{
 			name:     "wrong password",
 			userID:   "user-1",
-			password: "WrongP@ss1",
-			setup:    func(s *mockUserStore) { seedUser(t, s, "user-1", "test@example.com", "ValidP@ss1") },
+			password: "Wr0ngP@ss123!",
+			setup:    func(s *mockUserStore) { seedUser(t, s, "user-1", "test@example.com", "V@lidPass1234") },
 			wantErr:  true,
 		},
 		{
 			name:     "unknown user",
 			userID:   "nonexistent",
-			password: "Anything1!",
+			password: "Anything123!!",
 			setup:    func(_ *mockUserStore) {},
 			wantErr:  true,
 		},
@@ -434,14 +434,14 @@ func TestRegister(t *testing.T) {
 		{
 			name:  "valid registration",
 			email: "new@example.com",
-			pass:  "ValidP@ss1",
+			pass:  "V@lidPass1234",
 			uname: "NewUser",
 			setup: func(_ *mockUserStore) {},
 		},
 		{
 			name:    "duplicate email",
 			email:   "taken@example.com",
-			pass:    "ValidP@ss1",
+			pass:    "V@lidPass1234",
 			uname:   "NewUser",
 			setup:   func(s *mockUserStore) { s.emailTaken["taken@example.com"] = true },
 			wantErr: true,
@@ -449,7 +449,7 @@ func TestRegister(t *testing.T) {
 		{
 			name:    "duplicate name",
 			email:   "new@example.com",
-			pass:    "ValidP@ss1",
+			pass:    "V@lidPass1234",
 			uname:   "TakenName",
 			setup:   func(s *mockUserStore) { s.nameTaken["TakenName"] = true },
 			wantErr: true,
@@ -457,7 +457,7 @@ func TestRegister(t *testing.T) {
 		{
 			name:    "invalid email",
 			email:   "not-an-email",
-			pass:    "ValidP@ss1",
+			pass:    "V@lidPass1234",
 			uname:   "NewUser",
 			setup:   func(_ *mockUserStore) {},
 			wantErr: true,
@@ -473,7 +473,7 @@ func TestRegister(t *testing.T) {
 		{
 			name:  "store create error",
 			email: "new@example.com",
-			pass:  "ValidP@ss1",
+			pass:  "V@lidPass1234",
 			uname: "NewUser",
 			setup: func(s *mockUserStore) {
 				s.createErr = errors.New("db write failed")

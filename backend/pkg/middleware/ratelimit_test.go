@@ -24,7 +24,7 @@ func TestRateLimiter_BlocksOverLimit(t *testing.T) {
 
 	// Use up all attempts.
 	for i := 0; i < 3; i++ {
-		rl.Check("block-key", 3, 60)
+		_ = rl.Check("block-key", 3, 60)
 	}
 
 	// Next attempt should be blocked.
@@ -39,7 +39,7 @@ func TestRateLimiter_ResetsAfterWindow(t *testing.T) {
 
 	// Use up all attempts with a 1-second window.
 	for i := 0; i < 3; i++ {
-		rl.Check("reset-key", 3, 1)
+		_ = rl.Check("reset-key", 3, 1)
 	}
 
 	// Should be blocked.
@@ -62,7 +62,7 @@ func TestRateLimiter_IndependentKeys(t *testing.T) {
 
 	// Max out key A.
 	for i := 0; i < 2; i++ {
-		rl.Check("key-a", 2, 60)
+		_ = rl.Check("key-a", 2, 60)
 	}
 	if err := rl.Check("key-a", 2, 60); err == nil {
 		t.Error("key-a should be rate-limited")

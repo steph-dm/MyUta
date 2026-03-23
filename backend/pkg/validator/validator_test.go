@@ -66,13 +66,13 @@ func TestPassword(t *testing.T) {
 		password string
 		wantErr  bool
 	}{
-		{"valid complex", "MyP@ss123", false},
-		{"valid all requirements", "Abcdef1!", false},
-		{"too short", "Ab1!", true},
-		{"no uppercase", "myp@ss123", true},
-		{"no lowercase", "MYP@SS123", true},
-		{"no number", "MyP@ssword", true},
-		{"no special", "MyPass123", true},
+		{"valid complex", "MyP@ssword123", false},
+		{"valid all requirements", "Abcdefghij1!", false},
+		{"too short", "MyP@ss1!", true},
+		{"no uppercase", "mypassword@123", true},
+		{"no lowercase", "MYPASSWORD@123", true},
+		{"no number", "MyP@sswordabc", true},
+		{"no special", "MyPassword123", true},
 	}
 
 	for _, tt := range tests {
