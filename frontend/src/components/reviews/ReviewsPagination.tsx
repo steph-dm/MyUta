@@ -36,6 +36,7 @@ const ReviewsPagination = ({
                     className="h-8 w-8 p-0"
                     disabled={currentPage <= 1}
                     onClick={() => onPageChange(currentPage - 1)}
+                    aria-label={t("table.previousPage")}
                 >
                     <ChevronLeft className="h-4 w-4" />
                 </Button>
@@ -48,6 +49,7 @@ const ReviewsPagination = ({
                     className="h-8 w-8 p-0"
                     disabled={currentPage >= totalPages}
                     onClick={() => onPageChange(currentPage + 1)}
+                    aria-label={t("table.nextPage")}
                 >
                     <ChevronRight className="h-4 w-4" />
                 </Button>

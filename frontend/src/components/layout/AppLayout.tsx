@@ -152,6 +152,7 @@ const AppLayout = () => {
               onClick={logout}
               className="w-full flex items-center justify-center px-3 py-2 rounded-lg hover:bg-destructive/10 text-destructive transition-colors group relative"
               title={t("actions.logout")}
+              aria-label={t("actions.logout")}
             >
               <MaterialIcon icon="logout" size={20} />
               <div className="absolute left-full ml-2 px-2 py-1 bg-foreground text-background text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap">
@@ -178,6 +179,7 @@ const AppLayout = () => {
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
           className="hidden lg:flex absolute -right-3 top-20 bg-card border border-border rounded-full p-1.5 shadow-md hover:shadow-lg transition-all hover:bg-muted"
+          aria-label={isCollapsed ? t("actions.expandSidebar") : t("actions.collapseSidebar")}
         >
           <ChevronLeft
             className={cn(

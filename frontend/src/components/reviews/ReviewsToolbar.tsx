@@ -51,7 +51,7 @@ const ReviewsToolbar = ({ filters, totalReviews }: ReviewsToolbarProps) => {
                 <div className="flex items-center gap-2">
                     <Popover open={filters.genreFilterOpen} onOpenChange={filters.setGenreFilterOpen}>
                         <PopoverTrigger asChild>
-                            <Button variant="outline" size="sm" className="h-9">
+                            <Button variant="outline" size="sm" className="h-9" aria-label={t("table.genre")}>
                                 <Filter className="h-4 w-4 min-[400px]:mr-1" />
                                 <span className="hidden min-[400px]:inline">{t("table.genre")}</span>
                                 {filters.selectedGenres.length > 0 && (
@@ -101,6 +101,7 @@ const ReviewsToolbar = ({ filters, totalReviews }: ReviewsToolbarProps) => {
                                 variant={filters.datePreset ? "default" : "outline"}
                                 size="sm"
                                 className="h-9"
+                                aria-label={filters.dateLabel ?? t("table.date")}
                             >
                                 <CalendarDays className="h-4 w-4 min-[400px]:mr-1" />
                                 <span className="hidden min-[400px]:inline">{filters.dateLabel ?? t("table.date")}</span>
@@ -191,6 +192,7 @@ const ReviewsToolbar = ({ filters, totalReviews }: ReviewsToolbarProps) => {
                         onClick={() =>
                             filters.setScoreSortDirection((prev) => (prev === "desc" ? "asc" : "desc"))
                         }
+                        aria-label={t("table.score")}
                     >
                         {filters.scoreSortDirection === "asc" ? (
                             <ArrowUp className="h-4 w-4 min-[400px]:mr-1" />

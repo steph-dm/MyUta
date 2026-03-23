@@ -26,7 +26,9 @@
         "play": "再生",
         "stop": "停止",
         "closePlayer": "プレーヤーを閉じる",
-        "toggleTheme": "テーマを切り替える"
+        "toggleTheme": "テーマを切り替える",
+        "expandSidebar": "サイドバーを展開",
+        "collapseSidebar": "サイドバーを折りたたむ"
     },
     "empty": {
         "noResults": "結果が見つかりません",

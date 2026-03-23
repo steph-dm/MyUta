@@ -26,7 +26,9 @@
         "play": "Play",
         "stop": "Stop",
         "closePlayer": "Close player",
-        "toggleTheme": "Toggle theme"
+        "toggleTheme": "Toggle theme",
+        "expandSidebar": "Expand sidebar",
+        "collapseSidebar": "Collapse sidebar"
     },
     "empty": {
         "noResults": "No results found",

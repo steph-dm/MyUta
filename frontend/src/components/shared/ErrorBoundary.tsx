@@ -6,6 +6,7 @@ import i18n from "../../i18n";
 interface Props {
     children: ReactNode;
     fallback?: ReactNode;
+    compact?: boolean;
 }
 
 interface State {
@@ -32,6 +33,20 @@ class ErrorBoundary extends Component<Props, State> {
         if (this.state.hasError) {
             if (this.props.fallback) return this.props.fallback;
 
+            if (this.props.compact) {
+                return (
+                    <div className="flex items-center gap-3 rounded-lg border border-destructive/20 bg-destructive/5 p-4">
+                        <AlertTriangle className="h-5 w-5 text-destructive shrink-0" />
+                        <p className="text-sm text-muted-foreground flex-1">
+                            {i18n.t("common:errors.unexpectedMessage")}
+                        </p>
+                        <Button variant="outline" size="sm" onClick={this.handleReset}>
+                            {i18n.t("common:errors.tryAgain")}
+                        </Button>
+                    </div>
+                );
+            }
+
             return (
                 <div className="flex flex-col items-center justify-center gap-4 py-16 px-4 text-center">
                     <AlertTriangle className="h-12 w-12 text-destructive" />
@@ -53,3 +68,7 @@ class ErrorBoundary extends Component<Props, State> {
 }
 
 export default ErrorBoundary;
+
+export const SectionErrorBoundary = ({ children }: { children: ReactNode }) => (
+    <ErrorBoundary compact>{children}</ErrorBoundary>
+);

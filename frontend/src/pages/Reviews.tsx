@@ -8,6 +8,7 @@ import AddReviewModal from "../components/reviews/AddReviewModal";
 import EditReviewModal from "../components/reviews/EditReviewModal";
 
 import { TableSkeleton } from "../components/shared/Skeletons";
+import { SectionErrorBoundary } from "../components/shared/ErrorBoundary";
 import {
   Card,
   CardContent,
@@ -119,10 +120,12 @@ const Reviews = () => {
         </CardHeader>
         <CardContent className="space-y-4">
           {sections.map(({ type, reviews, color, borderColor }) => (
-            <div key={type} className={`border rounded-lg ${borderColor}`}>
+            <SectionErrorBoundary key={type}>
+            <div className={`border rounded-lg ${borderColor}`}>
               <button
                 onClick={() => toggleSection(type)}
                 className="w-full flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
+                aria-expanded={!(collapsedSections[type] ?? reviews.length === 0)}
               >
                 <div className="flex items-center gap-3">
                   {(collapsedSections[type] ?? reviews.length === 0) ? (
@@ -153,6 +156,7 @@ const Reviews = () => {
                 </div>
               )}
             </div>
+            </SectionErrorBoundary>
           ))}
         </CardContent>
       </Card>

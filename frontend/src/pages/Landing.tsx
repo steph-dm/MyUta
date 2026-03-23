@@ -54,6 +54,8 @@ export default function Landing() {
           <button
             className="sm:hidden p-2 text-muted-foreground"
             onClick={() => setMenuOpen(!menuOpen)}
+            aria-label={menuOpen ? t("landing.nav.closeMenu") : t("landing.nav.openMenu")}
+            aria-expanded={menuOpen}
           >
             {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>

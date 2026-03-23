@@ -152,7 +152,7 @@ const Songs = () => {
 
             <Popover open={genreFilterOpen} onOpenChange={setGenreFilterOpen}>
               <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className="h-9">
+                <Button variant="outline" size="sm" className="h-9" aria-label={t("filters.genre")}>
                   <Filter className="h-4 w-4 min-[400px]:mr-1" />
                   <span className="hidden min-[400px]:inline">{t("filters.genre")}</span>
                   {selectedGenres.length > 0 && (
@@ -199,6 +199,7 @@ const Songs = () => {
               size="sm"
               className="h-9"
               onClick={() => setSortBy(sortBy === "title-asc" ? "title-desc" : "title-asc")}
+              aria-label={sortBy === "title-asc" ? t("sort.aToZ", { ns: "common" }) : t("sort.zToA", { ns: "common" })}
             >
               <span className="hidden min-[400px]:inline">{sortBy === "title-asc" ? t("sort.aToZ", { ns: "common" }) : t("sort.zToA", { ns: "common" })}</span>
               <span className="min-[400px]:hidden">{sortBy === "title-asc" ? "A→Z" : "Z→A"}</span>
@@ -209,6 +210,7 @@ const Songs = () => {
               size="sm"
               onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
               className="gap-2 h-9"
+              aria-label={t("filters.favoritesOnly")}
             >
               <Heart className={`h-4 w-4 ${showFavoritesOnly ? "fill-current" : ""}`} />
               <span className="hidden min-[400px]:inline">{t("filters.favoritesOnly")}</span>

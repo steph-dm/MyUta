@@ -73,6 +73,7 @@ const ProfileFavorites = ({
                                             }
                                         }}
                                         title={activePlayerUrl === song.youtubeUrl ? t("card.stop", { ns: "songs" }) : t("card.play", { ns: "songs" })}
+                                        aria-label={activePlayerUrl === song.youtubeUrl ? t("card.stop", { ns: "songs" }) : t("card.play", { ns: "songs" })}
                                     >
                                         <Play className="h-3 w-3" />
                                     </Button>
@@ -83,6 +84,7 @@ const ProfileFavorites = ({
                                     className="h-7 w-7 p-0 text-red-500"
                                     onClick={() => onRemoveFavorite(song.id)}
                                     title={t("card.removeFromFavorites", { ns: "songs" })}
+                                    aria-label={t("card.removeFromFavorites", { ns: "songs" })}
                                 >
                                     <Heart className="h-3 w-3 fill-current" />
                                 </Button>

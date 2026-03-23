@@ -147,6 +147,7 @@ const SongDetail = () => {
                                                 }
                                             }}
                                             title={activePlayerUrl === song.youtubeUrl ? tCommon("actions.stop") : tCommon("actions.play")}
+                                            aria-label={activePlayerUrl === song.youtubeUrl ? tCommon("actions.stop") : tCommon("actions.play")}
                                         >
                                             <Play className="h-4 w-4" />
                                         </Button>
@@ -157,6 +158,7 @@ const SongDetail = () => {
                                         className={`h-8 w-8 p-0 ${song.isFavorite ? "text-red-500" : ""}`}
                                         onClick={() => { toggleFavorite({ variables: { songId: song.id } }); trackEvent({ name: "toggle_favorite", data: { type: "song" } }); }}
                                         title={song.isFavorite ? t("card.removeFromFavorites") : t("card.addToFavorites")}
+                                        aria-label={song.isFavorite ? t("card.removeFromFavorites") : t("card.addToFavorites")}
                                     >
                                         <Heart className={`h-4 w-4 ${song.isFavorite ? "fill-current" : ""}`} />
                                     </Button>
@@ -286,6 +288,7 @@ const SongDetail = () => {
                             <button
                                 onClick={() => toggleSection(type)}
                                 className="w-full flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
+                                aria-expanded={!(collapsedSections[type] ?? sectionReviews.length === 0)}
                             >
                                 <div className="flex items-center gap-3">
                                     {(collapsedSections[type] ?? sectionReviews.length === 0) ? (

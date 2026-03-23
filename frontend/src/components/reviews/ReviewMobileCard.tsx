@@ -84,7 +84,7 @@ const ReviewMobileCard = ({
                     {review.notes && (
                         <Popover>
                             <PopoverTrigger asChild>
-                                <button className="hover:bg-muted rounded-md p-1 transition-colors">
+                                <button className="hover:bg-muted rounded-md p-1 transition-colors" aria-label={t("table.viewNotes")}>
                                     <MessageCircleQuestion className="h-4 w-4 text-muted-foreground" />
                                 </button>
                             </PopoverTrigger>
@@ -112,6 +112,7 @@ const ReviewMobileCard = ({
                                     );
                                 }
                             }}
+                            aria-label={activePlayerUrl === review.song.youtubeUrl ? t("table.stopAudio") : t("table.playAudio")}
                         >
                             <Play className="h-3.5 w-3.5" />
                         </Button>
@@ -122,6 +123,7 @@ const ReviewMobileCard = ({
                         onClick={() => generateScoreCard(review, currentUser ? { name: currentUser.name, email: currentUser.email } : undefined)}
                         className="h-7 w-7 p-0"
                         title={t("shareScoreCard")}
+                        aria-label={t("shareScoreCard")}
                     >
                         <Share2 className="h-3.5 w-3.5" />
                     </Button>
@@ -133,6 +135,7 @@ const ReviewMobileCard = ({
                                     size="sm"
                                     onClick={() => onEditReview(review)}
                                     className="h-7 w-7 p-0"
+                                    aria-label={t("table.editReview")}
                                 >
                                     <Edit className="h-3.5 w-3.5" />
                                 </Button>

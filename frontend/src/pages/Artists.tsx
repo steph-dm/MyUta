@@ -98,6 +98,7 @@ const Artists = () => {
               size="sm"
               className="h-9"
               onClick={() => setSortBy(sortBy === "name-asc" ? "name-desc" : "name-asc")}
+              aria-label={sortBy === "name-asc" ? t("sort.aToZ", { ns: "common" }) : t("sort.zToA", { ns: "common" })}
             >
               <span className="hidden min-[400px]:inline">{sortBy === "name-asc" ? t("sort.aToZ", { ns: "common" }) : t("sort.zToA", { ns: "common" })}</span>
               <span className="min-[400px]:hidden">{sortBy === "name-asc" ? "A→Z" : "Z→A"}</span>

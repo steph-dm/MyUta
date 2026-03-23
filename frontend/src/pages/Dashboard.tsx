@@ -7,6 +7,7 @@ import { getIssueColor, getMachineBadgeColor } from "../lib/utils";
 import ReviewsTable from "../components/reviews/ReviewsTable";
 
 import { StatCardsSkeleton, CardSkeleton, TableSkeleton } from "../components/shared/Skeletons";
+import { SectionErrorBoundary } from "../components/shared/ErrorBoundary";
 
 import {
   Card,
@@ -115,6 +116,7 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6">
+      <SectionErrorBoundary>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card>
           <CardHeader className="pb-2">
@@ -162,7 +164,9 @@ const Dashboard = () => {
         </Card>
 
       </div>
+      </SectionErrorBoundary>
 
+      <SectionErrorBoundary>
       {stats.mostPracticed && stats.mostPracticed.count > 1 && (
         <Card>
           <CardContent className="flex items-center gap-3 py-3">
@@ -173,6 +177,7 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       )}
+      </SectionErrorBoundary>
 
       <Card>
         <CardHeader>
@@ -187,6 +192,7 @@ const Dashboard = () => {
               <button
                 onClick={() => toggleSection(type)}
                 className="w-full flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
+                aria-expanded={!(collapsedSections[type] ?? reviews.length === 0)}
               >
                 <div className="flex items-center gap-3">
                   {(collapsedSections[type] ?? reviews.length === 0) ? (
@@ -221,6 +227,7 @@ const Dashboard = () => {
       </Card>
 
       {stats.commonIssues.length > 0 && (
+        <SectionErrorBoundary>
         <Card>
           <CardHeader>
             <CardTitle className="text-sm font-medium">{t("commonIssues")}</CardTitle>
@@ -243,6 +250,7 @@ const Dashboard = () => {
             ))}
           </CardContent>
         </Card>
+        </SectionErrorBoundary>
       )}
 
 

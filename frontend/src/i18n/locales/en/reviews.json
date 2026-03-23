@@ -44,7 +44,14 @@
         "tryAdjustingFilters": "Try adjusting your search or filters",
         "clearFilters": "Clear filters",
         "clearDateFilter": "Clear date filter",
-        "showing": "Showing {{from}}–{{to}} of {{total}}"
+        "showing": "Showing {{from}}–{{to}} of {{total}}",
+        "viewNotes": "View notes",
+        "moreIssues": "{{count}} more issues",
+        "playAudio": "Play audio",
+        "stopAudio": "Stop audio",
+        "editReview": "Edit review",
+        "previousPage": "Previous page",
+        "nextPage": "Next page"
     },
     "modal": {
         "addTitle": "Add New Review",

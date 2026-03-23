@@ -44,7 +44,14 @@
         "tryAdjustingFilters": "検索条件やフィルターを変更してみてください",
         "clearFilters": "フィルターをクリア",
         "clearDateFilter": "日付フィルターをクリア",
-        "showing": "{{from}}～{{to}} / {{total}}件"
+        "showing": "{{from}}～{{to}} / {{total}}件",
+        "viewNotes": "メモを表示",
+        "moreIssues": "他{{count}}件の課題",
+        "playAudio": "再生",
+        "stopAudio": "停止",
+        "editReview": "採点を編集",
+        "previousPage": "前のページ",
+        "nextPage": "次のページ"
     },
     "modal": {
         "addTitle": "採点を追加",

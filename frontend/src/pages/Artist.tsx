@@ -96,6 +96,7 @@ const Artist = () => {
                   className={`h-8 w-8 p-0 shrink-0 ${artist.isFavorite ? "text-red-500" : ""}`}
                   onClick={() => { toggleFavoriteArtist({ variables: { artistId: artist.id } }); trackEvent({ name: "toggle_favorite", data: { type: "artist" } }); }}
                   title={artist.isFavorite ? t("card.removeFromFavorites") : t("card.addToFavorites")}
+                  aria-label={artist.isFavorite ? t("card.removeFromFavorites") : t("card.addToFavorites")}
                 >
                   <Heart className={`h-4 w-4 ${artist.isFavorite ? "fill-current" : ""}`} />
                 </Button>

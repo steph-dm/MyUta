@@ -123,6 +123,7 @@ const ReviewDesktopRow = ({
                                             className="hover:bg-muted rounded-md px-1.5 py-0.5 text-xs text-muted-foreground border transition-colors"
                                             onMouseEnter={() => onSetHoveredIssuesId(review.id)}
                                             onMouseLeave={() => onSetHoveredIssuesId(null)}
+                                            aria-label={t("table.moreIssues", { count: sortedIssues.length - 1 })}
                                         >
                                             +{sortedIssues.length - 1}
                                         </button>
@@ -165,6 +166,7 @@ const ReviewDesktopRow = ({
                                 className="hover:bg-muted rounded-md p-1 transition-colors"
                                 onMouseEnter={() => onSetHoveredNoteId(review.id)}
                                 onMouseLeave={() => onSetHoveredNoteId(null)}
+                                aria-label={t("table.viewNotes")}
                             >
                                 <MessageCircleQuestion className="h-4 w-4 text-muted-foreground" />
                             </button>
@@ -205,6 +207,7 @@ const ReviewDesktopRow = ({
                                 );
                             }
                         }}
+                        aria-label={activePlayerUrl === review.song.youtubeUrl ? t("table.stopAudio") : t("table.playAudio")}
                     >
                         <Play className="h-4 w-4" />
                     </Button>
@@ -221,6 +224,7 @@ const ReviewDesktopRow = ({
                             onClick={() => generateScoreCard(review, currentUser ? { name: currentUser.name, email: currentUser.email } : undefined)}
                             className="h-8 w-8 p-0"
                             title={t("shareScoreCard")}
+                            aria-label={t("shareScoreCard")}
                         >
                             <Share2 className="h-4 w-4" />
                         </Button>
@@ -230,6 +234,7 @@ const ReviewDesktopRow = ({
                                 size="sm"
                                 onClick={() => onEditReview(review)}
                                 className="h-8 w-8 p-0"
+                                aria-label={t("table.editReview")}
                             >
                                 <Edit className="h-4 w-4" />
                             </Button>
