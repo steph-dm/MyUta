@@ -13,7 +13,7 @@ Karaoke score tracker for DAM and JOYSOUND machines. Log each session with score
 - Log scores from DAM and JOYSOUND, with per-section issue tagging
 - Trend charts per song to track progress
 - OCR import: snap a photo of the score screen, auto-extracts the data
-- Song library with genres and artist aliases (YOASOBI ↔ よあそび)
+- Song library with genres and artist pages
 - Built-in YouTube search to preview songs
 - JSON export/import for backups
 - EN / JA via i18next
