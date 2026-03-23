@@ -1,63 +1,79 @@
-# MyUta (マイウタ)
+# マイウタ (MyUta)
 
-Personal karaoke score tracker — keep track of sessions, songs, and scores so you can see how you're improving over time. Supports English and Japanese.
+[![CI](https://github.com/steph-dm/MyUta/actions/workflows/ci.yml/badge.svg)](https://github.com/steph-dm/MyUta/actions/workflows/ci.yml)
 
-Go + GraphQL backend, React + Vite frontend, PostgreSQL.
+Karaoke score tracker for DAM and JOYSOUND machines. Log each session with scores, tag what went wrong (pitch, rhythm, timing, etc.), and track which songs you're improving on. Bilingual (English / Japanese).
+
+<p align="center">
+  <img src="frontend/public/preview-dashboard.png" alt="Dashboard" width="720" />
+</p>
+
+## What it does
+
+- Log scores from DAM and JOYSOUND, with per-section issue tagging
+- Trend charts per song to track progress
+- OCR import: snap a photo of the score screen, auto-extracts the data
+- Song library with genres and artist aliases (YOASOBI ↔ よあそび)
+- Built-in YouTube search to preview songs
+- JSON export/import for backups
+- EN / JA via i18next
+
+## Stack
+
+**Backend:** Go 1.26, GraphQL (gqlgen), PostgreSQL, Bun ORM
+**Frontend:** React 19, TypeScript, Vite, Tailwind, shadcn/ui
+**Auth:** JWT + bcrypt, refresh tokens, rate-limited login
+**Infra:** Docker Compose, nginx, Railway
+**APIs:** YouTube Data v3, Anthropic Claude (OCR)
+
+## Project structure
+
+```
+backend/
+  cmd/server/          → entrypoint
+  internal/graph/      → GraphQL resolvers + dataloaders
+  internal/service/    → business logic
+  internal/storage/    → Postgres (Bun ORM)
+  pkg/                 → auth, config, middleware, validator
+
+frontend/src/
+  pages/               → route-level components
+  components/          → UI (charts, layout, forms, shadcn)
+  hooks/               → hooks
+  contexts/            → auth + theme providers
+  i18n/                → EN/JA translations
+```
 
 ## Getting started
 
-You'll need Docker, Go 1.26+, and Node 20+.
-
-**1. Copy the env files:**
+Docker, Go 1.26+, and Node 20+.
 
 ```bash
+# 1. env files
 cp .env.example .env
 cp backend/.env.example backend/.env
+
+# 2. database
+make db
+
+# 3. backend (localhost:4000/graphql)
+make dev-backend
+
+# 4. frontend (localhost:3000)
+make dev-frontend
 ```
 
-Root `.env` is for Docker Compose, `backend/.env` is for running the backend directly. The defaults work out of the box for local development.
+Tables auto-migrate on first run. After seeding (`make seed`), log in with `john.smith@example.com` / `password123`.
 
-**2. Start Postgres:**
+## Other commands
 
 ```bash
-docker compose up postgres -d
+make test       # backend tests
+make lint       # golangci-lint + tsc --noEmit
+make build      # production builds
+make up         # full stack via docker
 ```
 
-**3. Run the backend:**
+## License
 
-```bash
-cd backend
-go run ./cmd/server
-```
-
-Database tables are created automatically on first start.
-
-API is at `http://localhost:4000/graphql`, health check at `http://localhost:4000/healthz`.
-
-**4. Run the frontend:**
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Frontend is at `http://localhost:3000`.
-
-## Sample data
-
-There's a seed file with sample songs, artists, and karaoke scores you can load to try things out:
-
-```bash
-docker exec -i myuta-postgres-1 psql -U myuser -d myuta < backend/seed_test_data.sql
-```
-
-Login with `john.smith@example.com` / `password123`
-
-## Docker (full stack)
-
-```bash
-docker compose up --build
-```
-
-Backend at `http://localhost:4000/graphql`, frontend at `http://localhost:3000`.
+Copyright © 2026 steph-dm. All rights reserved.
