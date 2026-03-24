@@ -46,11 +46,11 @@ func TestMe(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		name     string
-		userID   string
-		setup    func(*mockUserStore)
-		wantNil  bool
-		wantErr  bool
+		name    string
+		userID  string
+		setup   func(*mockUserStore)
+		wantNil bool
+		wantErr bool
 	}{
 		{
 			name:   "active user",

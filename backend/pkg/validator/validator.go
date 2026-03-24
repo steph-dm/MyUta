@@ -11,16 +11,16 @@ import (
 )
 
 const (
-	maxTitleLength   = 200
-	maxNameLength    = 200
-	maxNotesLength   = 1000
-	minScore         = 0.0
-	maxScore         = 100.0
-	maxPasswordLen   = 72 // bcrypt truncates at 72 bytes
-	maxTake          = 200
-	maxDays          = 365
-	maxImportSize    = 5 * 1024 * 1024 // 5 MB
-	maxBatchDelete   = 100
+	maxTitleLength = 200
+	maxNameLength  = 200
+	maxNotesLength = 1000
+	minScore       = 0.0
+	maxScore       = 100.0
+	maxPasswordLen = 72 // bcrypt truncates at 72 bytes
+	maxTake        = 200
+	maxDays        = 365
+	maxImportSize  = 5 * 1024 * 1024 // 5 MB
+	maxBatchDelete = 100
 )
 
 var (

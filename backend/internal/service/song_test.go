@@ -30,7 +30,6 @@ func newMockSongStore() *mockSongStore {
 	}
 }
 
-
 func (m *mockSongStore) GetSong(_ context.Context, id string) (*storage.Song, error) {
 	s, ok := m.songs[id]
 	if !ok {
@@ -130,7 +129,6 @@ func (m *mockSongStore) BatchReviewCounts(_ context.Context, _ []string) (map[st
 	return map[string]int{}, nil
 }
 
-
 func (m *mockSongStore) GetArtist(_ context.Context, id string) (*storage.Artist, error) {
 	a, ok := m.artists[id]
 	if !ok {
@@ -172,7 +170,6 @@ func (m *mockSongStore) MultiGetArtists(_ context.Context, ids []string) ([]*sto
 	return result, nil
 }
 
-
 func (m *mockSongStore) GetReview(_ context.Context, _ string) (*storage.Review, error) {
 	return nil, storage.ErrNotFound
 }
@@ -205,7 +202,6 @@ func (m *mockSongStore) GetDashboardStats(_ context.Context, _ string) (*storage
 	return &storage.DashboardStats{}, nil
 }
 
-
 func (m *mockSongStore) ToggleFavoriteSong(_ context.Context, _, _ string) (bool, error) {
 	return true, nil
 }
@@ -228,7 +224,6 @@ func (m *mockSongStore) BatchIsArtistFavorited(_ context.Context, _ string, _ []
 	return nil, nil
 }
 
-
 func (m *mockSongStore) ExportReviews(_ context.Context, _ string) ([]*storage.ExportReview, error) {
 	return nil, nil
 }
@@ -238,7 +233,6 @@ func (m *mockSongStore) ExportFavoriteSongs(_ context.Context, _ string) ([]*sto
 func (m *mockSongStore) ExportFavoriteArtistNames(_ context.Context, _ string) ([]string, error) {
 	return nil, nil
 }
-
 
 func (m *mockSongStore) GetUser(_ context.Context, _ string) (*storage.User, error) {
 	return nil, storage.ErrNotFound
@@ -252,13 +246,13 @@ func (m *mockSongStore) EmailExists(_ context.Context, _ string, _ ...string) (b
 func (m *mockSongStore) NameExists(_ context.Context, _ string, _ ...string) (bool, error) {
 	return false, nil
 }
-func (m *mockSongStore) CreateUser(_ context.Context, _ *storage.User) error               { return nil }
-func (m *mockSongStore) UpdateUser(_ context.Context, _ *storage.User, _ ...string) error  { return nil }
-func (m *mockSongStore) UpdatePassword(_ context.Context, _, _ string) error               { return nil }
-func (m *mockSongStore) GetPassword(_ context.Context, _ string) (string, error)           { return "", nil }
-func (m *mockSongStore) SoftDeleteUser(_ context.Context, _ string) error                  { return nil }
-func (m *mockSongStore) IsAdmin(_ context.Context, _ string) (bool, error)                 { return false, nil }
-func (m *mockSongStore) ListActiveUsers(_ context.Context) ([]*storage.User, error)        { return nil, nil }
+func (m *mockSongStore) CreateUser(_ context.Context, _ *storage.User) error              { return nil }
+func (m *mockSongStore) UpdateUser(_ context.Context, _ *storage.User, _ ...string) error { return nil }
+func (m *mockSongStore) UpdatePassword(_ context.Context, _, _ string) error              { return nil }
+func (m *mockSongStore) GetPassword(_ context.Context, _ string) (string, error)          { return "", nil }
+func (m *mockSongStore) SoftDeleteUser(_ context.Context, _ string) error                 { return nil }
+func (m *mockSongStore) IsAdmin(_ context.Context, _ string) (bool, error)                { return false, nil }
+func (m *mockSongStore) ListActiveUsers(_ context.Context) ([]*storage.User, error)       { return nil, nil }
 func (m *mockSongStore) IsActiveUser(_ context.Context, _ string, _ time.Time) (bool, error) {
 	return true, nil
 }

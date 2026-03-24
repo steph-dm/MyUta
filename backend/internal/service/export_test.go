@@ -14,13 +14,13 @@ import (
 )
 
 type mockExportStore struct {
-	user           *storage.User
-	reviews        []*storage.ExportReview
-	favorites      []*storage.ExportFavorite
+	user            *storage.User
+	reviews         []*storage.ExportReview
+	favorites       []*storage.ExportFavorite
 	favoriteArtists []string
 
-	songs   map[string]*storage.Song
-	artists map[string]*storage.Artist
+	songs         map[string]*storage.Song
+	artists       map[string]*storage.Artist
 	artistsByName map[string]*storage.Artist
 
 	songsByTitleArtist map[string]*storage.Song
@@ -44,7 +44,6 @@ func newMockExportStore() *mockExportStore {
 	}
 }
 
-
 func (m *mockExportStore) ExportReviews(_ context.Context, _ string) ([]*storage.ExportReview, error) {
 	return m.reviews, nil
 }
@@ -56,7 +55,6 @@ func (m *mockExportStore) ExportFavoriteSongs(_ context.Context, _ string) ([]*s
 func (m *mockExportStore) ExportFavoriteArtistNames(_ context.Context, _ string) ([]string, error) {
 	return m.favoriteArtists, nil
 }
-
 
 func (m *mockExportStore) GetUser(_ context.Context, _ string) (*storage.User, error) {
 	if m.getUserErr != nil {
@@ -77,19 +75,20 @@ func (m *mockExportStore) EmailExists(_ context.Context, _ string, _ ...string) 
 func (m *mockExportStore) NameExists(_ context.Context, _ string, _ ...string) (bool, error) {
 	return false, nil
 }
-func (m *mockExportStore) CreateUser(_ context.Context, _ *storage.User) error        { return nil }
+func (m *mockExportStore) CreateUser(_ context.Context, _ *storage.User) error { return nil }
 func (m *mockExportStore) UpdateUser(_ context.Context, _ *storage.User, _ ...string) error {
 	return nil
 }
-func (m *mockExportStore) UpdatePassword(_ context.Context, _, _ string) error  { return nil }
+func (m *mockExportStore) UpdatePassword(_ context.Context, _, _ string) error     { return nil }
 func (m *mockExportStore) GetPassword(_ context.Context, _ string) (string, error) { return "", nil }
-func (m *mockExportStore) SoftDeleteUser(_ context.Context, _ string) error     { return nil }
-func (m *mockExportStore) IsAdmin(_ context.Context, _ string) (bool, error)    { return false, nil }
-func (m *mockExportStore) ListActiveUsers(_ context.Context) ([]*storage.User, error) { return nil, nil }
+func (m *mockExportStore) SoftDeleteUser(_ context.Context, _ string) error        { return nil }
+func (m *mockExportStore) IsAdmin(_ context.Context, _ string) (bool, error)       { return false, nil }
+func (m *mockExportStore) ListActiveUsers(_ context.Context) ([]*storage.User, error) {
+	return nil, nil
+}
 func (m *mockExportStore) IsActiveUser(_ context.Context, _ string, _ time.Time) (bool, error) {
 	return true, nil
 }
-
 
 func (m *mockExportStore) GetArtist(_ context.Context, id string) (*storage.Artist, error) {
 	a, ok := m.artists[id]
@@ -121,7 +120,6 @@ func (m *mockExportStore) ListArtists(_ context.Context, _ string, _, _ *int) ([
 func (m *mockExportStore) MultiGetArtists(_ context.Context, _ []string) ([]*storage.Artist, error) {
 	return nil, nil
 }
-
 
 func (m *mockExportStore) GetSong(_ context.Context, id string) (*storage.Song, error) {
 	s, ok := m.songs[id]
@@ -178,7 +176,6 @@ func (m *mockExportStore) BatchReviewCounts(_ context.Context, _ []string) (map[
 	return nil, nil
 }
 
-
 func (m *mockExportStore) GetReview(_ context.Context, _ string) (*storage.Review, error) {
 	return nil, storage.ErrNotFound
 }
@@ -219,7 +216,6 @@ func (m *mockExportStore) GetDashboardStats(_ context.Context, _ string) (*stora
 	return &storage.DashboardStats{}, nil
 }
 
-
 func (m *mockExportStore) ToggleFavoriteSong(_ context.Context, _, songID string) (bool, error) {
 	m.songFavMap[songID] = true
 	return true, nil
@@ -253,7 +249,6 @@ func (m *mockExportStore) BatchIsArtistFavorited(_ context.Context, _ string, id
 	}
 	return result, nil
 }
-
 
 func TestExportData(t *testing.T) {
 	t.Parallel()

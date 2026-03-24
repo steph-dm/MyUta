@@ -95,42 +95,53 @@ func (m *mockArtistStore) ListFavoriteArtists(_ context.Context, _ string) ([]*s
 	return nil, nil
 }
 
-
-func (m *mockArtistStore) GetUser(context.Context, string) (*storage.User, error)            { return nil, nil }
-func (m *mockArtistStore) GetUserByEmail(context.Context, string) (*storage.User, error)     { return nil, nil }
-func (m *mockArtistStore) EmailExists(context.Context, string, ...string) (bool, error)      { return false, nil }
-func (m *mockArtistStore) NameExists(context.Context, string, ...string) (bool, error)       { return false, nil }
-func (m *mockArtistStore) CreateUser(context.Context, *storage.User) error                   { return nil }
-func (m *mockArtistStore) UpdateUser(context.Context, *storage.User, ...string) error        { return nil }
-func (m *mockArtistStore) UpdatePassword(context.Context, string, string) error              { return nil }
-func (m *mockArtistStore) GetPassword(context.Context, string) (string, error)               { return "", nil }
-func (m *mockArtistStore) SoftDeleteUser(context.Context, string) error                      { return nil }
-func (m *mockArtistStore) IsAdmin(context.Context, string) (bool, error)                     { return false, nil }
-func (m *mockArtistStore) ListActiveUsers(context.Context) ([]*storage.User, error)          { return nil, nil }
-func (m *mockArtistStore) IsActiveUser(context.Context, string, time.Time) (bool, error)     { return true, nil }
-func (m *mockArtistStore) GetSong(context.Context, string) (*storage.Song, error)            { return nil, nil }
+func (m *mockArtistStore) GetUser(context.Context, string) (*storage.User, error) { return nil, nil }
+func (m *mockArtistStore) GetUserByEmail(context.Context, string) (*storage.User, error) {
+	return nil, nil
+}
+func (m *mockArtistStore) EmailExists(context.Context, string, ...string) (bool, error) {
+	return false, nil
+}
+func (m *mockArtistStore) NameExists(context.Context, string, ...string) (bool, error) {
+	return false, nil
+}
+func (m *mockArtistStore) CreateUser(context.Context, *storage.User) error            { return nil }
+func (m *mockArtistStore) UpdateUser(context.Context, *storage.User, ...string) error { return nil }
+func (m *mockArtistStore) UpdatePassword(context.Context, string, string) error       { return nil }
+func (m *mockArtistStore) GetPassword(context.Context, string) (string, error)        { return "", nil }
+func (m *mockArtistStore) SoftDeleteUser(context.Context, string) error               { return nil }
+func (m *mockArtistStore) IsAdmin(context.Context, string) (bool, error)              { return false, nil }
+func (m *mockArtistStore) ListActiveUsers(context.Context) ([]*storage.User, error)   { return nil, nil }
+func (m *mockArtistStore) IsActiveUser(context.Context, string, time.Time) (bool, error) {
+	return true, nil
+}
+func (m *mockArtistStore) GetSong(context.Context, string) (*storage.Song, error) { return nil, nil }
 func (m *mockArtistStore) GetSongByTitleAndArtist(context.Context, string, string, string) (*storage.Song, error) {
 	return nil, nil
 }
-func (m *mockArtistStore) SongExists(context.Context, string) (bool, error)        { return false, nil }
-func (m *mockArtistStore) CreateSong(context.Context, *storage.Song) error         { return nil }
-func (m *mockArtistStore) UpdateSong(context.Context, *storage.Song) error         { return nil }
+func (m *mockArtistStore) SongExists(context.Context, string) (bool, error) { return false, nil }
+func (m *mockArtistStore) CreateSong(context.Context, *storage.Song) error  { return nil }
+func (m *mockArtistStore) UpdateSong(context.Context, *storage.Song) error  { return nil }
 func (m *mockArtistStore) UpdateSongFields(context.Context, string, []string, *string, bool) error {
 	return nil
 }
-func (m *mockArtistStore) DeleteSong(context.Context, string) error                       { return nil }
-func (m *mockArtistStore) GetSongArtistID(context.Context, string) (string, error)        { return "", nil }
+func (m *mockArtistStore) DeleteSong(context.Context, string) error                { return nil }
+func (m *mockArtistStore) GetSongArtistID(context.Context, string) (string, error) { return "", nil }
 func (m *mockArtistStore) ListSongs(context.Context, string, *int, *int) ([]*storage.Song, error) {
 	return nil, nil
 }
-func (m *mockArtistStore) CountSongsByArtist(context.Context, string, string) (int, error) { return 0, nil }
+func (m *mockArtistStore) CountSongsByArtist(context.Context, string, string) (int, error) {
+	return 0, nil
+}
 func (m *mockArtistStore) BatchReviewCounts(context.Context, []string) (map[string]int, error) {
 	return nil, nil
 }
-func (m *mockArtistStore) GetReview(context.Context, string) (*storage.Review, error) { return nil, nil }
-func (m *mockArtistStore) CreateReview(context.Context, *storage.Review) error        { return nil }
-func (m *mockArtistStore) UpdateReview(context.Context, *storage.Review) error        { return nil }
-func (m *mockArtistStore) DeleteReview(context.Context, string) error                 { return nil }
+func (m *mockArtistStore) GetReview(context.Context, string) (*storage.Review, error) {
+	return nil, nil
+}
+func (m *mockArtistStore) CreateReview(context.Context, *storage.Review) error { return nil }
+func (m *mockArtistStore) UpdateReview(context.Context, *storage.Review) error { return nil }
+func (m *mockArtistStore) DeleteReview(context.Context, string) error          { return nil }
 func (m *mockArtistStore) DeleteReviewBatch(context.Context, []string, string) (int, error) {
 	return 0, nil
 }
@@ -239,12 +250,12 @@ func TestUpsertArtist(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		name     string
-		userID   string
-		input    string
-		setup    func(*mockArtistStore)
-		wantNew  bool
-		wantErr  bool
+		name    string
+		userID  string
+		input   string
+		setup   func(*mockArtistStore)
+		wantNew bool
+		wantErr bool
 	}{
 		{
 			name:    "creates new artist",

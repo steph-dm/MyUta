@@ -135,4 +135,3 @@ func ClientIPFromContext(ctx context.Context, requestKey any) string {
 	}
 	return "unknown"
 }
-

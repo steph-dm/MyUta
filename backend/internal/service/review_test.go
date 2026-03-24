@@ -143,12 +143,12 @@ func (m *mockReviewStore) SongExists(_ context.Context, songID string) (bool, er
 	return ok, nil
 }
 
-func (m *mockReviewStore) CreateSong(_ context.Context, _ *storage.Song) error        { return nil }
-func (m *mockReviewStore) UpdateSong(_ context.Context, _ *storage.Song) error        { return nil }
+func (m *mockReviewStore) CreateSong(_ context.Context, _ *storage.Song) error { return nil }
+func (m *mockReviewStore) UpdateSong(_ context.Context, _ *storage.Song) error { return nil }
 func (m *mockReviewStore) UpdateSongFields(_ context.Context, _ string, _ []string, _ *string, _ bool) error {
 	return nil
 }
-func (m *mockReviewStore) DeleteSong(_ context.Context, _ string) error               { return nil }
+func (m *mockReviewStore) DeleteSong(_ context.Context, _ string) error { return nil }
 func (m *mockReviewStore) GetSongArtistID(_ context.Context, _ string) (string, error) {
 	return "", nil
 }
@@ -181,9 +181,9 @@ func (m *mockReviewStore) GetArtist(_ context.Context, id string) (*storage.Arti
 func (m *mockReviewStore) GetArtistByName(_ context.Context, _, _ string) (*storage.Artist, error) {
 	return nil, nil
 }
-func (m *mockReviewStore) CreateArtist(_ context.Context, _ *storage.Artist) error  { return nil }
-func (m *mockReviewStore) UpdateArtist(_ context.Context, _ *storage.Artist) error  { return nil }
-func (m *mockReviewStore) DeleteArtist(_ context.Context, _ string) error           { return nil }
+func (m *mockReviewStore) CreateArtist(_ context.Context, _ *storage.Artist) error { return nil }
+func (m *mockReviewStore) UpdateArtist(_ context.Context, _ *storage.Artist) error { return nil }
+func (m *mockReviewStore) DeleteArtist(_ context.Context, _ string) error          { return nil }
 func (m *mockReviewStore) ListArtists(_ context.Context, _ string, _, _ *int) ([]*storage.Artist, error) {
 	return nil, nil
 }
@@ -209,7 +209,6 @@ func seedReview(store *mockReviewStore, id, userID, songID string, score float64
 	store.ownership[id] = userID
 	return r
 }
-
 
 // --- Tests ---
 

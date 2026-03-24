@@ -203,7 +203,6 @@ func (s *Store) ListReviewsWithSongBySong(ctx context.Context, songID, userID st
 	return s.scanReviewsWithSong(ctx, query, songID, userID)
 }
 
-
 func (s *Store) RecentReviewsWithSong(ctx context.Context, userID string, cutoff time.Time) ([]*storage.ReviewWithSong, error) {
 	query := reviewWithSongJoinQuery + ` WHERE r."userId" = $1 AND r.date >= $2 ORDER BY r.date DESC`
 	return s.scanReviewsWithSong(ctx, query, userID, cutoff)
