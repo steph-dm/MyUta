@@ -1,34 +1,21 @@
-import { FormEvent, useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { toast } from "sonner";
-import {
-  AlertCircle,
-  CheckCircle2,
-  Globe,
-  Lock,
-  User,
-} from "lucide-react";
+import { Globe } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { Alert, AlertDescription } from "../components/ui/alert";
 import {
-  UPDATE_USER,
-  ME,
   GET_MY_REVIEWS,
   GET_MY_FAVORITES,
-  CHANGE_PASSWORD,
   DELETE_ACCOUNT,
   EXPORT_DATA,
   IMPORT_DATA,
   TOGGLE_FAVORITE,
 } from "../graphql/queries";
-import type { Review, FavoriteSong, MachineType } from "../types";
-import { MACHINE_TYPES } from "../types";
+import type { Review, FavoriteSong } from "../types";
 import { useAuth } from "../contexts/AuthContext";
-import { cn, formatDateYYYYMMDD, getMachineButtonColor } from "../lib/utils";
+import { formatDateYYYYMMDD } from "../lib/utils";
 import { trackEvent } from "../lib/analytics";
 import FloatingPlayer from "../components/shared/FloatingPlayer";
 import UserAvatar from "../components/ui/user-avatar";
@@ -36,98 +23,15 @@ import ProfileStatsCards from "../components/profile/ProfileStatsCards";
 import ProfileRecentActivity from "../components/profile/ProfileRecentActivity";
 import ProfileFavorites from "../components/profile/ProfileFavorites";
 import ProfileDangerZone from "../components/profile/ProfileDangerZone";
-
-const validatePassword = (
-  password: string,
-  t: (key: string, options?: Record<string, unknown>) => string,
-): string | null => {
-  if (password.length < 12) {
-    return t("validation.passwordMin", { ns: "auth" });
-  }
-  if (!/[a-z]/.test(password)) {
-    return t("validation.passwordLowercase", { ns: "auth" });
-  }
-  if (!/[A-Z]/.test(password)) {
-    return t("validation.passwordUppercase", { ns: "auth" });
-  }
-  if (!/[0-9]/.test(password)) {
-    return t("validation.passwordNumber", { ns: "auth" });
-  }
-  if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-    return t("validation.passwordSpecial", { ns: "auth" });
-  }
-
-  return null;
-};
+import ProfilePersonalInfo from "../components/profile/ProfilePersonalInfo";
+import ProfileChangePassword from "../components/profile/ProfileChangePassword";
 
 const Profile = () => {
   const { user, refetchUser, logout } = useAuth();
   const { t, i18n } = useTranslation("profile");
 
-  const [email, setEmail] = useState(user?.email || "");
-  const [name, setName] = useState(user?.name || "");
-  const [birthdate, setBirthdate] = useState(
-    user?.birthdate ? String(user.birthdate).split("T")[0] : "",
-  );
-  const [defaultMachineType, setDefaultMachineType] =
-    useState<MachineType | null>(
-      (user?.defaultMachineType as MachineType) || null,
-    );
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordSuccess, setPasswordSuccess] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-
   const [activePlayerUrl, setActivePlayerUrl] = useState<string | null>(null);
   const [activePlayerInfo, setActivePlayerInfo] = useState("");
-
-  useEffect(() => {
-    if (!user) {
-      return;
-    }
-
-    setEmail(user.email || "");
-    setName(user.name || "");
-    setBirthdate(user.birthdate ? String(user.birthdate).split("T")[0] : "");
-    setDefaultMachineType((user.defaultMachineType as MachineType) || null);
-  }, [user]);
-
-  const [updateUser, { loading }] = useMutation(UPDATE_USER, {
-    refetchQueries: [{ query: ME }],
-    onCompleted: async () => {
-      setSuccessMessage(t("toast.profileSaved"));
-      setErrorMessage("");
-      await refetchUser();
-      setTimeout(() => setSuccessMessage(""), 3000);
-    },
-    onError: (error) => {
-      setErrorMessage(error.message);
-      setSuccessMessage("");
-    },
-  });
-
-  const [changePassword, { loading: changingPassword }] = useMutation(
-    CHANGE_PASSWORD,
-    {
-      onCompleted: () => {
-        trackEvent({ name: "change_password" });
-        setPasswordSuccess(t("changePassword.success"));
-        setPasswordError("");
-        setCurrentPassword("");
-        setNewPassword("");
-        setConfirmPassword("");
-        setTimeout(() => setPasswordSuccess(""), 3000);
-      },
-      onError: (error) => {
-        setPasswordError(error.message);
-        setPasswordSuccess("");
-      },
-    },
-  );
 
   const [deleteAccount, { loading: deletingAccount }] = useMutation(
     DELETE_ACCOUNT,
@@ -228,64 +132,6 @@ const Profile = () => {
     } finally {
       const input = e.target as HTMLInputElement;
       if (input) input.value = "";
-    }
-  };
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setSuccessMessage("");
-    setErrorMessage("");
-
-    if (!user?.id) return;
-
-    try {
-      const trimmedEmail = email.trim();
-      const trimmedName = name.trim();
-
-      await updateUser({
-        variables: {
-          id: user.id,
-          email: trimmedEmail !== user.email ? trimmedEmail : undefined,
-          name: trimmedName !== user.name ? trimmedName : undefined,
-          birthdate:
-            birthdate !== String(user.birthdate).split("T")[0]
-              ? birthdate
-              : undefined,
-          defaultMachineType:
-            defaultMachineType !== user.defaultMachineType
-              ? defaultMachineType
-              : undefined,
-        },
-      });
-      toast(t("toast.profileSaved"));
-    } catch {
-      toast.error(t("toast.profileSaveFailed"));
-    }
-  };
-
-  const handleChangePassword = async (e: FormEvent) => {
-    e.preventDefault();
-    setPasswordError("");
-    setPasswordSuccess("");
-
-    if (newPassword !== confirmPassword) {
-      setPasswordError(t("changePassword.mismatch"));
-      return;
-    }
-
-    const passwordValidationError = validatePassword(newPassword, t);
-    if (passwordValidationError) {
-      setPasswordError(passwordValidationError);
-      return;
-    }
-
-    try {
-      await changePassword({
-        variables: { currentPassword, newPassword },
-      });
-      toast(t("toast.passwordUpdated"));
-    } catch {
-      toast.error(t("toast.passwordUpdateFailed"));
     }
   };
 
@@ -407,190 +253,9 @@ const Profile = () => {
         onRemoveFavorite={(songId) => { toggleFavorite({ variables: { songId } }); trackEvent({ name: "toggle_favorite", data: { type: "song" } }); }}
       />
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <User className="h-5 w-5" /> {t("personalInfo")}
-          </CardTitle>
-          <CardDescription>{t("title")}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {successMessage && (
-              <Alert className="bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800">
-                <CheckCircle2 className="h-4 w-4 text-green-600" />
-                <AlertDescription className="text-green-800 dark:text-green-200">
-                  {successMessage}
-                </AlertDescription>
-              </Alert>
-            )}
+      <ProfilePersonalInfo user={user} onSaved={refetchUser} />
 
-            {errorMessage && (
-              <Alert className="bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800">
-                <AlertCircle className="h-4 w-4 text-red-600" />
-                <AlertDescription className="text-red-800 dark:text-red-200">
-                  {errorMessage}
-                </AlertDescription>
-              </Alert>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="email">{t("email")}</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  placeholder="your.email@example.com"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="name">{t("username")}</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  placeholder={t("namePlaceholder")}
-                  maxLength={20}
-                />
-                <p className="text-xs text-muted-foreground">
-                  {t("characters", { count: name.length, max: 20 })}
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="birthdate">{t("birthdate")}</Label>
-                <Input
-                  id="birthdate"
-                  type="date"
-                  value={birthdate}
-                  onChange={(e) => setBirthdate(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="defaultMachineType">
-                {t("defaultMachine")}
-              </Label>
-              <p className="text-sm text-muted-foreground">
-                {t("defaultMachineDesc")}
-              </p>
-              <div className="flex gap-2">
-                {MACHINE_TYPES.map((type) => (
-                  <Button
-                    key={type}
-                    type="button"
-                    variant={
-                      defaultMachineType === type ? "default" : "outline"
-                    }
-                    className={cn(
-                      "flex-1",
-                      defaultMachineType === type && getMachineButtonColor(type),
-                    )}
-                    onClick={() => setDefaultMachineType(type)}
-                  >
-                    {type}
-                  </Button>
-                ))}
-                <Button
-                  type="button"
-                  variant={defaultMachineType === null ? "default" : "outline"}
-                  className="flex-1"
-                  onClick={() => setDefaultMachineType(null)}
-                >
-                  {t("none")}
-                </Button>
-              </div>
-            </div>
-
-            <div className="flex justify-end">
-              <Button type="submit" disabled={loading}>
-                {loading ? t("saving") : t("actions.save", { ns: "common" })}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Lock className="h-5 w-5" /> {t("changePassword.title")}
-          </CardTitle>
-          <CardDescription>{t("changePassword.title")}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleChangePassword} className="space-y-4">
-            {passwordSuccess && (
-              <Alert className="bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800">
-                <CheckCircle2 className="h-4 w-4 text-green-600" />
-                <AlertDescription className="text-green-800 dark:text-green-200">
-                  {passwordSuccess}
-                </AlertDescription>
-              </Alert>
-            )}
-
-            {passwordError && (
-              <Alert className="bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800">
-                <AlertCircle className="h-4 w-4 text-red-600" />
-                <AlertDescription className="text-red-800 dark:text-red-200">
-                  {passwordError}
-                </AlertDescription>
-              </Alert>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="currentPassword">{t("changePassword.current")}</Label>
-                <Input
-                  id="currentPassword"
-                  type="password"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  required
-                  placeholder="••••••••"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="newPassword">{t("changePassword.new")}</Label>
-                <Input
-                  id="newPassword"
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  required
-                  placeholder="••••••••"
-                  minLength={12}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">{t("changePassword.confirm")}</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                  placeholder="••••••••"
-                  minLength={12}
-                />
-              </div>
-            </div>
-            <div className="flex justify-end">
-              <Button type="submit" disabled={changingPassword}>
-                {changingPassword ? t("changePassword.submitting") : t("changePassword.submit")}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+      <ProfileChangePassword />
 
       <Card>
         <CardHeader>

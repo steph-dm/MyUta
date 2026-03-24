@@ -83,9 +83,33 @@ const errorLink = onError(({ graphQLErrors, networkError, forward, operation }) 
   }
 });
 
+const cache = new InMemoryCache({
+  typePolicies: {
+    Song: {
+      fields: {
+        genres: { merge: (_existing, incoming) => incoming },
+        reviews: { merge: (_existing, incoming) => incoming },
+      },
+    },
+    Artist: {
+      fields: {
+        songs: { merge: (_existing, incoming) => incoming },
+      },
+    },
+    Query: {
+      fields: {
+        myReviews: { merge: (_existing, incoming) => incoming },
+        mySongs: { merge: (_existing, incoming) => incoming },
+        myFavorites: { merge: (_existing, incoming) => incoming },
+        myFavoriteArtists: { merge: (_existing, incoming) => incoming },
+      },
+    },
+  },
+});
+
 const client = new ApolloClient({
   link: from([errorLink, httpLink]),
-  cache: new InMemoryCache(),
+  cache,
 });
 
 export default client;
