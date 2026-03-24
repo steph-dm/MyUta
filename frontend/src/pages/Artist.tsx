@@ -19,6 +19,7 @@ import SongCard from "../components/songs/SongCard";
 import EditSongModal from "../components/songs/EditSongModal";
 import FloatingPlayer from "../components/shared/FloatingPlayer";
 import EmptyState from "../components/shared/EmptyState";
+import { useFloatingPlayer } from "../hooks/useFloatingPlayer";
 
 const Artist = () => {
   const { id } = useParams<{ id: string }>();
@@ -27,8 +28,7 @@ const Artist = () => {
     variables: { id },
     fetchPolicy: "cache-and-network",
   });
-  const [activePlayerUrl, setActivePlayerUrl] = useState<string | null>(null);
-  const [activePlayerInfo, setActivePlayerInfo] = useState("");
+  const { activePlayerUrl, activePlayerInfo, play, stop } = useFloatingPlayer();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingSong, setEditingSong] = useState<Song | null>(null);
 
@@ -64,7 +64,7 @@ const Artist = () => {
   if (loading)
     return null;
   if (error)
-    return <div className="text-red-600 py-8">{error.message}</div>;
+    return <div className="text-red-600 py-8">{t("errors.loadFailed", { ns: "common" })}</div>;
   if (!data?.artist)
     return <div className="text-muted-foreground py-8">{t("notFound")}</div>;
 
@@ -131,11 +131,8 @@ const Artist = () => {
                 activePlayerUrl={activePlayerUrl}
                 onToggleFavorite={() => { toggleFavorite({ variables: { songId: song.id } }); trackEvent({ name: "toggle_favorite", data: { type: "song" } }); }}
                 onEdit={() => handleEditSong(song)}
-                onPlay={(url, info) => {
-                  setActivePlayerUrl(url);
-                  setActivePlayerInfo(info);
-                }}
-                onStop={() => setActivePlayerUrl(null)}
+                onPlay={play}
+                onStop={stop}
               />
             ))}
           </div>
@@ -156,7 +153,7 @@ const Artist = () => {
         <FloatingPlayer
           url={activePlayerUrl}
           songInfo={activePlayerInfo}
-          onClose={() => setActivePlayerUrl(null)}
+          onClose={stop}
         />
       )}
     </div>

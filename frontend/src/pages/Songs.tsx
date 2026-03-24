@@ -32,9 +32,9 @@ import {
   CommandInput,
   CommandItem,
 } from "../components/ui/command";
-import { Heart, Search, Filter, Check, Music } from "lucide-react"; // Added Music icon
+import { Heart, Search, Filter, Check, Music } from "lucide-react";
 import { cn } from "../lib/utils";
-
+import { useFloatingPlayer } from "../hooks/useFloatingPlayer";
 
 const Songs = () => {
   const { t } = useTranslation("songs");
@@ -44,8 +44,7 @@ const Songs = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingSong, setEditingSong] = useState<Song | null>(null);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
-  const [activePlayerUrl, setActivePlayerUrl] = useState<string | null>(null);
-  const [activePlayerInfo, setActivePlayerInfo] = useState("");
+  const { activePlayerUrl, activePlayerInfo, play, stop } = useFloatingPlayer();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [genreFilterOpen, setGenreFilterOpen] = useState(false);
@@ -70,15 +69,6 @@ const Songs = () => {
     setIsEditModalOpen(false);
     setEditingSong(null);
   }, [refetch]);
-
-  const handlePlay = useCallback((url: string, info: string) => {
-    setActivePlayerUrl(url);
-    setActivePlayerInfo(info);
-  }, []);
-
-  const handleStop = useCallback(() => {
-    setActivePlayerUrl(null);
-  }, []);
 
   const songs = useMemo(() => data?.songs || [], [data?.songs]);
 
@@ -125,7 +115,7 @@ const Songs = () => {
   if (loading)
     return <div className="space-y-6"><GridSkeleton count={6} /></div>;
   if (error)
-    return <div className="text-red-600 py-8">{error.message}</div>;
+    return <div className="text-red-600 py-8">{t("errors.loadFailed", { ns: "common" })}</div>;
 
   return (
     <div className="space-y-6">
@@ -281,8 +271,8 @@ const Songs = () => {
                   activePlayerUrl={activePlayerUrl}
                   onToggleFavorite={() => { toggleFavorite({ variables: { songId: song.id } }); trackEvent({ name: "toggle_favorite", data: { type: "song" } }); }}
                   onEdit={() => handleEditSong(song)}
-                  onPlay={handlePlay}
-                  onStop={handleStop}
+                  onPlay={play}
+                  onStop={stop}
                 />
               ))}
             </div>
@@ -304,7 +294,7 @@ const Songs = () => {
         <FloatingPlayer
           url={activePlayerUrl}
           songInfo={activePlayerInfo}
-          onClose={() => setActivePlayerUrl(null)}
+          onClose={stop}
         />
       )}
     </div>
