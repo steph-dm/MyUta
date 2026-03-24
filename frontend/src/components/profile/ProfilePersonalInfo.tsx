@@ -12,6 +12,7 @@ import { UPDATE_USER, ME } from "../../graphql/queries";
 import type { MachineType } from "../../types";
 import { MACHINE_TYPES } from "../../types";
 import { cn, getMachineButtonColor } from "../../lib/utils";
+import { translateError } from "../../lib/error-messages";
 
 interface Props {
   user: {
@@ -55,7 +56,7 @@ const ProfilePersonalInfo = ({ user, onSaved }: Props) => {
       setTimeout(() => setSuccessMessage(""), 3000);
     },
     onError: (error) => {
-      setErrorMessage(error.message);
+      setErrorMessage(translateError(error.message, t));
       setSuccessMessage("");
     },
   });

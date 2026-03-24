@@ -10,6 +10,7 @@ import { Label } from "../ui/label";
 import { Alert, AlertDescription } from "../ui/alert";
 import { CHANGE_PASSWORD } from "../../graphql/queries";
 import { trackEvent } from "../../lib/analytics";
+import { translateError } from "../../lib/error-messages";
 
 const validatePassword = (
   password: string,
@@ -56,7 +57,7 @@ const ProfileChangePassword = () => {
         setTimeout(() => setPasswordSuccess(""), 3000);
       },
       onError: (error) => {
-        setPasswordError(error.message);
+        setPasswordError(translateError(error.message, t));
         setPasswordSuccess("");
       },
     },

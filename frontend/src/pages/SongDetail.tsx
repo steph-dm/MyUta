@@ -68,7 +68,7 @@ const SongDetail = () => {
 
     if (error) {
         return (
-            <div className="text-red-600 py-8">{error.message}</div>
+            <div className="text-red-600 py-8">{t("errors.loadFailed", { ns: "common" })}</div>
         );
     }
 

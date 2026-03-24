@@ -21,8 +21,10 @@ export function parseDateValue(date: string | Date): Date {
   return new Date(date);
 }
 
-export function formatDateYYYYMMDD(date: string | Date): string {
+export function formatDateYYYYMMDD(date: string | Date | null | undefined): string {
+  if (!date) return "";
   const d = parseDateValue(date);
+  if (isNaN(d.getTime())) return "";
   return `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}`;
 }
 

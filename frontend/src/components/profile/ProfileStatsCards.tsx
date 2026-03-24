@@ -17,10 +17,10 @@ interface ProfileStatsCardsProps {
     joysoundReviews: Review[];
 }
 
-const avgScore = (arr: Review[]) =>
+const avgScore = (arr: Review[], fallback: string) =>
     arr.length > 0
         ? (arr.reduce((acc, r) => acc + r.score, 0) / arr.length).toFixed(3)
-        : "N/A";
+        : fallback;
 
 const ProfileStatsCards = ({ reviews, damReviews, joysoundReviews }: ProfileStatsCardsProps) => {
     const { t } = useTranslation("profile");
@@ -58,7 +58,7 @@ const ProfileStatsCards = ({ reviews, damReviews, joysoundReviews }: ProfileStat
                                 DAM
                             </Badge>
                         </CardDescription>
-                        <CardTitle className="text-2xl">{avgScore(damReviews)}</CardTitle>
+                        <CardTitle className="text-2xl">{avgScore(damReviews, t("stats.noData"))}</CardTitle>
                     </CardHeader>
                 </Card>
             )}
@@ -72,7 +72,7 @@ const ProfileStatsCards = ({ reviews, damReviews, joysoundReviews }: ProfileStat
                                 JOYSOUND
                             </Badge>
                         </CardDescription>
-                        <CardTitle className="text-2xl">{avgScore(joysoundReviews)}</CardTitle>
+                        <CardTitle className="text-2xl">{avgScore(joysoundReviews, t("stats.noData"))}</CardTitle>
                     </CardHeader>
                 </Card>
             )}

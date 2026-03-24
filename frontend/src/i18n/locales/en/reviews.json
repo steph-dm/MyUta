@@ -57,6 +57,7 @@
         "addTitle": "Add New Review",
         "addDescription": "Add a new karaoke performance review to your history.",
         "editTitle": "Edit Review",
+        "editDescription": "{{song}} by {{artist}}",
         "song": "Song",
         "songPlaceholder": "Search or create song...",
         "searchSong": "Type song title...",

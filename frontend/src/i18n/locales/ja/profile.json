@@ -45,7 +45,8 @@
         "totalArtists": "アーティスト数",
         "averageScore": "平均点",
         "artistCount_one": "{{count}}人のアーティスト",
-        "artistCount_other": "{{count}}人のアーティスト"
+        "artistCount_other": "{{count}}人のアーティスト",
+        "noData": "N/A"
     },
     "data": {
         "title": "データ管理",

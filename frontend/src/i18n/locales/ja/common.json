@@ -41,7 +41,30 @@
         "notFound": "ページが見つかりません",
         "notFoundDesc": "お探しのページは存在しないか、移動されました。",
         "backHome": "ダッシュボードに戻る",
-        "invalidUrl": "無効なURL"
+        "invalidUrl": "無効なURL",
+        "loadFailed": "データの読み込みに失敗しました",
+        "api": {
+            "invalidCredentials": "メールアドレスまたはパスワードが正しくありません",
+            "emailTaken": "このメールアドレスは既に使用されています",
+            "nameTaken": "この名前は既に使用されています",
+            "wrongCurrentPassword": "現在のパスワードが正しくありません",
+            "wrongPassword": "パスワードが正しくありません",
+            "accountDeactivated": "このアカウントは無効化されています",
+            "notAuthorized": "この操作を行う権限がありません",
+            "notFound": "指定された項目が見つかりません",
+            "passwordTooShort": "パスワードは12文字以上にしてください",
+            "passwordTooLong": "パスワードは72文字以下にしてください",
+            "passwordNeedsLowercase": "パスワードに小文字を含めてください",
+            "passwordNeedsUppercase": "パスワードに大文字を含めてください",
+            "passwordNeedsNumber": "パスワードに数字を含めてください",
+            "passwordNeedsSpecial": "パスワードに特殊文字を含めてください",
+            "invalidEmail": "メールアドレスの形式が正しくありません",
+            "nameLength": "名前は1〜20文字にしてください",
+            "tooYoung": "13歳以上である必要があります",
+            "importTooLarge": "インポートデータは5MB以下にしてください",
+            "scoreRange": "スコアは0〜100の範囲で入力してください",
+            "invalidDate": "日付の形式が正しくありません"
+        }
     },
     "confirm": {
         "deleteTitle": "本当に削除しますか？",

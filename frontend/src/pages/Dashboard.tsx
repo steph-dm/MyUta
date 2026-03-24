@@ -57,7 +57,7 @@ const Dashboard = () => {
   if (loading)
     return <div className="space-y-6"><StatCardsSkeleton /><CardSkeleton /><TableSkeleton /></div>;
   if (error)
-    return <div className="text-red-600 py-8">{error.message}</div>;
+    return <div className="text-red-600 py-8">{t("errors.loadFailed", { ns: "common" })}</div>;
 
   const stats: DashboardStats = statsData.dashboardStats;
   const { myReviews } = reviewsData;

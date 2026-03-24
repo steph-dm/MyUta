@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../contexts/AuthContext";
 import { REGISTER } from "../graphql/queries";
 import { trackEvent } from "../lib/analytics";
+import { translateError } from "../lib/error-messages";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -57,6 +58,7 @@ export default function Register() {
   const navigate = useNavigate();
   const { login } = useAuth();
   const { t, i18n } = useTranslation("auth");
+  const { t: tCommon } = useTranslation("common");
 
   const [registerMutation, { loading }] = useMutation(REGISTER, {
     onCompleted: (data) => {
@@ -67,9 +69,9 @@ export default function Register() {
     onError: (error) => {
       if (error.graphQLErrors?.[0]?.extensions?.field) {
         const field = error.graphQLErrors[0].extensions.field as string;
-        setErrors({ [field]: error.message });
+        setErrors({ [field]: translateError(error.message, tCommon) });
       } else {
-        setErrors({ submit: error.message });
+        setErrors({ submit: translateError(error.message, tCommon) });
       }
     },
   });

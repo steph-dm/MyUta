@@ -120,7 +120,10 @@ const ReviewMobileCard = ({
                     <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => generateScoreCard(review, currentUser ? { name: currentUser.name, email: currentUser.email } : undefined)}
+                        onClick={() => {
+                            const genreLabels = Object.fromEntries(review.song.genres.map(g => [g, t(`genreNames.${g}`, { ns: "songs" })]));
+                            generateScoreCard(review, currentUser ? { name: currentUser.name, email: currentUser.email } : undefined, genreLabels);
+                        }}
                         className="h-7 w-7 p-0"
                         title={t("shareScoreCard")}
                         aria-label={t("shareScoreCard")}

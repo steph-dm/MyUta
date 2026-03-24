@@ -41,7 +41,30 @@
         "notFound": "Page not found",
         "notFoundDesc": "The page you're looking for doesn't exist or has been moved.",
         "backHome": "Back to Dashboard",
-        "invalidUrl": "Invalid URL"
+        "invalidUrl": "Invalid URL",
+        "loadFailed": "Failed to load data",
+        "api": {
+            "invalidCredentials": "Invalid email or password",
+            "emailTaken": "Email already in use",
+            "nameTaken": "Name already taken",
+            "wrongCurrentPassword": "Current password is incorrect",
+            "wrongPassword": "Password is incorrect",
+            "accountDeactivated": "This account has been deactivated",
+            "notAuthorized": "You don't have permission to do this",
+            "notFound": "The requested item was not found",
+            "passwordTooShort": "Password must be at least 12 characters",
+            "passwordTooLong": "Password cannot exceed 72 characters",
+            "passwordNeedsLowercase": "Password must contain a lowercase letter",
+            "passwordNeedsUppercase": "Password must contain an uppercase letter",
+            "passwordNeedsNumber": "Password must contain a number",
+            "passwordNeedsSpecial": "Password must contain a special character",
+            "invalidEmail": "Invalid email format",
+            "nameLength": "Name must be between 1 and 20 characters",
+            "tooYoung": "You must be at least 13 years old",
+            "importTooLarge": "Import data cannot exceed 5MB",
+            "scoreRange": "Score must be between 0 and 100",
+            "invalidDate": "Invalid date format"
+        }
     },
     "confirm": {
         "deleteTitle": "Are you sure?",

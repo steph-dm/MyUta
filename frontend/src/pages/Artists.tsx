@@ -69,7 +69,7 @@ const Artists = () => {
   if (loading)
     return <div className="space-y-6"><GridSkeleton count={6} /></div>;
   if (error)
-    return <div className="text-red-600 py-8">{error.message}</div>;
+    return <div className="text-red-600 py-8">{t("errors.loadFailed", { ns: "common" })}</div>;
 
   return (
     <div className="space-y-6">

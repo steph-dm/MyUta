@@ -57,6 +57,7 @@
         "addTitle": "採点を追加",
         "addDescription": "カラオケの採点記録を追加します。",
         "editTitle": "採点を編集",
+        "editDescription": "{{artist}} の {{song}}",
         "song": "曲",
         "songPlaceholder": "曲を検索または作成...",
         "searchSong": "曲名を入力...",

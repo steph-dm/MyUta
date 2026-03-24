@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { toast } from "sonner";
@@ -17,6 +16,7 @@ import type { Review, FavoriteSong } from "../types";
 import { useAuth } from "../contexts/AuthContext";
 import { formatDateYYYYMMDD } from "../lib/utils";
 import { trackEvent } from "../lib/analytics";
+import { translateError } from "../lib/error-messages";
 import FloatingPlayer from "../components/shared/FloatingPlayer";
 import UserAvatar from "../components/ui/user-avatar";
 import ProfileStatsCards from "../components/profile/ProfileStatsCards";
@@ -25,13 +25,13 @@ import ProfileFavorites from "../components/profile/ProfileFavorites";
 import ProfileDangerZone from "../components/profile/ProfileDangerZone";
 import ProfilePersonalInfo from "../components/profile/ProfilePersonalInfo";
 import ProfileChangePassword from "../components/profile/ProfileChangePassword";
+import { useFloatingPlayer } from "../hooks/useFloatingPlayer";
 
 const Profile = () => {
   const { user, refetchUser, logout } = useAuth();
   const { t, i18n } = useTranslation("profile");
 
-  const [activePlayerUrl, setActivePlayerUrl] = useState<string | null>(null);
-  const [activePlayerInfo, setActivePlayerInfo] = useState("");
+  const { activePlayerUrl, activePlayerInfo, play, stop } = useFloatingPlayer();
 
   const [deleteAccount, { loading: deletingAccount }] = useMutation(
     DELETE_ACCOUNT,
@@ -127,7 +127,7 @@ const Profile = () => {
     } catch (error) {
       const message = error instanceof SyntaxError
         ? t("data.invalidJson")
-        : (error as Error).message || t("data.importError");
+        : translateError((error as Error).message, t);
       toast.error(message);
     } finally {
       const input = e.target as HTMLInputElement;
@@ -144,7 +144,7 @@ const Profile = () => {
       return null;
     } catch (error) {
       toast.error(t("toast.deleteAccountFailed"));
-      return (error as Error).message || t("toast.deleteAccountFailed");
+      return translateError((error as Error).message, t);
     }
   };
 
@@ -191,7 +191,7 @@ const Profile = () => {
 
       downloadFile(csvLines.join("\n"), "text/csv", `${exportFileBaseName}.csv`);
     } catch (error) {
-      toast.error((error as Error).message || t("data.exportError"));
+      toast.error(translateError((error as Error).message, t));
     }
   };
 
@@ -244,10 +244,9 @@ const Profile = () => {
         activePlayerUrl={activePlayerUrl}
         onTogglePlayer={(url, info) => {
           if (url) {
-            setActivePlayerUrl(url);
-            setActivePlayerInfo(info);
+            play(url, info);
           } else {
-            setActivePlayerUrl(null);
+            stop();
           }
         }}
         onRemoveFavorite={(songId) => { toggleFavorite({ variables: { songId } }); trackEvent({ name: "toggle_favorite", data: { type: "song" } }); }}
@@ -298,7 +297,7 @@ const Profile = () => {
         <FloatingPlayer
           url={activePlayerUrl}
           songInfo={activePlayerInfo}
-          onClose={() => setActivePlayerUrl(null)}
+          onClose={stop}
         />
       )}
     </div>

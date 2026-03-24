@@ -512,7 +512,7 @@ const AddReviewModal = ({
             {state.isCreatingNewArtist && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Badge variant="outline" className="text-xs bg-primary/10">
-                  New
+                  {t("modal.new")}
                 </Badge>
                 {state.newArtistName}
                 <button

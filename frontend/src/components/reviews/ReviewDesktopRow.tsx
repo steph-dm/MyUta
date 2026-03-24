@@ -221,7 +221,10 @@ const ReviewDesktopRow = ({
                         <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => generateScoreCard(review, currentUser ? { name: currentUser.name, email: currentUser.email } : undefined)}
+                            onClick={() => {
+                                const genreLabels = Object.fromEntries(review.song.genres.map(g => [g, t(`genreNames.${g}`, { ns: "songs" })]));
+                                generateScoreCard(review, currentUser ? { name: currentUser.name, email: currentUser.email } : undefined, genreLabels);
+                            }}
                             className="h-8 w-8 p-0"
                             title={t("shareScoreCard")}
                             aria-label={t("shareScoreCard")}

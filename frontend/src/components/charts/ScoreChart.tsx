@@ -9,6 +9,7 @@ import {
   ReferenceLine,
   Cell,
 } from "recharts";
+import { useTranslation } from "react-i18next";
 import { parseDateValue } from "../../lib/utils";
 
 interface Review {
@@ -67,6 +68,8 @@ const CustomTooltip = ({
 };
 
 const ScoreChart = ({ machineType, reviews }: ScoreChartProps) => {
+  const { i18n } = useTranslation();
+  const locale = i18n.language === "ja" ? "ja-JP" : "en-US";
   const filteredReviews = reviews
     .filter((review) => review.machineType === machineType)
     .sort((a, b) => parseDateValue(a.date).getTime() - parseDateValue(b.date).getTime());
@@ -82,11 +85,11 @@ const ScoreChart = ({ machineType, reviews }: ScoreChartProps) => {
     return {
       idx: index.toString(),
       dateKey,
-      date: reviewDate.toLocaleDateString("ja-JP", {
+      date: reviewDate.toLocaleDateString(locale, {
         month: "short",
         day: "numeric",
       }),
-      fullDate: reviewDate.toLocaleDateString("ja-JP"),
+      fullDate: reviewDate.toLocaleDateString(locale),
       score: review.score,
     };
   });

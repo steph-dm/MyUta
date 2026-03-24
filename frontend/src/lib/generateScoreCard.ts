@@ -100,7 +100,7 @@ function drawBadge(
   return badgeW;
 }
 
-export function generateScoreCard(review: Review, user?: UserInfo): void {
+export function generateScoreCard(review: Review, user?: UserInfo, genreLabels?: Record<string, string>): void {
   const canvas = document.createElement("canvas");
   const dpr = Math.min(window.devicePixelRatio || 1, 3);
   canvas.width = CARD_WIDTH * dpr;
@@ -242,7 +242,8 @@ export function generateScoreCard(review: Review, user?: UserInfo): void {
   bx += drawBadge(ctx, review.machineType, bx, badgeY, getMachineColors(review.machineType)) + 5;
   for (const genre of review.song.genres) {
     const colors = GENRE_CANVAS_COLORS[genre] || { bg: "#374151", text: "#e5e7eb" };
-    const w = drawBadge(ctx, genre, bx, badgeY, colors);
+    const label = genreLabels?.[genre] ?? genre;
+    const w = drawBadge(ctx, label, bx, badgeY, colors);
     bx += w + 4;
     if (bx > CARD_WIDTH - 20) break;
   }

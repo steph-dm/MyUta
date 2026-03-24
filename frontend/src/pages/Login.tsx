@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../contexts/AuthContext";
 import { LOGIN } from "../graphql/queries";
 import { trackEvent } from "../lib/analytics";
+import { translateError } from "../lib/error-messages";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -28,6 +29,7 @@ export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
   const { t, i18n } = useTranslation("auth");
+  const { t: tCommon } = useTranslation("common");
 
   const [loginMutation, { loading }] = useMutation(LOGIN, {
     onCompleted: (data) => {
@@ -36,7 +38,7 @@ export default function Login() {
       navigate("/dashboard");
     },
     onError: (error) => {
-      setErrors({ submit: error.message });
+      setErrors({ submit: translateError(error.message, tCommon) });
     },
   });
 

@@ -45,7 +45,8 @@
         "totalArtists": "Total Artists",
         "averageScore": "Average Score",
         "artistCount_one": "{{count}} artist",
-        "artistCount_other": "{{count}} artists"
+        "artistCount_other": "{{count}} artists",
+        "noData": "N/A"
     },
     "data": {
         "title": "Data Management",

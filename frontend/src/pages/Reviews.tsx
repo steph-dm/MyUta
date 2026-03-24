@@ -48,7 +48,7 @@ const Reviews = () => {
   if (loading)
     return <div className="space-y-6"><TableSkeleton rows={8} /></div>;
   if (error)
-    return <div className="text-red-600 py-8">{error.message}</div>;
+    return <div className="text-red-600 py-8">{t("errors.loadFailed", { ns: "common" })}</div>;
 
   const { myReviews } = data;
 

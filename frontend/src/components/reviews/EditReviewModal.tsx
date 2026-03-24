@@ -131,7 +131,7 @@ const EditReviewModal = ({
         <DialogHeader>
           <DialogTitle>{t("modal.editTitle")}</DialogTitle>
           <DialogDescription>
-            {review.song.title} by {review.song.artist.name}
+            {t("modal.editDescription", { song: review.song.title, artist: review.song.artist.name })}
           </DialogDescription>
         </DialogHeader>
 
