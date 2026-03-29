@@ -65,7 +65,7 @@ make dev-backend
 make dev-frontend
 ```
 
-Tables auto-migrate on first run. After seeding (`make seed`), log in with `john.smith@example.com` / `password123`.
+Tables auto-migrate on first run. After seeding (`make seed`), log in with `taro.tanaka@example.com` / `password123`.
 
 ## Other commands
 

@@ -32,11 +32,13 @@ go test ./...
 
 ## Sample data
 
-`seed_test_data.sql` has test data you can load — 10 artists, 28 songs, 35 reviews with Japanese notes:
+`seed_test_data.sql` — 15 artists, 33 songs, 50 reviews.
 
 ```bash
-docker exec -i myuta-postgres-1 psql -U myuser -d myuta < backend/seed_test_data.sql
+make seed
 ```
+
+Login: `taro.tanaka@example.com` / `password123`
 
 ## Layout
 
