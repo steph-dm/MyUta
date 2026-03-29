@@ -3,7 +3,13 @@ import { useTranslation } from "react-i18next";
 import { useMutation } from "@apollo/client";
 import { toast } from "sonner";
 import { AlertCircle, CheckCircle2, User } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -161,9 +167,7 @@ const ProfilePersonalInfo = ({ user, onSaved }: Props) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="defaultMachineType">
-              {t("defaultMachine")}
-            </Label>
+            <Label htmlFor="defaultMachineType">{t("defaultMachine")}</Label>
             <p className="text-sm text-muted-foreground">
               {t("defaultMachineDesc")}
             </p>
@@ -172,9 +176,7 @@ const ProfilePersonalInfo = ({ user, onSaved }: Props) => {
                 <Button
                   key={type}
                   type="button"
-                  variant={
-                    defaultMachineType === type ? "default" : "outline"
-                  }
+                  variant={defaultMachineType === type ? "default" : "outline"}
                   className={cn(
                     "flex-1",
                     defaultMachineType === type && getMachineButtonColor(type),

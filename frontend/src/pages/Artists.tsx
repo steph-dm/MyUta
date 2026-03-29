@@ -27,7 +27,10 @@ const Artists = () => {
   });
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<"name-asc" | "name-desc">("name-asc");
-  const [editingArtist, setEditingArtist] = useState<{ id: string; name: string } | null>(null);
+  const [editingArtist, setEditingArtist] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const [toggleFavoriteArtist] = useMutation(TOGGLE_FAVORITE_ARTIST, {
     update(cache, _, { variables }) {
       cache.modify({
@@ -54,10 +57,14 @@ const Artists = () => {
 
     switch (sortBy) {
       case "name-asc":
-        result.sort((a: ArtistDetail, b: ArtistDetail) => a.name.localeCompare(b.name));
+        result.sort((a: ArtistDetail, b: ArtistDetail) =>
+          a.name.localeCompare(b.name),
+        );
         break;
       case "name-desc":
-        result.sort((a: ArtistDetail, b: ArtistDetail) => b.name.localeCompare(a.name));
+        result.sort((a: ArtistDetail, b: ArtistDetail) =>
+          b.name.localeCompare(a.name),
+        );
         break;
     }
 
@@ -67,9 +74,17 @@ const Artists = () => {
   const hasActiveFilters = !!searchQuery;
 
   if (loading)
-    return <div className="space-y-6"><GridSkeleton count={6} /></div>;
+    return (
+      <div className="space-y-6">
+        <GridSkeleton count={6} />
+      </div>
+    );
   if (error)
-    return <div className="text-red-600 py-8">{t("errors.loadFailed", { ns: "common" })}</div>;
+    return (
+      <div className="text-red-600 py-8">
+        {t("errors.loadFailed", { ns: "common" })}
+      </div>
+    );
 
   return (
     <div className="space-y-6">
@@ -93,33 +108,49 @@ const Artists = () => {
             </div>
 
             <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-9"
-              onClick={() => setSortBy(sortBy === "name-asc" ? "name-desc" : "name-asc")}
-              aria-label={sortBy === "name-asc" ? t("sort.aToZ", { ns: "common" }) : t("sort.zToA", { ns: "common" })}
-            >
-              <span className="hidden min-[400px]:inline">{sortBy === "name-asc" ? t("sort.aToZ", { ns: "common" }) : t("sort.zToA", { ns: "common" })}</span>
-              <span className="min-[400px]:hidden">{sortBy === "name-asc" ? "A→Z" : "Z→A"}</span>
-            </Button>
-
-            {hasActiveFilters && (
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
-                className="h-9 text-muted-foreground"
-                onClick={() => setSearchQuery("")}
+                className="h-9"
+                onClick={() =>
+                  setSortBy(sortBy === "name-asc" ? "name-desc" : "name-asc")
+                }
+                aria-label={
+                  sortBy === "name-asc"
+                    ? t("sort.aToZ", { ns: "common" })
+                    : t("sort.zToA", { ns: "common" })
+                }
               >
-                {t("actions.clear", { ns: "common" })}
+                <span className="hidden min-[400px]:inline">
+                  {sortBy === "name-asc"
+                    ? t("sort.aToZ", { ns: "common" })
+                    : t("sort.zToA", { ns: "common" })}
+                </span>
+                <span className="min-[400px]:hidden">
+                  {sortBy === "name-asc" ? "A→Z" : "Z→A"}
+                </span>
               </Button>
-            )}
+
+              {hasActiveFilters && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-9 text-muted-foreground"
+                  onClick={() => setSearchQuery("")}
+                >
+                  {t("actions.clear", { ns: "common" })}
+                </Button>
+              )}
             </div>
           </div>
 
           {hasActiveFilters && (
             <p className="text-sm text-muted-foreground mb-3">
-              {t("showing", { count: displayedArtists.length, total: artists.length, ns: "common" })}
+              {t("showing", {
+                count: displayedArtists.length,
+                total: artists.length,
+                ns: "common",
+              })}
             </p>
           )}
 
@@ -138,7 +169,9 @@ const Artists = () => {
               />
             )
           ) : (
-            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 transition-opacity ${isSearchPending ? "opacity-60" : "opacity-100"}`}>
+            <div
+              className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 transition-opacity ${isSearchPending ? "opacity-60" : "opacity-100"}`}
+            >
               {displayedArtists.map((artist: ArtistDetail) => (
                 <Card
                   key={artist.id}
@@ -149,17 +182,37 @@ const Artists = () => {
                       variant="outline"
                       size="sm"
                       className={`h-8 w-8 p-0 ${artist.isFavorite ? "text-red-500" : ""}`}
-                      onClick={() => { toggleFavoriteArtist({ variables: { artistId: artist.id } }); trackEvent({ name: "toggle_favorite", data: { type: "artist" } }); }}
-                      title={artist.isFavorite ? t("card.removeFromFavorites") : t("card.addToFavorites")}
-                      aria-label={artist.isFavorite ? t("card.removeFromFavorites") : t("card.addToFavorites")}
+                      onClick={() => {
+                        toggleFavoriteArtist({
+                          variables: { artistId: artist.id },
+                        });
+                        trackEvent({
+                          name: "toggle_favorite",
+                          data: { type: "artist" },
+                        });
+                      }}
+                      title={
+                        artist.isFavorite
+                          ? t("card.removeFromFavorites")
+                          : t("card.addToFavorites")
+                      }
+                      aria-label={
+                        artist.isFavorite
+                          ? t("card.removeFromFavorites")
+                          : t("card.addToFavorites")
+                      }
                     >
-                      <Heart className={`h-4 w-4 ${artist.isFavorite ? "fill-current" : ""}`} />
+                      <Heart
+                        className={`h-4 w-4 ${artist.isFavorite ? "fill-current" : ""}`}
+                      />
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
                       className="h-8 w-8 p-0"
-                      onClick={() => setEditingArtist({ id: artist.id, name: artist.name })}
+                      onClick={() =>
+                        setEditingArtist({ id: artist.id, name: artist.name })
+                      }
                       title={t("card.editArtist")}
                       aria-label={t("card.editArtist")}
                     >
@@ -169,7 +222,10 @@ const Artists = () => {
                   <CardHeader className="pr-24">
                     <CardTitle className="text-lg flex items-center gap-2">
                       <MaterialIcon icon="music_note" size={20} />
-                      <Link to={`/artists/${artist.id}`} className="hover:underline transition-colors truncate">
+                      <Link
+                        to={`/artists/${artist.id}`}
+                        className="hover:underline transition-colors truncate"
+                      >
                         {artist.name}
                       </Link>
                     </CardTitle>

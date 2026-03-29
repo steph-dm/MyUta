@@ -31,7 +31,13 @@ export function preloadRoute(path: string) {
 
 const Lazy = ({ children }: { children: React.ReactNode }) => (
   <ErrorBoundary>
-    <Suspense fallback={<div className="flex justify-center py-12 text-muted-foreground">{i18n.t("common:actions.loading")}</div>}>
+    <Suspense
+      fallback={
+        <div className="flex justify-center py-12 text-muted-foreground">
+          {i18n.t("common:actions.loading")}
+        </div>
+      }
+    >
       {children}
     </Suspense>
   </ErrorBoundary>
@@ -61,31 +67,59 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "/dashboard",
-        element: <Lazy><Dashboard /></Lazy>,
+        element: (
+          <Lazy>
+            <Dashboard />
+          </Lazy>
+        ),
       },
       {
         path: "/songs",
-        element: <Lazy><Songs /></Lazy>,
+        element: (
+          <Lazy>
+            <Songs />
+          </Lazy>
+        ),
       },
       {
         path: "/songs/:id",
-        element: <Lazy><SongDetail /></Lazy>,
+        element: (
+          <Lazy>
+            <SongDetail />
+          </Lazy>
+        ),
       },
       {
         path: "/reviews",
-        element: <Lazy><Reviews /></Lazy>,
+        element: (
+          <Lazy>
+            <Reviews />
+          </Lazy>
+        ),
       },
       {
         path: "/artists",
-        element: <Lazy><Artists /></Lazy>,
+        element: (
+          <Lazy>
+            <Artists />
+          </Lazy>
+        ),
       },
       {
         path: "/artists/:id",
-        element: <Lazy><Artist /></Lazy>,
+        element: (
+          <Lazy>
+            <Artist />
+          </Lazy>
+        ),
       },
       {
         path: "/profile",
-        element: <Lazy><Profile /></Lazy>,
+        element: (
+          <Lazy>
+            <Profile />
+          </Lazy>
+        ),
       },
     ],
   },

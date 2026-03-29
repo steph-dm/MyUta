@@ -47,15 +47,17 @@ const AppLayout = () => {
         <div className="flex justify-between items-center px-4 py-3">
           <Link to="/dashboard" className="flex items-center space-x-2">
             <img src="/favicon.svg" alt="マイウタ" className="w-8 h-8" />
-            <h1 className="text-xl font-bold text-foreground">
-              マイウタ
-            </h1>
+            <h1 className="text-xl font-bold text-foreground">マイウタ</h1>
           </Link>
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2 rounded-lg hover:bg-muted transition-colors"
-              aria-label={isMobileMenuOpen ? t("actions.closeMenu") : t("actions.openMenu")}
+              aria-label={
+                isMobileMenuOpen
+                  ? t("actions.closeMenu")
+                  : t("actions.openMenu")
+              }
             >
               {isMobileMenuOpen ? (
                 <X className="w-6 h-6 text-foreground" />
@@ -84,9 +86,7 @@ const AppLayout = () => {
             >
               <img src="/favicon.svg" alt="マイウタ" className="w-8 h-8" />
               {!isCollapsed && (
-                <h1 className="text-xl font-bold text-foreground">
-                  マイウタ
-                </h1>
+                <h1 className="text-xl font-bold text-foreground">マイウタ</h1>
               )}
             </Link>
           </div>
@@ -101,7 +101,8 @@ const AppLayout = () => {
               onMouseEnter={() => preloadRoute(item.path)}
               className={cn(
                 "flex items-center px-3 py-3 mb-1 rounded-lg text-sm font-medium transition-all group relative",
-                location.pathname === item.path || (item.path === "/dashboard" && location.pathname === "/")
+                location.pathname === item.path ||
+                  (item.path === "/dashboard" && location.pathname === "/")
                   ? "bg-primary/10 text-primary"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted",
               )}
@@ -179,7 +180,11 @@ const AppLayout = () => {
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
           className="hidden lg:flex absolute -right-3 top-20 bg-card border border-border rounded-full p-1.5 shadow-md hover:shadow-lg transition-all hover:bg-muted"
-          aria-label={isCollapsed ? t("actions.expandSidebar") : t("actions.collapseSidebar")}
+          aria-label={
+            isCollapsed
+              ? t("actions.expandSidebar")
+              : t("actions.collapseSidebar")
+          }
         >
           <ChevronLeft
             className={cn(

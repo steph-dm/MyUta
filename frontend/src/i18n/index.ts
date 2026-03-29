@@ -19,38 +19,38 @@ import reviewsJA from "./locales/ja/reviews.json";
 import profileJA from "./locales/ja/profile.json";
 
 i18n
-    .use(LanguageDetector)
-    .use(initReactI18next)
-    .init({
-        resources: {
-            en: {
-                common: commonEN,
-                auth: authEN,
-                dashboard: dashboardEN,
-                songs: songsEN,
-                artists: artistsEN,
-                reviews: reviewsEN,
-                profile: profileEN,
-            },
-            ja: {
-                common: commonJA,
-                auth: authJA,
-                dashboard: dashboardJA,
-                songs: songsJA,
-                artists: artistsJA,
-                reviews: reviewsJA,
-                profile: profileJA,
-            },
-        },
-        fallbackLng: "en",
-        defaultNS: "common",
-        interpolation: {
-            escapeValue: false,
-        },
-        detection: {
-            order: ["localStorage", "navigator"],
-            caches: ["localStorage"],
-        },
-    });
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    resources: {
+      en: {
+        common: commonEN,
+        auth: authEN,
+        dashboard: dashboardEN,
+        songs: songsEN,
+        artists: artistsEN,
+        reviews: reviewsEN,
+        profile: profileEN,
+      },
+      ja: {
+        common: commonJA,
+        auth: authJA,
+        dashboard: dashboardJA,
+        songs: songsJA,
+        artists: artistsJA,
+        reviews: reviewsJA,
+        profile: profileJA,
+      },
+    },
+    fallbackLng: "en",
+    defaultNS: "common",
+    interpolation: {
+      escapeValue: false,
+    },
+    detection: {
+      order: ["localStorage", "navigator"],
+      caches: ["localStorage"],
+    },
+  });
 
 export default i18n;

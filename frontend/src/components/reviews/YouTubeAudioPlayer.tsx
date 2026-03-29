@@ -27,7 +27,10 @@ interface YTStateEvent {
 declare global {
   interface Window {
     YT: {
-      Player: new (el: HTMLElement, config: Record<string, unknown>) => YTPlayer;
+      Player: new (
+        el: HTMLElement,
+        config: Record<string, unknown>,
+      ) => YTPlayer;
     };
     onYouTubeIframeAPIReady: (() => void) | undefined;
   }
@@ -212,10 +215,16 @@ const YouTubeAudioPlayer = ({
   const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   if (!videoId)
-    return <span className="text-muted-foreground text-sm">{t("errors.invalidUrl")}</span>;
+    return (
+      <span className="text-muted-foreground text-sm">
+        {t("errors.invalidUrl")}
+      </span>
+    );
 
   return (
-    <div className={`flex items-center gap-1.5 h-8 select-none border border-border rounded-full px-2 ${className ?? "w-[220px]"}`}>
+    <div
+      className={`flex items-center gap-1.5 h-8 select-none border border-border rounded-full px-2 ${className ?? "w-[220px]"}`}
+    >
       <div ref={containerRef} className="hidden" />
 
       <button

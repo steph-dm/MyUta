@@ -101,7 +101,12 @@ const AddReviewModal = ({
       setField("isCreatingNewSong", false);
       setField("newSongTitle", "");
     }
-  }, [state.selectedArtist, state.isCreatingNewArtist, getArtistSongs, setField]);
+  }, [
+    state.selectedArtist,
+    state.isCreatingNewArtist,
+    getArtistSongs,
+    setField,
+  ]);
 
   useEffect(() => {
     if (isOpen) {
@@ -140,9 +145,7 @@ const AddReviewModal = ({
           .filter(Boolean)
           .map((s: string) => s.toLowerCase().trim());
         const matchedArtist = artists.find((a) => {
-          const terms = [a.name].map((s) =>
-            s.toLowerCase().trim(),
-          );
+          const terms = [a.name].map((s) => s.toLowerCase().trim());
           return artistSearchTerms.some((t) => terms.includes(t));
         });
 
@@ -174,9 +177,7 @@ const AddReviewModal = ({
             .filter(Boolean)
             .map((s: string) => s.toLowerCase().trim());
           const matchedSong = artistSongs.find((s) => {
-            const terms = [s.title].map((t) =>
-              t.toLowerCase().trim(),
-            );
+            const terms = [s.title].map((t) => t.toLowerCase().trim());
             return songSearchTerms.some((t) => terms.includes(t));
           });
           if (matchedSong) {
@@ -293,7 +294,10 @@ const AddReviewModal = ({
             variables: { name: state.newArtistName.trim() },
           });
           artistId = artistData.upsertArtist.id;
-          trackEvent({ name: "add_artist", data: { name: state.newArtistName.trim() } });
+          trackEvent({
+            name: "add_artist",
+            data: { name: state.newArtistName.trim() },
+          });
         }
 
         if (state.isCreatingNewSong && state.newSongTitle.trim() && artistId) {
@@ -307,7 +311,10 @@ const AddReviewModal = ({
             },
           });
           songId = songData.upsertSong.id;
-          trackEvent({ name: "add_song", data: { title: state.newSongTitle.trim() } });
+          trackEvent({
+            name: "add_song",
+            data: { title: state.newSongTitle.trim() },
+          });
         }
 
         if (artistId && songId) {
@@ -324,7 +331,15 @@ const AddReviewModal = ({
           onReviewAdded();
           onClose();
           toast(t("toast.added"));
-          trackEvent({ name: "add_review", data: { machineType: state.machineType, songTitle: state.isCreatingNewSong ? state.newSongTitle : (state.selectedSong?.title || "") } });
+          trackEvent({
+            name: "add_review",
+            data: {
+              machineType: state.machineType,
+              songTitle: state.isCreatingNewSong
+                ? state.newSongTitle
+                : state.selectedSong?.title || "",
+            },
+          });
         }
       } catch {
         toast.error(t("toast.saveFailed"));
@@ -349,15 +364,11 @@ const AddReviewModal = ({
   const songs: Song[] = songsData?.artist?.songs || [];
 
   const artistSearchMatchesExisting = artists.some((a) => {
-    const terms = [a.name].map((s) =>
-      s.toLowerCase().trim(),
-    );
+    const terms = [a.name].map((s) => s.toLowerCase().trim());
     return terms.includes(state.artistSearch.toLowerCase().trim());
   });
   const songSearchMatchesExisting = songs.some((s) => {
-    const terms = [s.title].map((t) =>
-      t.toLowerCase().trim(),
-    );
+    const terms = [s.title].map((t) => t.toLowerCase().trim());
     return terms.includes(state.songSearch.toLowerCase().trim());
   });
 
@@ -380,9 +391,7 @@ const AddReviewModal = ({
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
               <DialogTitle>{t("modal.addTitle")}</DialogTitle>
-              <DialogDescription>
-                {t("modal.addDescription")}
-              </DialogDescription>
+              <DialogDescription>{t("modal.addDescription")}</DialogDescription>
             </div>
             <div>
               <input
@@ -502,7 +511,9 @@ const AddReviewModal = ({
                           }}
                         >
                           <Plus className="h-4 w-4" />
-                          {t("modal.createArtist", { name: state.artistSearch.trim() })}
+                          {t("modal.createArtist", {
+                            name: state.artistSearch.trim(),
+                          })}
                         </button>
                       </div>
                     )}
@@ -547,9 +558,7 @@ const AddReviewModal = ({
                     "w-full justify-between",
                     state.errors.song && "border-red-500",
                   )}
-                  disabled={
-                    !state.selectedArtist && !state.isCreatingNewArtist
-                  }
+                  disabled={!state.selectedArtist && !state.isCreatingNewArtist}
                 >
                   {songDisplayText || t("modal.songPlaceholder")}
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -616,7 +625,9 @@ const AddReviewModal = ({
                         }}
                       >
                         <Plus className="h-4 w-4" />
-                        {t("modal.createSong", { name: state.songSearch.trim() })}
+                        {t("modal.createSong", {
+                          name: state.songSearch.trim(),
+                        })}
                       </button>
                     </div>
                   )}
@@ -723,9 +734,7 @@ const AddReviewModal = ({
                     key={type}
                     type="button"
                     size="sm"
-                    variant={
-                      state.machineType === type ? "default" : "outline"
-                    }
+                    variant={state.machineType === type ? "default" : "outline"}
                     className={cn(
                       "flex-1",
                       state.machineType === type && getMachineButtonColor(type),
@@ -753,7 +762,9 @@ const AddReviewModal = ({
                   >
                     {state.issues.length === 0
                       ? t("modal.noIssueSelected")
-                      : t("modal.issuesSelected", { count: state.issues.length })}
+                      : t("modal.issuesSelected", {
+                          count: state.issues.length,
+                        })}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
@@ -763,24 +774,26 @@ const AddReviewModal = ({
                     <CommandList>
                       <CommandEmpty>{t("modal.noIssuesFound")}</CommandEmpty>
                       <CommandGroup>
-                        {[...ISSUE_OPTIONS].sort((a, b) =>
-                          t(`issues.${a}`).localeCompare(t(`issues.${b}`))
-                        ).map((issue) => (
-                          <CommandItem
-                            key={issue}
-                            onSelect={() => toggleIssue(issue)}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                state.issues.includes(issue)
-                                  ? "opacity-100"
-                                  : "opacity-0",
-                              )}
-                            />
-                            {t(`issues.${issue}`)}
-                          </CommandItem>
-                        ))}
+                        {[...ISSUE_OPTIONS]
+                          .sort((a, b) =>
+                            t(`issues.${a}`).localeCompare(t(`issues.${b}`)),
+                          )
+                          .map((issue) => (
+                            <CommandItem
+                              key={issue}
+                              onSelect={() => toggleIssue(issue)}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  state.issues.includes(issue)
+                                    ? "opacity-100"
+                                    : "opacity-0",
+                                )}
+                              />
+                              {t(`issues.${issue}`)}
+                            </CommandItem>
+                          ))}
                       </CommandGroup>
                     </CommandList>
                   </Command>
@@ -830,7 +843,10 @@ const AddReviewModal = ({
             <Button type="button" variant="outline" onClick={onClose}>
               {t("modal.cancel")}
             </Button>
-            <Button type="submit" disabled={state.isSubmitting || state.isExtracting}>
+            <Button
+              type="submit"
+              disabled={state.isSubmitting || state.isExtracting}
+            >
               {state.isSubmitting ? t("modal.submitting") : t("modal.submit")}
             </Button>
           </div>

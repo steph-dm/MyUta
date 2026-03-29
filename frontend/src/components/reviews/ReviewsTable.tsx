@@ -8,7 +8,6 @@ import type { Review } from "../../types";
 import { DELETE_REVIEW, DELETE_REVIEWS } from "../../graphql/queries";
 import { trackEvent } from "../../lib/analytics";
 
-
 import { Button } from "../ui/button";
 import {
   AlertDialog,
@@ -97,7 +96,6 @@ const ReviewsTable = ({
 
   const showCheckboxes = showActions && !!onReviewDeleted;
 
-
   return (
     <>
       <div>
@@ -113,14 +111,20 @@ const ReviewsTable = ({
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>
-                    {t("deleteDialog.bulkTitle", { count: filters.selectedIds.size })}
+                    {t("deleteDialog.bulkTitle", {
+                      count: filters.selectedIds.size,
+                    })}
                   </AlertDialogTitle>
                   <AlertDialogDescription>
-                    {t("deleteDialog.bulkDescription", { count: filters.selectedIds.size })}
+                    {t("deleteDialog.bulkDescription", {
+                      count: filters.selectedIds.size,
+                    })}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>{t("deleteDialog.cancel")}</AlertDialogCancel>
+                  <AlertDialogCancel>
+                    {t("deleteDialog.cancel")}
+                  </AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleDeleteSelected}
                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"

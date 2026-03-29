@@ -72,7 +72,10 @@ const ScoreChart = ({ machineType, reviews }: ScoreChartProps) => {
   const locale = i18n.language === "ja" ? "ja-JP" : "en-US";
   const filteredReviews = reviews
     .filter((review) => review.machineType === machineType)
-    .sort((a, b) => parseDateValue(a.date).getTime() - parseDateValue(b.date).getTime());
+    .sort(
+      (a, b) =>
+        parseDateValue(a.date).getTime() - parseDateValue(b.date).getTime(),
+    );
 
   if (filteredReviews.length === 0) {
     return null;
@@ -98,7 +101,10 @@ const ScoreChart = ({ machineType, reviews }: ScoreChartProps) => {
   let startIndex = 0;
   while (startIndex < data.length) {
     let endIndex = startIndex;
-    while (endIndex < data.length && data[endIndex].dateKey === data[startIndex].dateKey) {
+    while (
+      endIndex < data.length &&
+      data[endIndex].dateKey === data[startIndex].dateKey
+    ) {
       endIndex++;
     }
     labelIndices.add(Math.floor((startIndex + endIndex - 1) / 2));
@@ -106,7 +112,8 @@ const ScoreChart = ({ machineType, reviews }: ScoreChartProps) => {
   }
 
   const averageScore =
-    filteredReviews.reduce((sum, review) => sum + review.score, 0) / filteredReviews.length;
+    filteredReviews.reduce((sum, review) => sum + review.score, 0) /
+    filteredReviews.length;
   const allScores = filteredReviews.map((review) => review.score);
   const minScore = Math.max(0, Math.floor(Math.min(...allScores) - 5));
   const maxScore = Math.min(100, Math.ceil(Math.max(...allScores) + 5));
@@ -142,7 +149,10 @@ const ScoreChart = ({ machineType, reviews }: ScoreChartProps) => {
             stroke="currentColor"
             opacity={0.5}
           />
-          <Tooltip content={<CustomTooltip machineType={machineType} />} cursor={false} />
+          <Tooltip
+            content={<CustomTooltip machineType={machineType} />}
+            cursor={false}
+          />
           <ReferenceLine
             y={averageScore}
             stroke={COLORS[machineType]}

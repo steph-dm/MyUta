@@ -64,7 +64,10 @@ const CommandList = React.forwardRef<
   return (
     <CommandPrimitive.List
       ref={innerRef}
-      className={cn("max-h-[300px] overflow-y-auto overflow-x-hidden", className)}
+      className={cn(
+        "max-h-[300px] overflow-y-auto overflow-x-hidden",
+        className,
+      )}
       onWheel={(e) => {
         const el = innerRef.current;
         if (el) {

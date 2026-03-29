@@ -19,7 +19,9 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
           <CardContent className="pt-6">
             <div className="flex flex-col items-center justify-center space-y-4">
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-              <p className="text-lg font-medium text-muted-foreground">{t("actions.loading")}</p>
+              <p className="text-lg font-medium text-muted-foreground">
+                {t("actions.loading")}
+              </p>
             </div>
           </CardContent>
         </Card>

@@ -84,7 +84,9 @@ export default function Login() {
           variant="ghost"
           size="sm"
           className="text-xs px-2 h-7 text-muted-foreground"
-          onClick={() => { i18n.changeLanguage(i18n.language === "ja" ? "en" : "ja"); }}
+          onClick={() => {
+            i18n.changeLanguage(i18n.language === "ja" ? "en" : "ja");
+          }}
         >
           {i18n.language === "ja" ? "🇺🇸 EN" : "🇯🇵 JA"}
         </Button>

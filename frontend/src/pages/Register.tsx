@@ -192,7 +192,9 @@ export default function Register() {
           variant="ghost"
           size="sm"
           className="text-xs px-2 h-7 text-muted-foreground"
-          onClick={() => { i18n.changeLanguage(i18n.language === "ja" ? "en" : "ja"); }}
+          onClick={() => {
+            i18n.changeLanguage(i18n.language === "ja" ? "en" : "ja");
+          }}
         >
           {i18n.language === "ja" ? "🇺🇸 EN" : "🇯🇵 JA"}
         </Button>
@@ -227,7 +229,9 @@ export default function Register() {
                 disabled={loading}
                 className={cn(errors.email && "border-red-500")}
               />
-              {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
+              {errors.email && (
+                <p className="text-sm text-red-500">{errors.email}</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -244,8 +248,12 @@ export default function Register() {
                 maxLength={20}
                 className={cn(errors.name && "border-red-500")}
               />
-              <p className="text-xs text-muted-foreground">{t("register.usernameHint")}</p>
-              {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
+              <p className="text-xs text-muted-foreground">
+                {t("register.usernameHint")}
+              </p>
+              {errors.name && (
+                <p className="text-sm text-red-500">{errors.name}</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -261,8 +269,12 @@ export default function Register() {
                 maxLength={10}
                 className={cn(errors.birthdate && "border-red-500")}
               />
-              <p className="text-xs text-muted-foreground">{t("register.birthdateHint")}</p>
-              {errors.birthdate && <p className="text-sm text-red-500">{errors.birthdate}</p>}
+              <p className="text-xs text-muted-foreground">
+                {t("register.birthdateHint")}
+              </p>
+              {errors.birthdate && (
+                <p className="text-sm text-red-500">{errors.birthdate}</p>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -299,11 +311,15 @@ export default function Register() {
                   ))}
                 </div>
               )}
-              {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
+              {errors.password && (
+                <p className="text-sm text-red-500">{errors.password}</p>
+              )}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">{t("register.confirmPassword")}</Label>
+              <Label htmlFor="confirmPassword">
+                {t("register.confirmPassword")}
+              </Label>
               <Input
                 id="confirmPassword"
                 name="confirmPassword"
@@ -324,8 +340,11 @@ export default function Register() {
             </Button>
 
             <div className="text-center text-sm text-muted-foreground">
-              {t("register.hasAccount")} {" "}
-              <Link to="/login" className="font-medium text-primary hover:underline">
+              {t("register.hasAccount")}{" "}
+              <Link
+                to="/login"
+                className="font-medium text-primary hover:underline"
+              >
                 {t("register.loginLink")}
               </Link>
             </div>

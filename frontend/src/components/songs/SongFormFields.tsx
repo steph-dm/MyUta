@@ -152,8 +152,8 @@ const SongFormFields = ({
                 className={cn(
                   "w-full text-left px-3 py-2 text-sm hover:bg-muted/50 flex items-center gap-3 overflow-hidden",
                   youtubeUrl ===
-                  `https://www.youtube.com/watch?v=${result.videoId}` &&
-                  "bg-muted",
+                    `https://www.youtube.com/watch?v=${result.videoId}` &&
+                    "bg-muted",
                 )}
                 onClick={() => {
                   onYoutubeUrlChange(
@@ -169,7 +169,9 @@ const SongFormFields = ({
                   className="w-20 h-14 object-cover rounded shrink-0"
                 />
                 <div className="min-w-0 flex-1 overflow-hidden">
-                  <p className="font-medium leading-snug line-clamp-2">{result.title}</p>
+                  <p className="font-medium leading-snug line-clamp-2">
+                    {result.title}
+                  </p>
                   <p className="text-xs text-muted-foreground mt-0.5">
                     {result.channelTitle} · {result.duration}
                   </p>
@@ -204,22 +206,24 @@ const SongFormFields = ({
               <CommandInput placeholder={t("form.searchGenres")} />
               <CommandEmpty>{t("form.noGenresFound")}</CommandEmpty>
               <CommandGroup>
-                {[...GENRE_OPTIONS].sort((a, b) =>
-                  t(`genreNames.${a}`).localeCompare(t(`genreNames.${b}`))
-                ).map((genre) => (
-                  <CommandItem
-                    key={genre}
-                    onSelect={() => handleGenreToggle(genre)}
-                  >
-                    <Check
-                      className={cn(
-                        "mr-2 h-4 w-4",
-                        genres.includes(genre) ? "opacity-100" : "opacity-0",
-                      )}
-                    />
-                    {t(`genreNames.${genre}`)}
-                  </CommandItem>
-                ))}
+                {[...GENRE_OPTIONS]
+                  .sort((a, b) =>
+                    t(`genreNames.${a}`).localeCompare(t(`genreNames.${b}`)),
+                  )
+                  .map((genre) => (
+                    <CommandItem
+                      key={genre}
+                      onSelect={() => handleGenreToggle(genre)}
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          genres.includes(genre) ? "opacity-100" : "opacity-0",
+                        )}
+                      />
+                      {t(`genreNames.${genre}`)}
+                    </CommandItem>
+                  ))}
               </CommandGroup>
             </Command>
           </PopoverContent>
@@ -227,7 +231,11 @@ const SongFormFields = ({
         {genres.length > 0 && (
           <div className="flex flex-wrap gap-1">
             {genres.map((genre) => (
-              <Badge key={genre} variant="outline" className={`text-xs ${getGenreColor(genre)}`}>
+              <Badge
+                key={genre}
+                variant="outline"
+                className={`text-xs ${getGenreColor(genre)}`}
+              >
                 {t(`genreNames.${genre}`)}
                 <button
                   type="button"

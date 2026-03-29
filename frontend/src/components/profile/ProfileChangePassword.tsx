@@ -3,7 +3,13 @@ import { useTranslation } from "react-i18next";
 import { useMutation } from "@apollo/client";
 import { toast } from "sonner";
 import { AlertCircle, CheckCircle2, Lock } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -119,7 +125,9 @@ const ProfileChangePassword = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="currentPassword">{t("changePassword.current")}</Label>
+              <Label htmlFor="currentPassword">
+                {t("changePassword.current")}
+              </Label>
               <Input
                 id="currentPassword"
                 type="password"
@@ -142,7 +150,9 @@ const ProfileChangePassword = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">{t("changePassword.confirm")}</Label>
+              <Label htmlFor="confirmPassword">
+                {t("changePassword.confirm")}
+              </Label>
               <Input
                 id="confirmPassword"
                 type="password"
@@ -156,7 +166,9 @@ const ProfileChangePassword = () => {
           </div>
           <div className="flex justify-end">
             <Button type="submit" disabled={changingPassword}>
-              {changingPassword ? t("changePassword.submitting") : t("changePassword.submit")}
+              {changingPassword
+                ? t("changePassword.submitting")
+                : t("changePassword.submit")}
             </Button>
           </div>
         </form>

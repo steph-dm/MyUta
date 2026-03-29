@@ -7,8 +7,7 @@ import {
 } from "@apollo/client";
 import { onError } from "@apollo/client/link/error";
 
-const GRAPHQL_URL =
-  import.meta.env.VITE_GRAPHQL_URL ?? "/graphql";
+const GRAPHQL_URL = import.meta.env.VITE_GRAPHQL_URL ?? "/graphql";
 
 const httpLink = createHttpLink({
   uri: GRAPHQL_URL,
@@ -37,51 +36,53 @@ const refreshToken = async (): Promise<boolean> => {
   return !!json?.data?.refreshToken;
 };
 
-const errorLink = onError(({ graphQLErrors, networkError, forward, operation }) => {
-  if (graphQLErrors) {
-    const hasAuthError = graphQLErrors.some(
-      (e) => e.extensions?.code === "UNAUTHENTICATED"
-    );
+const errorLink = onError(
+  ({ graphQLErrors, networkError, forward, operation }) => {
+    if (graphQLErrors) {
+      const hasAuthError = graphQLErrors.some(
+        (e) => e.extensions?.code === "UNAUTHENTICATED",
+      );
 
-    if (hasAuthError) {
-      const path = window.location.pathname;
-      if (path === "/" || path === "/login" || path === "/register") return;
+      if (hasAuthError) {
+        const path = window.location.pathname;
+        if (path === "/" || path === "/login" || path === "/register") return;
 
-      if (isRefreshing) {
-        return new Observable((observer) => {
-          pendingRequests.push(() => {
-            forward(operation).subscribe(observer);
+        if (isRefreshing) {
+          return new Observable((observer) => {
+            pendingRequests.push(() => {
+              forward(operation).subscribe(observer);
+            });
           });
+        }
+
+        isRefreshing = true;
+
+        return new Observable((observer) => {
+          refreshToken()
+            .then((success) => {
+              if (!success) throw new Error("refresh failed");
+              resolvePending();
+              forward(operation).subscribe(observer);
+            })
+            .catch(() => {
+              pendingRequests = [];
+              window.location.href = "/";
+            })
+            .finally(() => {
+              isRefreshing = false;
+            });
         });
       }
 
-      isRefreshing = true;
-
-      return new Observable((observer) => {
-        refreshToken()
-          .then((success) => {
-            if (!success) throw new Error("refresh failed");
-            resolvePending();
-            forward(operation).subscribe(observer);
-          })
-          .catch(() => {
-            pendingRequests = [];
-            window.location.href = "/";
-          })
-          .finally(() => {
-            isRefreshing = false;
-          });
+      graphQLErrors.forEach(({ message }) => {
+        console.error("GraphQL error:", message);
       });
     }
-
-    graphQLErrors.forEach(({ message }) => {
-      console.error("GraphQL error:", message);
-    });
-  }
-  if (networkError) {
-    console.error("Network error:", networkError);
-  }
-});
+    if (networkError) {
+      console.error("Network error:", networkError);
+    }
+  },
+);
 
 const cache = new InMemoryCache({
   typePolicies: {

@@ -2,7 +2,13 @@ import { useTranslation } from "react-i18next";
 import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { toast } from "sonner";
 import { Globe } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import {
   GET_MY_REVIEWS,
@@ -52,16 +58,22 @@ const Profile = () => {
     },
   });
 
-  const { data: reviewsData, refetch: refetchReviews } = useQuery(GET_MY_REVIEWS, {
-    variables: { userId: user?.id },
-    skip: !user?.id,
-    fetchPolicy: "cache-and-network",
-  });
+  const { data: reviewsData, refetch: refetchReviews } = useQuery(
+    GET_MY_REVIEWS,
+    {
+      variables: { userId: user?.id },
+      skip: !user?.id,
+      fetchPolicy: "cache-and-network",
+    },
+  );
 
-  const { data: favoritesData, refetch: refetchFavorites } = useQuery(GET_MY_FAVORITES, {
-    skip: !user?.id,
-    fetchPolicy: "cache-and-network",
-  });
+  const { data: favoritesData, refetch: refetchFavorites } = useQuery(
+    GET_MY_FAVORITES,
+    {
+      skip: !user?.id,
+      fetchPolicy: "cache-and-network",
+    },
+  );
 
   const [fetchExportData, { loading: exporting }] = useLazyQuery(EXPORT_DATA, {
     fetchPolicy: "network-only",
@@ -95,7 +107,11 @@ const Profile = () => {
       if (!exportData) {
         return;
       }
-      downloadFile(exportData, "application/json", `${exportFileBaseName}.json`);
+      downloadFile(
+        exportData,
+        "application/json",
+        `${exportFileBaseName}.json`,
+      );
       trackEvent({ name: "export_data" });
     } catch {
       toast.error(t("data.exportError"));
@@ -115,19 +131,31 @@ const Profile = () => {
       if (result) {
         toast.success(
           t("data.importedCount", { count: result.reviewsImported }) +
-          (result.reviewsSkipped > 0 ? t("data.skipped", { count: result.reviewsSkipped }) : "")
+            (result.reviewsSkipped > 0
+              ? t("data.skipped", { count: result.reviewsSkipped })
+              : ""),
         );
-        trackEvent({ name: "import_data", data: { reviewsImported: result.reviewsImported } });
+        trackEvent({
+          name: "import_data",
+          data: { reviewsImported: result.reviewsImported },
+        });
         if (result.errors?.length > 0) {
-          toast.warning(t("data.importWarnings", { count: result.errors.length }));
+          toast.warning(
+            t("data.importWarnings", { count: result.errors.length }),
+          );
         }
 
-        await Promise.all([refetchUser(), refetchReviews(), refetchFavorites()]);
+        await Promise.all([
+          refetchUser(),
+          refetchReviews(),
+          refetchFavorites(),
+        ]);
       }
     } catch (error) {
-      const message = error instanceof SyntaxError
-        ? t("data.invalidJson")
-        : translateError((error as Error).message, t);
+      const message =
+        error instanceof SyntaxError
+          ? t("data.invalidJson")
+          : translateError((error as Error).message, t);
       toast.error(message);
     } finally {
       const input = e.target as HTMLInputElement;
@@ -135,7 +163,9 @@ const Profile = () => {
     }
   };
 
-  const handleDeleteAccount = async (password: string): Promise<string | null> => {
+  const handleDeleteAccount = async (
+    password: string,
+  ): Promise<string | null> => {
     if (!password) {
       return t("dangerZone.passwordPlaceholder");
     }
@@ -180,16 +210,25 @@ const Profile = () => {
       const csvLines = [
         headers.join(","),
         ...rows.map((row) =>
-          headers.map((header) => {
-            const value = header === "issues" || header === "genres"
-              ? (Array.isArray(row[header]) ? (row[header] as string[]).join(";") : "")
-              : (row[header] ?? "");
-            return `"${String(value).replace(/"/g, '""')}"`;
-          }).join(",")
+          headers
+            .map((header) => {
+              const value =
+                header === "issues" || header === "genres"
+                  ? Array.isArray(row[header])
+                    ? (row[header] as string[]).join(";")
+                    : ""
+                  : (row[header] ?? "");
+              return `"${String(value).replace(/"/g, '""')}"`;
+            })
+            .join(","),
         ),
       ];
 
-      downloadFile(csvLines.join("\n"), "text/csv", `${exportFileBaseName}.csv`);
+      downloadFile(
+        csvLines.join("\n"),
+        "text/csv",
+        `${exportFileBaseName}.csv`,
+      );
     } catch (error) {
       toast.error(translateError((error as Error).message, t));
     }
@@ -249,7 +288,10 @@ const Profile = () => {
             stop();
           }
         }}
-        onRemoveFavorite={(songId) => { toggleFavorite({ variables: { songId } }); trackEvent({ name: "toggle_favorite", data: { type: "song" } }); }}
+        onRemoveFavorite={(songId) => {
+          toggleFavorite({ variables: { songId } });
+          trackEvent({ name: "toggle_favorite", data: { type: "song" } });
+        }}
       />
 
       <ProfilePersonalInfo user={user} onSaved={refetchUser} />
@@ -261,21 +303,35 @@ const Profile = () => {
           <CardTitle className="text-lg flex items-center gap-2">
             <Globe className="h-5 w-5" /> {t("preferences.language")}
           </CardTitle>
-          <CardDescription>{t("preferences.languageDescription")}</CardDescription>
+          <CardDescription>
+            {t("preferences.languageDescription")}
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex gap-2">
             <Button
               variant={i18n.language === "en" ? "default" : "outline"}
               className="flex-1 gap-2"
-              onClick={() => { i18n.changeLanguage("en"); trackEvent({ name: "change_language", data: { language: "en" } }); }}
+              onClick={() => {
+                i18n.changeLanguage("en");
+                trackEvent({
+                  name: "change_language",
+                  data: { language: "en" },
+                });
+              }}
             >
               🇺🇸 {t("preferences.english")}
             </Button>
             <Button
               variant={i18n.language === "ja" ? "default" : "outline"}
               className="flex-1 gap-2"
-              onClick={() => { i18n.changeLanguage("ja"); trackEvent({ name: "change_language", data: { language: "ja" } }); }}
+              onClick={() => {
+                i18n.changeLanguage("ja");
+                trackEvent({
+                  name: "change_language",
+                  data: { language: "ja" },
+                });
+              }}
             >
               🇯🇵 {t("preferences.japanese")}
             </Button>

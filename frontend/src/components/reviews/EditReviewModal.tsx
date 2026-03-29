@@ -104,7 +104,7 @@ const EditReviewModal = ({
         variables: {
           id: review.id,
           songId: review.song.id,
-            date,
+          date,
           score: parseFloat(score),
           machineType,
           issues: issues,
@@ -114,7 +114,10 @@ const EditReviewModal = ({
       onReviewUpdated();
       onClose();
       toast(t("toast.updated"));
-      trackEvent({ name: "edit_review", data: { songTitle: review.song.title } });
+      trackEvent({
+        name: "edit_review",
+        data: { songTitle: review.song.title },
+      });
     } catch {
       toast.error(t("toast.saveFailed"));
       setErrors({ submit: t("toast.saveFailed") });
@@ -131,7 +134,10 @@ const EditReviewModal = ({
         <DialogHeader>
           <DialogTitle>{t("modal.editTitle")}</DialogTitle>
           <DialogDescription>
-            {t("modal.editDescription", { song: review.song.title, artist: review.song.artist.name })}
+            {t("modal.editDescription", {
+              song: review.song.title,
+              artist: review.song.artist.name,
+            })}
           </DialogDescription>
         </DialogHeader>
 
@@ -224,30 +230,32 @@ const EditReviewModal = ({
                     <CommandInput placeholder={t("modal.searchIssues")} />
                     <CommandEmpty>{t("modal.noIssuesFound")}</CommandEmpty>
                     <CommandGroup>
-                      {[...ISSUE_OPTIONS].sort((a, b) =>
-                        t(`issues.${a}`).localeCompare(t(`issues.${b}`))
-                      ).map((issue) => (
-                        <CommandItem
-                          key={issue}
-                          onSelect={() =>
-                            setIssues((prev) =>
-                              prev.includes(issue)
-                                ? prev.filter((i) => i !== issue)
-                                : [...prev, issue],
-                            )
-                          }
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              issues.includes(issue)
-                                ? "opacity-100"
-                                : "opacity-0",
-                            )}
-                          />
-                          {t(`issues.${issue}`)}
-                        </CommandItem>
-                      ))}
+                      {[...ISSUE_OPTIONS]
+                        .sort((a, b) =>
+                          t(`issues.${a}`).localeCompare(t(`issues.${b}`)),
+                        )
+                        .map((issue) => (
+                          <CommandItem
+                            key={issue}
+                            onSelect={() =>
+                              setIssues((prev) =>
+                                prev.includes(issue)
+                                  ? prev.filter((i) => i !== issue)
+                                  : [...prev, issue],
+                              )
+                            }
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                issues.includes(issue)
+                                  ? "opacity-100"
+                                  : "opacity-0",
+                              )}
+                            />
+                            {t(`issues.${issue}`)}
+                          </CommandItem>
+                        ))}
                     </CommandGroup>
                   </Command>
                 </PopoverContent>
@@ -258,7 +266,11 @@ const EditReviewModal = ({
           {issues.length > 0 && (
             <div className="flex flex-wrap gap-1">
               {issues.map((issue) => (
-                <Badge key={issue} variant="outline" className={cn("text-xs", getIssueColor(issue))}>
+                <Badge
+                  key={issue}
+                  variant="outline"
+                  className={cn("text-xs", getIssueColor(issue))}
+                >
                   {t(`issues.${issue}`)}
                   <button
                     type="button"

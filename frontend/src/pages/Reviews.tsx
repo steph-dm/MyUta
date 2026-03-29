@@ -32,23 +32,28 @@ const Reviews = () => {
     Record<string, boolean>
   >({});
 
-
   const { loading, error, data, refetch } = useQuery(GET_MY_REVIEWS, {
     variables: { userId: currentUser?.id },
     skip: !currentUser?.id,
     fetchPolicy: "cache-and-network",
   });
 
-
-
   if (!currentUser) {
     return null;
   }
 
   if (loading)
-    return <div className="space-y-6"><TableSkeleton rows={8} /></div>;
+    return (
+      <div className="space-y-6">
+        <TableSkeleton rows={8} />
+      </div>
+    );
   if (error)
-    return <div className="text-red-600 py-8">{t("errors.loadFailed", { ns: "common" })}</div>;
+    return (
+      <div className="text-red-600 py-8">
+        {t("errors.loadFailed", { ns: "common" })}
+      </div>
+    );
 
   const { myReviews } = data;
 
@@ -92,8 +97,6 @@ const Reviews = () => {
     setIsEditModalOpen(true);
   };
 
-
-
   return (
     <div className="space-y-6">
       <Card>
@@ -121,41 +124,43 @@ const Reviews = () => {
         <CardContent className="space-y-4">
           {sections.map(({ type, reviews, color, borderColor }) => (
             <SectionErrorBoundary key={type}>
-            <div className={`border rounded-lg ${borderColor}`}>
-              <button
-                onClick={() => toggleSection(type)}
-                className="w-full flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
-                aria-expanded={!(collapsedSections[type] ?? reviews.length === 0)}
-              >
-                <div className="flex items-center gap-3">
-                  {(collapsedSections[type] ?? reviews.length === 0) ? (
-                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                  ) : (
-                    <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                  )}
-                  <Badge
-                    variant="secondary"
-                    className={`${color} text-sm px-3 py-1`}
-                  >
-                    {type}
-                  </Badge>
-                  <span className="text-sm text-muted-foreground">
-                    {reviews.length === 0
-                      ? t("noReviews")
-                      : t("reviewCount", { count: reviews.length })}
-                  </span>
-                </div>
-              </button>
-              {!(collapsedSections[type] ?? reviews.length === 0) && (
-                <div className="px-4 pb-4">
-                  <ReviewsTable
-                    reviews={reviews}
-                    onEditReview={handleEditReview}
-                    onReviewDeleted={() => refetch()}
-                  />
-                </div>
-              )}
-            </div>
+              <div className={`border rounded-lg ${borderColor}`}>
+                <button
+                  onClick={() => toggleSection(type)}
+                  className="w-full flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
+                  aria-expanded={
+                    !(collapsedSections[type] ?? reviews.length === 0)
+                  }
+                >
+                  <div className="flex items-center gap-3">
+                    {(collapsedSections[type] ?? reviews.length === 0) ? (
+                      <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                    ) : (
+                      <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                    )}
+                    <Badge
+                      variant="secondary"
+                      className={`${color} text-sm px-3 py-1`}
+                    >
+                      {type}
+                    </Badge>
+                    <span className="text-sm text-muted-foreground">
+                      {reviews.length === 0
+                        ? t("noReviews")
+                        : t("reviewCount", { count: reviews.length })}
+                    </span>
+                  </div>
+                </button>
+                {!(collapsedSections[type] ?? reviews.length === 0) && (
+                  <div className="px-4 pb-4">
+                    <ReviewsTable
+                      reviews={reviews}
+                      onEditReview={handleEditReview}
+                      onReviewDeleted={() => refetch()}
+                    />
+                  </div>
+                )}
+              </div>
             </SectionErrorBoundary>
           ))}
         </CardContent>
@@ -177,8 +182,6 @@ const Reviews = () => {
         onReviewUpdated={handleReviewUpdated}
         review={editingReview}
       />
-
-
     </div>
   );
 };

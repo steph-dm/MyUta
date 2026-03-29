@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { useParams, Link } from "react-router-dom";
-import { GET_ARTIST, TOGGLE_FAVORITE, TOGGLE_FAVORITE_ARTIST } from "../graphql/queries";
+import {
+  GET_ARTIST,
+  TOGGLE_FAVORITE,
+  TOGGLE_FAVORITE_ARTIST,
+} from "../graphql/queries";
 import type { Song } from "../types";
 import { trackEvent } from "../lib/analytics";
 import { useTranslation } from "react-i18next";
@@ -61,10 +65,13 @@ const Artist = () => {
     setEditingSong(null);
   };
 
-  if (loading)
-    return null;
+  if (loading) return null;
   if (error)
-    return <div className="text-red-600 py-8">{t("errors.loadFailed", { ns: "common" })}</div>;
+    return (
+      <div className="text-red-600 py-8">
+        {t("errors.loadFailed", { ns: "common" })}
+      </div>
+    );
   if (!data?.artist)
     return <div className="text-muted-foreground py-8">{t("notFound")}</div>;
 
@@ -94,11 +101,29 @@ const Artist = () => {
                   variant="outline"
                   size="sm"
                   className={`h-8 w-8 p-0 shrink-0 ${artist.isFavorite ? "text-red-500" : ""}`}
-                  onClick={() => { toggleFavoriteArtist({ variables: { artistId: artist.id } }); trackEvent({ name: "toggle_favorite", data: { type: "artist" } }); }}
-                  title={artist.isFavorite ? t("card.removeFromFavorites") : t("card.addToFavorites")}
-                  aria-label={artist.isFavorite ? t("card.removeFromFavorites") : t("card.addToFavorites")}
+                  onClick={() => {
+                    toggleFavoriteArtist({
+                      variables: { artistId: artist.id },
+                    });
+                    trackEvent({
+                      name: "toggle_favorite",
+                      data: { type: "artist" },
+                    });
+                  }}
+                  title={
+                    artist.isFavorite
+                      ? t("card.removeFromFavorites")
+                      : t("card.addToFavorites")
+                  }
+                  aria-label={
+                    artist.isFavorite
+                      ? t("card.removeFromFavorites")
+                      : t("card.addToFavorites")
+                  }
                 >
-                  <Heart className={`h-4 w-4 ${artist.isFavorite ? "fill-current" : ""}`} />
+                  <Heart
+                    className={`h-4 w-4 ${artist.isFavorite ? "fill-current" : ""}`}
+                  />
                 </Button>
               </div>
               <CardDescription className="text-sm sm:text-base mt-1">
@@ -129,7 +154,13 @@ const Artist = () => {
                 artistName={artist.name}
                 artistId={artist.id}
                 activePlayerUrl={activePlayerUrl}
-                onToggleFavorite={() => { toggleFavorite({ variables: { songId: song.id } }); trackEvent({ name: "toggle_favorite", data: { type: "song" } }); }}
+                onToggleFavorite={() => {
+                  toggleFavorite({ variables: { songId: song.id } });
+                  trackEvent({
+                    name: "toggle_favorite",
+                    data: { type: "song" },
+                  });
+                }}
                 onEdit={() => handleEditSong(song)}
                 onPlay={play}
                 onStop={stop}

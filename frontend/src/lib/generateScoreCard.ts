@@ -18,7 +18,12 @@ const GENRE_CANVAS_COLORS: Record<Genre, { bg: string; text: string }> = {
 };
 
 const AVATAR_HEX_COLORS = [
-  "#3b82f6", "#a855f7", "#22c55e", "#f97316", "#ec4899", "#14b8a6",
+  "#3b82f6",
+  "#a855f7",
+  "#22c55e",
+  "#f97316",
+  "#ec4899",
+  "#14b8a6",
 ];
 
 interface UserInfo {
@@ -56,7 +61,11 @@ function getMachineColors(type: string): { bg: string; text: string } {
 
 function roundRectPath(
   ctx: CanvasRenderingContext2D,
-  x: number, y: number, w: number, h: number, r: number,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
 ) {
   ctx.beginPath();
   ctx.roundRect(x, y, w, h, r);
@@ -100,7 +109,11 @@ function drawBadge(
   return badgeW;
 }
 
-export function generateScoreCard(review: Review, user?: UserInfo, genreLabels?: Record<string, string>): void {
+export function generateScoreCard(
+  review: Review,
+  user?: UserInfo,
+  genreLabels?: Record<string, string>,
+): void {
   const canvas = document.createElement("canvas");
   const dpr = Math.min(window.devicePixelRatio || 1, 3);
   canvas.width = CARD_WIDTH * dpr;
@@ -112,7 +125,10 @@ export function generateScoreCard(review: Review, user?: UserInfo, genreLabels?:
   if (!ctx) return;
   ctx.scale(dpr, dpr);
 
-  trackEvent({ name: "share_score_card", data: { songTitle: review.song.title } });
+  trackEvent({
+    name: "share_score_card",
+    data: { songTitle: review.song.title },
+  });
 
   const scoreColor = getScoreColor(review.score);
 
@@ -201,7 +217,8 @@ export function generateScoreCard(review: Review, user?: UserInfo, genreLabels?:
 
   // Progress
   const startAngle = -Math.PI / 2;
-  const endAngle = startAngle + (Math.PI * 2 * Math.min(review.score, 100)) / 100;
+  const endAngle =
+    startAngle + (Math.PI * 2 * Math.min(review.score, 100)) / 100;
   ctx.beginPath();
   ctx.arc(ringX, ringY, ringR - 4, startAngle, endAngle);
   ctx.strokeStyle = scoreColor;
@@ -239,9 +256,19 @@ export function generateScoreCard(review: Review, user?: UserInfo, genreLabels?:
   // Badges: machine + genres inline
   const badgeY = titleY + 50;
   let bx = rightX;
-  bx += drawBadge(ctx, review.machineType, bx, badgeY, getMachineColors(review.machineType)) + 5;
+  bx +=
+    drawBadge(
+      ctx,
+      review.machineType,
+      bx,
+      badgeY,
+      getMachineColors(review.machineType),
+    ) + 5;
   for (const genre of review.song.genres) {
-    const colors = GENRE_CANVAS_COLORS[genre] || { bg: "#374151", text: "#e5e7eb" };
+    const colors = GENRE_CANVAS_COLORS[genre] || {
+      bg: "#374151",
+      text: "#e5e7eb",
+    };
     const label = genreLabels?.[genre] ?? genre;
     const w = drawBadge(ctx, label, bx, badgeY, colors);
     bx += w + 4;

@@ -110,12 +110,24 @@ const Songs = () => {
     return result;
   }, [songs, showFavoritesOnly, deferredSearchQuery, deferredGenres, sortBy]);
 
-  const hasActiveFilters = !!(searchQuery || selectedGenres.length > 0 || showFavoritesOnly);
+  const hasActiveFilters = !!(
+    searchQuery ||
+    selectedGenres.length > 0 ||
+    showFavoritesOnly
+  );
 
   if (loading)
-    return <div className="space-y-6"><GridSkeleton count={6} /></div>;
+    return (
+      <div className="space-y-6">
+        <GridSkeleton count={6} />
+      </div>
+    );
   if (error)
-    return <div className="text-red-600 py-8">{t("errors.loadFailed", { ns: "common" })}</div>;
+    return (
+      <div className="text-red-600 py-8">
+        {t("errors.loadFailed", { ns: "common" })}
+      </div>
+    );
 
   return (
     <div className="space-y-6">
@@ -139,87 +151,118 @@ const Songs = () => {
             </div>
 
             <div className="flex items-center gap-2">
-
-            <Popover open={genreFilterOpen} onOpenChange={setGenreFilterOpen}>
-              <PopoverTrigger asChild>
-                <Button variant="outline" size="sm" className="h-9" aria-label={t("filters.genre")}>
-                  <Filter className="h-4 w-4 min-[400px]:mr-1" />
-                  <span className="hidden min-[400px]:inline">{t("filters.genre")}</span>
-                  {selectedGenres.length > 0 && (
-                    <Badge variant="secondary" className="ml-1 h-5 px-1 text-xs">
-                      {selectedGenres.length}
-                    </Badge>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-48 p-0" align="start">
-                <Command>
-                  <CommandInput placeholder={t("filters.searchGenres")} />
-                  <CommandEmpty>{t("filters.noGenresFound")}</CommandEmpty>
-                  <CommandGroup>
-                    {[...GENRE_OPTIONS].sort((a, b) =>
-                      t(`genreNames.${a}`).localeCompare(t(`genreNames.${b}`))
-                    ).map((genre) => (
-                      <CommandItem
-                        key={genre}
-                        onSelect={() =>
-                          setSelectedGenres((prev) =>
-                            prev.includes(genre)
-                              ? prev.filter((g) => g !== genre)
-                              : [...prev, genre],
-                          )
-                        }
+              <Popover open={genreFilterOpen} onOpenChange={setGenreFilterOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-9"
+                    aria-label={t("filters.genre")}
+                  >
+                    <Filter className="h-4 w-4 min-[400px]:mr-1" />
+                    <span className="hidden min-[400px]:inline">
+                      {t("filters.genre")}
+                    </span>
+                    {selectedGenres.length > 0 && (
+                      <Badge
+                        variant="secondary"
+                        className="ml-1 h-5 px-1 text-xs"
                       >
-                        <Check
-                          className={cn(
-                            "mr-2 h-4 w-4",
-                            selectedGenres.includes(genre) ? "opacity-100" : "opacity-0",
-                          )}
-                        />
-                        {t(`genreNames.${genre}`)}
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </Command>
-              </PopoverContent>
-            </Popover>
+                        {selectedGenres.length}
+                      </Badge>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-48 p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder={t("filters.searchGenres")} />
+                    <CommandEmpty>{t("filters.noGenresFound")}</CommandEmpty>
+                    <CommandGroup>
+                      {[...GENRE_OPTIONS]
+                        .sort((a, b) =>
+                          t(`genreNames.${a}`).localeCompare(
+                            t(`genreNames.${b}`),
+                          ),
+                        )
+                        .map((genre) => (
+                          <CommandItem
+                            key={genre}
+                            onSelect={() =>
+                              setSelectedGenres((prev) =>
+                                prev.includes(genre)
+                                  ? prev.filter((g) => g !== genre)
+                                  : [...prev, genre],
+                              )
+                            }
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                selectedGenres.includes(genre)
+                                  ? "opacity-100"
+                                  : "opacity-0",
+                              )}
+                            />
+                            {t(`genreNames.${genre}`)}
+                          </CommandItem>
+                        ))}
+                    </CommandGroup>
+                  </Command>
+                </PopoverContent>
+              </Popover>
 
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-9"
-              onClick={() => setSortBy(sortBy === "title-asc" ? "title-desc" : "title-asc")}
-              aria-label={sortBy === "title-asc" ? t("sort.aToZ", { ns: "common" }) : t("sort.zToA", { ns: "common" })}
-            >
-              <span className="hidden min-[400px]:inline">{sortBy === "title-asc" ? t("sort.aToZ", { ns: "common" }) : t("sort.zToA", { ns: "common" })}</span>
-              <span className="min-[400px]:hidden">{sortBy === "title-asc" ? "A→Z" : "Z→A"}</span>
-            </Button>
-
-            <Button
-              variant={showFavoritesOnly ? "default" : "outline"}
-              size="sm"
-              onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
-              className="gap-2 h-9"
-              aria-label={t("filters.favoritesOnly")}
-            >
-              <Heart className={`h-4 w-4 ${showFavoritesOnly ? "fill-current" : ""}`} />
-              <span className="hidden min-[400px]:inline">{t("filters.favoritesOnly")}</span>
-            </Button>
-
-            {hasActiveFilters && (
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
-                className="h-9 text-muted-foreground"
-                onClick={() => {
-                  setSearchQuery("");
-                  setSelectedGenres([]);
-                  setShowFavoritesOnly(false);
-                }}
+                className="h-9"
+                onClick={() =>
+                  setSortBy(sortBy === "title-asc" ? "title-desc" : "title-asc")
+                }
+                aria-label={
+                  sortBy === "title-asc"
+                    ? t("sort.aToZ", { ns: "common" })
+                    : t("sort.zToA", { ns: "common" })
+                }
               >
-                {t("actions.clear", { ns: "common" })}
+                <span className="hidden min-[400px]:inline">
+                  {sortBy === "title-asc"
+                    ? t("sort.aToZ", { ns: "common" })
+                    : t("sort.zToA", { ns: "common" })}
+                </span>
+                <span className="min-[400px]:hidden">
+                  {sortBy === "title-asc" ? "A→Z" : "Z→A"}
+                </span>
               </Button>
-            )}
+
+              <Button
+                variant={showFavoritesOnly ? "default" : "outline"}
+                size="sm"
+                onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                className="gap-2 h-9"
+                aria-label={t("filters.favoritesOnly")}
+              >
+                <Heart
+                  className={`h-4 w-4 ${showFavoritesOnly ? "fill-current" : ""}`}
+                />
+                <span className="hidden min-[400px]:inline">
+                  {t("filters.favoritesOnly")}
+                </span>
+              </Button>
+
+              {hasActiveFilters && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-9 text-muted-foreground"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setSelectedGenres([]);
+                    setShowFavoritesOnly(false);
+                  }}
+                >
+                  {t("actions.clear", { ns: "common" })}
+                </Button>
+              )}
             </div>
           </div>
 
@@ -242,7 +285,11 @@ const Songs = () => {
 
           {hasActiveFilters && (
             <p className="text-sm text-muted-foreground mb-3">
-              {t("showing", { count: displayedSongs.length, total: songs.length, ns: "common" })}
+              {t("showing", {
+                count: displayedSongs.length,
+                total: songs.length,
+                ns: "common",
+              })}
             </p>
           )}
 
@@ -261,7 +308,9 @@ const Songs = () => {
               />
             )
           ) : (
-            <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 transition-opacity ${isSearchPending ? "opacity-60" : "opacity-100"}`}>
+            <div
+              className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 transition-opacity ${isSearchPending ? "opacity-60" : "opacity-100"}`}
+            >
               {displayedSongs.map((song: Song) => (
                 <SongCard
                   key={song.id}
@@ -269,7 +318,13 @@ const Songs = () => {
                   artistName={song.artist.name}
                   artistId={song.artist.id}
                   activePlayerUrl={activePlayerUrl}
-                  onToggleFavorite={() => { toggleFavorite({ variables: { songId: song.id } }); trackEvent({ name: "toggle_favorite", data: { type: "song" } }); }}
+                  onToggleFavorite={() => {
+                    toggleFavorite({ variables: { songId: song.id } });
+                    trackEvent({
+                      name: "toggle_favorite",
+                      data: { type: "song" },
+                    });
+                  }}
                   onEdit={() => handleEditSong(song)}
                   onPlay={play}
                   onStop={stop}

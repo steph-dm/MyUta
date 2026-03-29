@@ -44,7 +44,9 @@ export default function Landing() {
             </Button>
             <ThemeToggle />
             <Link to="/login">
-              <Button variant="ghost" size="sm">{t("landing.nav.signIn")}</Button>
+              <Button variant="ghost" size="sm">
+                {t("landing.nav.signIn")}
+              </Button>
             </Link>
             <Link to="/register">
               <Button size="sm">{t("landing.nav.getStarted")}</Button>
@@ -54,10 +56,16 @@ export default function Landing() {
           <button
             className="sm:hidden p-2 text-muted-foreground"
             onClick={() => setMenuOpen(!menuOpen)}
-            aria-label={menuOpen ? t("landing.nav.closeMenu") : t("landing.nav.openMenu")}
+            aria-label={
+              menuOpen ? t("landing.nav.closeMenu") : t("landing.nav.openMenu")
+            }
             aria-expanded={menuOpen}
           >
-            {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {menuOpen ? (
+              <X className="w-5 h-5" />
+            ) : (
+              <Menu className="w-5 h-5" />
+            )}
           </button>
         </div>
 
@@ -74,12 +82,24 @@ export default function Landing() {
               </Button>
               <ThemeToggle />
             </div>
-            <Link to="/login" className="block" onClick={() => setMenuOpen(false)}>
-              <Button variant="ghost" size="sm" className="w-full justify-start">
+            <Link
+              to="/login"
+              className="block"
+              onClick={() => setMenuOpen(false)}
+            >
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start"
+              >
                 {t("landing.nav.signIn")}
               </Button>
             </Link>
-            <Link to="/register" className="block" onClick={() => setMenuOpen(false)}>
+            <Link
+              to="/register"
+              className="block"
+              onClick={() => setMenuOpen(false)}
+            >
               <Button size="sm" className="w-full">
                 {t("landing.nav.getStarted")}
               </Button>
@@ -103,7 +123,11 @@ export default function Landing() {
               </Button>
             </Link>
             <Link to="/login">
-              <Button variant="ghost" size="lg" className="text-base text-muted-foreground">
+              <Button
+                variant="ghost"
+                size="lg"
+                className="text-base text-muted-foreground"
+              >
                 {t("landing.hero.signIn")} →
               </Button>
             </Link>

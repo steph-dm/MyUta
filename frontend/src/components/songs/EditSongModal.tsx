@@ -139,7 +139,10 @@ const EditSongModal = ({
         <DialogHeader>
           <DialogTitle>{t("editSong.title")}</DialogTitle>
           <DialogDescription>
-            {t("editSong.description", { song: song.title, artist: song.artist.name })}
+            {t("editSong.description", {
+              song: song.title,
+              artist: song.artist.name,
+            })}
           </DialogDescription>
         </DialogHeader>
 
