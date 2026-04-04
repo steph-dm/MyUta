@@ -4,7 +4,7 @@
 [![Go](https://img.shields.io/github/go-mod/go-version/steph-dm/MyUta/main?filename=backend/go.mod)](https://go.dev/)
 [![Go Report Card](https://goreportcard.com/badge/github.com/steph-dm/MyUta/backend)](https://goreportcard.com/report/github.com/steph-dm/MyUta/backend)
 
-Karaoke score tracker for DAM and JOYSOUND machines. Log each session with scores, tag what went wrong (pitch, rhythm, timing, etc.), and track which songs you're improving on. Bilingual (English / Japanese).
+Karaoke score tracker for DAM and JOYSOUND machines. Log each session with scores, tag what went wrong (pitch, rhythm, timing, etc.), and track which songs you're improving on. Available in English / Japanese.
 
 <p align="center">
   <img src="frontend/public/preview-dashboard.png" alt="Dashboard" width="720" />

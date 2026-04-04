@@ -1,5 +1,4 @@
 # Linguist overrides
 frontend/package-lock.json  linguist-generated
-backend/internal/graph/generated.go  -linguist-generated
 backend/internal/graph/model/models_gen.go  linguist-generated
 backend/seed_test_data.sql  linguist-generated
