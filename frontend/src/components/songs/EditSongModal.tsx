@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import { useMutation } from "@apollo/client";
-import { UPSERT_SONG, UPSERT_ARTIST } from "../../graphql/queries";
+import { UPSERT_SONG, UPSERT_ARTIST } from "../../graphql";
 import {
   Dialog,
   DialogContent,

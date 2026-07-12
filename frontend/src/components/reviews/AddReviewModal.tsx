@@ -11,7 +11,7 @@ import {
   ME,
   EXTRACT_REVIEW_FROM_IMAGE,
   SEARCH_YOUTUBE,
-} from "../../graphql/queries";
+} from "../../graphql";
 import type { ArtistWithStats, Genre, Issue, MachineType } from "../../types";
 import { ISSUE_OPTIONS, MACHINE_TYPES } from "../../types";
 import { useReviewFormState } from "../../hooks/useReviewFormState";

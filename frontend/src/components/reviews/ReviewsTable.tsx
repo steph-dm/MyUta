@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Trash2 } from "lucide-react";
 
 import type { Review } from "../../types";
-import { DELETE_REVIEW, DELETE_REVIEWS } from "../../graphql/queries";
+import { DELETE_REVIEW, DELETE_REVIEWS } from "../../graphql";
 import { trackEvent } from "../../lib/analytics";
 
 import { Button } from "../ui/button";

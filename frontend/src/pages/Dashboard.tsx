@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { useTranslation } from "react-i18next";
-import { GET_MY_REVIEWS, DASHBOARD_STATS } from "../graphql/queries";
+import { GET_MY_REVIEWS, DASHBOARD_STATS } from "../graphql";
 import type { DashboardStats, Issue, Review } from "../types";
 import { getIssueColor, getMachineBadgeColor } from "../lib/utils";
 import ReviewsTable from "../components/reviews/ReviewsTable";

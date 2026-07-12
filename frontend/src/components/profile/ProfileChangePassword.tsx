@@ -14,7 +14,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Alert, AlertDescription } from "../ui/alert";
-import { CHANGE_PASSWORD } from "../../graphql/queries";
+import { CHANGE_PASSWORD } from "../../graphql";
 import { trackEvent } from "../../lib/analytics";
 import { translateError } from "../../lib/error-messages";
 

@@ -5,7 +5,7 @@ import {
   GET_ARTIST,
   TOGGLE_FAVORITE,
   TOGGLE_FAVORITE_ARTIST,
-} from "../graphql/queries";
+} from "../graphql";
 import type { Song } from "../types";
 import { trackEvent } from "../lib/analytics";
 import { useTranslation } from "react-i18next";

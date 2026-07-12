@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLazyQuery } from "@apollo/client";
-import { SEARCH_YOUTUBE } from "../../graphql/queries";
+import { SEARCH_YOUTUBE } from "../../graphql";
 import { trackEvent } from "../../lib/analytics";
 import {
   Command,

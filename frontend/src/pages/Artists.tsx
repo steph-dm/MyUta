@@ -1,7 +1,7 @@
 import { useState, useMemo, useDeferredValue } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { useTranslation } from "react-i18next";
-import { GET_ARTISTS, TOGGLE_FAVORITE_ARTIST } from "../graphql/queries";
+import { GET_ARTISTS, TOGGLE_FAVORITE_ARTIST } from "../graphql";
 import { trackEvent } from "../lib/analytics";
 import type { ArtistDetail } from "../types";
 import {

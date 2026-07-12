@@ -1,7 +1,7 @@
 import { useState, useMemo, useDeferredValue, useCallback } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { useTranslation } from "react-i18next";
-import { GET_SONGS, TOGGLE_FAVORITE } from "../graphql/queries";
+import { GET_SONGS, TOGGLE_FAVORITE } from "../graphql";
 import { trackEvent } from "../lib/analytics";
 import type { Song } from "../types";
 import { GENRE_OPTIONS } from "../types";

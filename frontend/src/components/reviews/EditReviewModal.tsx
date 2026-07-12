@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useMutation } from "@apollo/client";
-import { UPSERT_REVIEW } from "../../graphql/queries";
+import { UPSERT_REVIEW } from "../../graphql";
 import { useTranslation } from "react-i18next";
 import type { Review, Issue, MachineType } from "../../types";
 import { ISSUE_OPTIONS, MACHINE_TYPES } from "../../types";
