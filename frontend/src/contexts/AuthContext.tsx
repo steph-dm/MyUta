@@ -1,6 +1,6 @@
 import { createContext, useState, useContext, ReactNode } from "react";
 import { useQuery, useMutation } from "@apollo/client";
-import { ME, LOGOUT } from "../graphql/queries";
+import { ME, LOGOUT } from "../graphql";
 import type { User } from "../types";
 import { trackEvent } from "../lib/analytics";
 

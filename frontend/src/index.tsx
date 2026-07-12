@@ -7,9 +7,12 @@ import client from "./apollo-client";
 import { router } from "./router";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { initAnalytics } from "./lib/analytics";
 import "./i18n";
 import "./index.css";
 import "material-symbols/outlined.css";
+
+initAnalytics();
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 

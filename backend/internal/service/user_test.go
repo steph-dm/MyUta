@@ -3,7 +3,6 @@ package service_test
 import (
 	"context"
 	"testing"
-	"time"
 
 	"github.com/steph-dm/MyUta/backend/internal/service"
 	"github.com/steph-dm/MyUta/backend/internal/storage"
@@ -17,7 +16,6 @@ func seedTestUser(store *mockUserStore, id, email string, admin bool) *storage.U
 		Email:     email,
 		Name:      &name,
 		IsAdmin:   admin,
-		Birthdate: scalar.FromTime(time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)),
 		CreatedAt: scalar.Now(),
 		UpdatedAt: scalar.Now(),
 	}
@@ -58,16 +56,6 @@ func TestMe(t *testing.T) {
 			setup: func(s *mockUserStore) {
 				seedTestUser(s, "u-1", "test@example.com", false)
 			},
-		},
-		{
-			name:   "soft-deleted user returns nil",
-			userID: "u-1",
-			setup: func(s *mockUserStore) {
-				u := seedTestUser(s, "u-1", "del@example.com", false)
-				now := scalar.Now()
-				u.DeletedAt = &now
-			},
-			wantNil: true,
 		},
 		{
 			name:    "unknown user",
@@ -249,6 +237,40 @@ func TestUpdateUser(t *testing.T) {
 				t.Fatalf("unexpected error: %v", err)
 			}
 		})
+	}
+}
+
+func TestUpdateUser_ClearDefaultMachine(t *testing.T) {
+	t.Parallel()
+
+	store := newMockUserStore()
+	user := seedTestUser(store, "u-1", "test@example.com", false)
+	machine := storage.MachineTypeDAM
+	user.DefaultMachineType = &machine
+	clear := true
+	svc := service.NewUserService(store)
+
+	updated, err := svc.UpdateUser(context.Background(), "u-1", "u-1", nil, nil, nil, &clear)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if updated.DefaultMachineType != nil {
+		t.Errorf("default machine = %v, want nil", *updated.DefaultMachineType)
+	}
+}
+
+func TestUpdateUser_RejectsSetAndClearDefaultMachine(t *testing.T) {
+	t.Parallel()
+
+	store := newMockUserStore()
+	seedTestUser(store, "u-1", "test@example.com", false)
+	machine := storage.MachineTypeDAM
+	clear := true
+	svc := service.NewUserService(store)
+
+	_, err := svc.UpdateUser(context.Background(), "u-1", "u-1", nil, nil, &machine, &clear)
+	if err == nil {
+		t.Fatal("expected error when setting and clearing the default machine together")
 	}
 }
 

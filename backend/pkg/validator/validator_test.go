@@ -3,7 +3,6 @@ package validator_test
 import (
 	"math"
 	"testing"
-	"time"
 
 	"github.com/steph-dm/MyUta/backend/pkg/validator"
 )
@@ -104,31 +103,6 @@ func TestName(t *testing.T) {
 			err := validator.Name(tt.input)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Name(%q) error = %v, wantErr %v", tt.input, err, tt.wantErr)
-			}
-		})
-	}
-}
-
-func TestBirthdate(t *testing.T) {
-	now := time.Now()
-
-	tests := []struct {
-		name    string
-		date    time.Time
-		wantErr bool
-	}{
-		{"valid 25 years ago", now.AddDate(-25, 0, 0), false},
-		{"valid 13 years ago", now.AddDate(-13, 0, -1), false},
-		{"future date", now.AddDate(0, 0, 1), true},
-		{"too young (12)", now.AddDate(-12, 0, 0), true},
-		{"too old (121)", now.AddDate(-121, 0, 0), true},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			err := validator.Birthdate(tt.date)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Birthdate(%v) error = %v, wantErr %v", tt.date, err, tt.wantErr)
 			}
 		})
 	}

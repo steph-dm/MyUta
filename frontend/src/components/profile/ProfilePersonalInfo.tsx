@@ -14,7 +14,7 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Alert, AlertDescription } from "../ui/alert";
-import { UPDATE_USER, ME } from "../../graphql/queries";
+import { UPDATE_USER, ME } from "../../graphql";
 import type { MachineType } from "../../types";
 import { MACHINE_TYPES } from "../../types";
 import { cn, getMachineButtonColor } from "../../lib/utils";
@@ -25,7 +25,6 @@ interface Props {
     id: string;
     email: string;
     name: string;
-    birthdate: string;
     defaultMachineType: string | null;
   };
   onSaved: () => Promise<void>;
@@ -36,9 +35,6 @@ const ProfilePersonalInfo = ({ user, onSaved }: Props) => {
 
   const [email, setEmail] = useState(user.email || "");
   const [name, setName] = useState(user.name || "");
-  const [birthdate, setBirthdate] = useState(
-    user.birthdate ? String(user.birthdate).split("T")[0] : "",
-  );
   const [defaultMachineType, setDefaultMachineType] =
     useState<MachineType | null>(
       (user.defaultMachineType as MachineType) || null,
@@ -49,7 +45,6 @@ const ProfilePersonalInfo = ({ user, onSaved }: Props) => {
   useEffect(() => {
     setEmail(user.email || "");
     setName(user.name || "");
-    setBirthdate(user.birthdate ? String(user.birthdate).split("T")[0] : "");
     setDefaultMachineType((user.defaultMachineType as MachineType) || null);
   }, [user]);
 
@@ -81,13 +76,15 @@ const ProfilePersonalInfo = ({ user, onSaved }: Props) => {
           id: user.id,
           email: trimmedEmail !== user.email ? trimmedEmail : undefined,
           name: trimmedName !== user.name ? trimmedName : undefined,
-          birthdate:
-            birthdate !== String(user.birthdate).split("T")[0]
-              ? birthdate
-              : undefined,
           defaultMachineType:
-            defaultMachineType !== user.defaultMachineType
+            defaultMachineType !== user.defaultMachineType &&
+            defaultMachineType !== null
               ? defaultMachineType
+              : undefined,
+          clearDefaultMachineType:
+            defaultMachineType !== user.defaultMachineType &&
+            defaultMachineType === null
+              ? true
               : undefined,
         },
       });
@@ -152,17 +149,6 @@ const ProfilePersonalInfo = ({ user, onSaved }: Props) => {
               <p className="text-xs text-muted-foreground">
                 {t("characters", { count: name.length, max: 20 })}
               </p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="birthdate">{t("birthdate")}</Label>
-              <Input
-                id="birthdate"
-                type="date"
-                value={birthdate}
-                onChange={(e) => setBirthdate(e.target.value)}
-                required
-              />
             </div>
           </div>
 

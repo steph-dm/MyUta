@@ -24,7 +24,7 @@ Karaoke score tracker for DAM and JOYSOUND machines. Log each session with score
 
 **Backend:** Go 1.26, GraphQL (gqlgen), PostgreSQL, Bun ORM
 **Frontend:** React 19, TypeScript, Vite, Tailwind, shadcn/ui
-**Auth:** JWT + bcrypt, refresh tokens, rate-limited login
+**Auth:** HttpOnly JWT session cookies + bcrypt, rate-limited login
 **Infra:** Docker Compose, nginx, Railway
 **APIs:** YouTube Data v3, Anthropic Claude (OCR)
 

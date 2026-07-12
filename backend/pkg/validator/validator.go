@@ -68,28 +68,6 @@ func Name(name string) error {
 	return nil
 }
 
-func Birthdate(birthdate time.Time) error {
-	now := time.Now()
-
-	if birthdate.After(now) {
-		return apperror.BadInput("Birthdate cannot be in the future", "birthdate")
-	}
-
-	age := now.Year() - birthdate.Year()
-	if now.YearDay() < birthdate.YearDay() {
-		age--
-	}
-
-	if age < 13 {
-		return apperror.BadInput("You must be at least 13 years old to register", "birthdate")
-	}
-	if age > 120 {
-		return apperror.BadInput("Invalid birthdate", "birthdate")
-	}
-
-	return nil
-}
-
 func SongTitle(title string) error {
 	trimmed := strings.TrimSpace(title)
 	if trimmed == "" {

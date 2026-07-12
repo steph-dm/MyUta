@@ -63,8 +63,10 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+    environment:
+      BACKEND_URL: http://backend:4000
     ports:
-      - "3000:8080"
+      - "${FRONTEND_PORT:-3000}:8080"
     deploy:
       resources:
         limits:
@@ -72,9 +74,10 @@ services:
           cpus: '0.5'
     read_only: true
     tmpfs:
-      - /tmp
-      - /var/cache/nginx
-      - /var/run
+      - /tmp:rw,uid=1001,gid=1001,mode=1777
+      - /var/cache/nginx:rw,uid=1001,gid=1001,mode=755
+      - /var/run:rw,uid=1001,gid=1001,mode=755
+      - /etc/nginx/conf.d:rw,uid=1001,gid=1001,mode=755
 
 volumes:
   pgdata:

@@ -17,7 +17,6 @@ const ERROR_MAP: [RegExp, string][] = [
   [/password must contain.*special/i, "errors.api.passwordNeedsSpecial"],
   [/invalid email format/i, "errors.api.invalidEmail"],
   [/name must be between/i, "errors.api.nameLength"],
-  [/must be at least 13/i, "errors.api.tooYoung"],
   [/import data cannot exceed/i, "errors.api.importTooLarge"],
   [/score must be between/i, "errors.api.scoreRange"],
   [/invalid date/i, "errors.api.invalidDate"],
