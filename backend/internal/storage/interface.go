@@ -23,9 +23,9 @@ type UserStorer interface {
 	UpdateUser(ctx context.Context, user *User, columns ...string) error
 	UpdatePassword(ctx context.Context, id string, hashedPassword string) error
 	GetPassword(ctx context.Context, id string) (string, error)
-	SoftDeleteUser(ctx context.Context, id string) error
+	DeleteUser(ctx context.Context, id string) error
 	IsAdmin(ctx context.Context, id string) (bool, error)
-	ListActiveUsers(ctx context.Context) ([]*User, error)
+	ListUsers(ctx context.Context) ([]*User, error)
 	IsActiveUser(ctx context.Context, id string, tokenIssuedAt time.Time) (bool, error)
 }
 

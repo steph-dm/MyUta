@@ -124,12 +124,15 @@ func (s *ReviewService) UpsertReview(ctx context.Context, userID string, id *str
 	notes = normalizeOptionalString(notes)
 	issues = uniqueIssues(issues)
 
-	exists, err := s.store.SongExists(ctx, songID)
+	song, err := s.store.GetSong(ctx, songID)
 	if err != nil {
-		return nil, fmt.Errorf("can't check song: %w", err)
+		if errors.Is(err, storage.ErrNotFound) {
+			return nil, apperror.NotFound("Song")
+		}
+		return nil, fmt.Errorf("can't get song: %w", err)
 	}
-	if !exists {
-		return nil, apperror.NotFound("Song")
+	if song.UserID != userID {
+		return nil, apperror.Forbidden("Not authorized to review this song")
 	}
 
 	if id != nil && *id != "" {

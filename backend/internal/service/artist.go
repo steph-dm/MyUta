@@ -141,8 +141,12 @@ func (s *ArtistService) DeleteArtist(ctx context.Context, userID, id string) (*s
 }
 
 func (s *ArtistService) ToggleFavorite(ctx context.Context, userID, artistID string) (bool, error) {
-	if _, err := s.GetArtist(ctx, artistID); err != nil {
+	artist, err := s.GetArtist(ctx, artistID)
+	if err != nil {
 		return false, err
+	}
+	if artist.UserID != userID {
+		return false, apperror.Forbidden("Not authorized to favorite this artist")
 	}
 	return s.store.ToggleFavoriteArtist(ctx, userID, artistID)
 }

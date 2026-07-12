@@ -94,11 +94,15 @@ func (s *SongService) UpsertSong(ctx context.Context, userID string, id *string,
 	if err := validator.YouTubeURL(youtubeURL); err != nil {
 		return nil, err
 	}
-	if _, err := s.store.GetArtist(ctx, artistID); err != nil {
+	artist, err := s.store.GetArtist(ctx, artistID)
+	if err != nil {
 		if errors.Is(err, storage.ErrNotFound) {
 			return nil, apperror.NotFound("Artist")
 		}
 		return nil, fmt.Errorf("can't get artist: %w", err)
+	}
+	if artist.UserID != userID {
+		return nil, apperror.Forbidden("Not authorized to use this artist")
 	}
 	if youtubeURL != nil {
 		trimmedURL := strings.TrimSpace(*youtubeURL)
@@ -243,12 +247,15 @@ func (s *SongService) DeleteSong(ctx context.Context, userID, id string) (*stora
 }
 
 func (s *SongService) ToggleFavorite(ctx context.Context, userID, songID string) (bool, error) {
-	exists, err := s.store.SongExists(ctx, songID)
+	song, err := s.store.GetSong(ctx, songID)
 	if err != nil {
-		return false, fmt.Errorf("can't check song: %w", err)
+		if errors.Is(err, storage.ErrNotFound) {
+			return false, apperror.NotFound("Song")
+		}
+		return false, fmt.Errorf("can't get song: %w", err)
 	}
-	if !exists {
-		return false, apperror.NotFound("Song")
+	if song.UserID != userID {
+		return false, apperror.Forbidden("Not authorized to favorite this song")
 	}
 	return s.store.ToggleFavoriteSong(ctx, userID, songID)
 }

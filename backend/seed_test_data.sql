@@ -7,13 +7,12 @@ SET client_encoding = 'UTF8';
 BEGIN;
 
 -- User
-INSERT INTO users (id, email, name, password, birthdate, "isAdmin", "defaultMachineType", "createdAt", "updatedAt")
+INSERT INTO users (id, email, name, password, "isAdmin", "defaultMachineType", "createdAt", "updatedAt")
 VALUES (
   'a1b2c3d4-0000-4000-8000-000000000001',
   'taro.tanaka@example.com',
   '田中太郎',
   '$2b$12$U7bMWe09fPE8nWsoLsbsL.IguYB0vq7q053mD0KatJGnhWiPcfNeW',
-  '1993-08-22T00:00:00Z',
   false,
   'DAM',
   '2025-10-01T10:00:00Z',

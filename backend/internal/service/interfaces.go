@@ -8,9 +8,8 @@ import (
 )
 
 type AuthServicer interface {
-	Register(ctx context.Context, clientIP, email, password, name string, birthdate scalar.DateTime) (*storage.AuthPayload, error)
+	Register(ctx context.Context, clientIP, email, password, name string) (*storage.AuthPayload, error)
 	Login(ctx context.Context, clientIP, email, password string) (*storage.AuthPayload, error)
-	RefreshToken(ctx context.Context, userID string) (*storage.AuthPayload, error)
 	ChangePassword(ctx context.Context, userID, currentPassword, newPassword string) (bool, error)
 	DeleteAccount(ctx context.Context, userID, password string) (bool, error)
 }
@@ -20,7 +19,7 @@ type UserServicer interface {
 	GetUser(ctx context.Context, callerID, targetID string) (*storage.User, error)
 	ListUsers(ctx context.Context, callerID string) ([]*storage.User, error)
 	GetUserByID(ctx context.Context, id string) (*storage.User, error)
-	UpdateUser(ctx context.Context, callerID, targetID string, email, name *string, birthdate *scalar.DateTime, defaultMachineType *storage.MachineType) (*storage.User, error)
+	UpdateUser(ctx context.Context, callerID, targetID string, email, name *string, defaultMachineType *storage.MachineType, clearDefaultMachineType *bool) (*storage.User, error)
 	RequireAdmin(ctx context.Context, userID string) error
 }
 

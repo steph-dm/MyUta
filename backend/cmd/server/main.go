@@ -101,7 +101,7 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	graphqlHandler := dataloader.Middleware(store, auth.UserIDFromContext)(srv)
+	graphqlHandler := dataloader.Middleware(store, store, auth.UserIDFromContext)(srv)
 	graphqlHandler = injectRequest(graphqlHandler)
 
 	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
