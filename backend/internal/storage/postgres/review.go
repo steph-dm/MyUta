@@ -123,8 +123,8 @@ const reviewWithSongJoinQuery = `
 		s.id, s.title, s."artistId", s.genres,
 		s."youtubeUrl", s."generatedYoutube", s."createdAt", s."updatedAt",
 		a.id, a.name, a."createdAt", a."updatedAt",
-		u.id, u.email, u.name, u.birthdate,
-		u."isAdmin", u."defaultMachineType", u."deletedAt",
+		u.id, u.email, u.name,
+		u."isAdmin", u."defaultMachineType",
 		u."createdAt", u."updatedAt"
 	FROM reviews r
 	JOIN songs s ON r."songId" = s.id
@@ -149,7 +149,6 @@ func (s *Store) scanReviewsWithSong(ctx context.Context, query string, args ...a
 		var issueStrs []string
 		var genreStrs []string
 		var userMachineType *string
-		var userDeletedAt *time.Time
 
 		err := rows.Scan(
 			&rw.ID, &rw.Date, &rw.UserID, &rw.SongID, &rw.Score,
@@ -157,8 +156,8 @@ func (s *Store) scanReviewsWithSong(ctx context.Context, query string, args ...a
 			&song.ID, &song.Title, &song.ArtistID, pqStringArray(&genreStrs),
 			&song.YouTubeURL, &song.GeneratedYoutube, &song.CreatedAt, &song.UpdatedAt,
 			&a.ID, &a.Name, &a.CreatedAt, &a.UpdatedAt,
-			&u.ID, &u.Email, &u.Name, &u.Birthdate,
-			&u.IsAdmin, &userMachineType, &userDeletedAt,
+			&u.ID, &u.Email, &u.Name,
+			&u.IsAdmin, &userMachineType,
 			&u.CreatedAt, &u.UpdatedAt,
 		)
 		if err != nil {
@@ -180,11 +179,6 @@ func (s *Store) scanReviewsWithSong(ctx context.Context, query string, args ...a
 			machineType := storage.MachineType(*userMachineType)
 			u.DefaultMachineType = &machineType
 		}
-		if userDeletedAt != nil {
-			deletedAt := scalar.FromTime(*userDeletedAt)
-			u.DeletedAt = &deletedAt
-		}
-
 		song.LoadedArtist = &a
 		rw.LoadedSong = &song
 		rw.LoadedUser = &u

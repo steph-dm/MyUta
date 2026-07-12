@@ -9,7 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
-import { Button } from "../components/ui/button";
 import {
   GET_MY_REVIEWS,
   GET_MY_FAVORITES,
@@ -17,7 +16,7 @@ import {
   EXPORT_DATA,
   IMPORT_DATA,
   TOGGLE_FAVORITE,
-} from "../graphql/queries";
+} from "../graphql";
 import type { Review, FavoriteSong } from "../types";
 import { useAuth } from "../contexts/AuthContext";
 import { formatDateYYYYMMDD } from "../lib/utils";
@@ -31,11 +30,12 @@ import ProfileFavorites from "../components/profile/ProfileFavorites";
 import ProfileDangerZone from "../components/profile/ProfileDangerZone";
 import ProfilePersonalInfo from "../components/profile/ProfilePersonalInfo";
 import ProfileChangePassword from "../components/profile/ProfileChangePassword";
+import LanguageSelector from "../components/LanguageSelector";
 import { useFloatingPlayer } from "../hooks/useFloatingPlayer";
 
 const Profile = () => {
   const { user, refetchUser, logout } = useAuth();
-  const { t, i18n } = useTranslation("profile");
+  const { t } = useTranslation("profile");
 
   const { activePlayerUrl, activePlayerInfo, play, stop } = useFloatingPlayer();
 
@@ -308,34 +308,7 @@ const Profile = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-2">
-            <Button
-              variant={i18n.language === "en" ? "default" : "outline"}
-              className="flex-1 gap-2"
-              onClick={() => {
-                i18n.changeLanguage("en");
-                trackEvent({
-                  name: "change_language",
-                  data: { language: "en" },
-                });
-              }}
-            >
-              🇺🇸 {t("preferences.english")}
-            </Button>
-            <Button
-              variant={i18n.language === "ja" ? "default" : "outline"}
-              className="flex-1 gap-2"
-              onClick={() => {
-                i18n.changeLanguage("ja");
-                trackEvent({
-                  name: "change_language",
-                  data: { language: "ja" },
-                });
-              }}
-            >
-              🇯🇵 {t("preferences.japanese")}
-            </Button>
-          </div>
+          <LanguageSelector />
         </CardContent>
       </Card>
 

@@ -5,6 +5,7 @@
         "songs": "曲",
         "reviews": "採点記録"
     },
+    "language": "言語",
     "actions": {
         "save": "保存",
         "cancel": "キャンセル",
@@ -60,7 +61,6 @@
             "passwordNeedsSpecial": "パスワードに特殊文字を含めてください",
             "invalidEmail": "メールアドレスの形式が正しくありません",
             "nameLength": "名前は1〜20文字にしてください",
-            "tooYoung": "13歳以上である必要があります",
             "importTooLarge": "インポートデータは5MB以下にしてください",
             "scoreRange": "スコアは0〜100の範囲で入力してください",
             "invalidDate": "日付の形式が正しくありません"

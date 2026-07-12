@@ -3,7 +3,7 @@ import { useMutation } from "@apollo/client";
 import { useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../contexts/AuthContext";
-import { REGISTER } from "../graphql/queries";
+import { REGISTER } from "../graphql";
 import { trackEvent } from "../lib/analytics";
 import { translateError } from "../lib/error-messages";
 import { Button } from "../components/ui/button";
@@ -17,32 +17,8 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { ThemeToggle } from "../components/ui/theme-toggle";
+import LanguageSelector from "../components/LanguageSelector";
 import { cn } from "../lib/utils";
-
-const BIRTHDATE_RE = /^\d{4}\/\d{2}\/\d{2}$/;
-
-function parseBirthdateInput(value: string): Date | null {
-  if (!BIRTHDATE_RE.test(value)) {
-    return null;
-  }
-
-  const [year, month, day] = value.split("/").map(Number);
-  const birthdate = new Date(year, month - 1, day);
-
-  if (
-    birthdate.getFullYear() !== year ||
-    birthdate.getMonth() !== month - 1 ||
-    birthdate.getDate() !== day
-  ) {
-    return null;
-  }
-
-  return birthdate;
-}
-
-function formatBirthdateForApi(value: string): string {
-  return value.replace(/\//g, "-");
-}
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -50,14 +26,13 @@ export default function Register() {
     password: "",
     confirmPassword: "",
     name: "",
-    birthdate: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPasswordHints, setShowPasswordHints] = useState(false);
 
   const navigate = useNavigate();
   const { login } = useAuth();
-  const { t, i18n } = useTranslation("auth");
+  const { t } = useTranslation("auth");
   const { t: tCommon } = useTranslation("common");
 
   const [registerMutation, { loading }] = useMutation(REGISTER, {
@@ -106,32 +81,6 @@ export default function Register() {
       newErrors.name = t("validation.usernameLength");
     }
 
-    if (!formData.birthdate) {
-      newErrors.birthdate = t("validation.birthdateRequired");
-    } else if (!BIRTHDATE_RE.test(formData.birthdate)) {
-      newErrors.birthdate = t("validation.dateFormat");
-    } else {
-      const birthdate = parseBirthdateInput(formData.birthdate);
-      if (!birthdate) {
-        newErrors.birthdate = t("validation.invalidDate");
-      } else {
-        const today = new Date();
-        const age = today.getFullYear() - birthdate.getFullYear();
-        const monthDiff = today.getMonth() - birthdate.getMonth();
-        const adjustedAge =
-          monthDiff < 0 ||
-          (monthDiff === 0 && today.getDate() < birthdate.getDate())
-            ? age - 1
-            : age;
-
-        if (adjustedAge < 13) {
-          newErrors.birthdate = t("validation.ageMinimum");
-        } else if (adjustedAge > 120) {
-          newErrors.birthdate = t("validation.invalidDate");
-        }
-      }
-    }
-
     const passwordRequirements = validatePassword(formData.password);
     const failedRequirements = passwordRequirements.filter((req) => !req.test);
     if (failedRequirements.length > 0) {
@@ -151,18 +100,7 @@ export default function Register() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    if (name === "birthdate") {
-      let formatted = value.replace(/\D/g, "");
-      if (formatted.length >= 4) {
-        formatted = `${formatted.slice(0, 4)}/${formatted.slice(4)}`;
-      }
-      if (formatted.length >= 7) {
-        formatted = `${formatted.slice(0, 7)}/${formatted.slice(7, 9)}`;
-      }
-      setFormData((prev) => ({ ...prev, [name]: formatted }));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
+    setFormData((prev) => ({ ...prev, [name]: value }));
 
     setErrors((prev) => ({ ...prev, [name]: "", submit: "" }));
   };
@@ -178,7 +116,6 @@ export default function Register() {
         email: formData.email.trim(),
         password: formData.password,
         name: formData.name.trim(),
-        birthdate: formatBirthdateForApi(formData.birthdate),
       },
     });
   };
@@ -188,16 +125,7 @@ export default function Register() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4 relative">
       <div className="absolute top-4 right-4 flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-xs px-2 h-7 text-muted-foreground"
-          onClick={() => {
-            i18n.changeLanguage(i18n.language === "ja" ? "en" : "ja");
-          }}
-        >
-          {i18n.language === "ja" ? "🇺🇸 EN" : "🇯🇵 JA"}
-        </Button>
+        <LanguageSelector />
         <ThemeToggle />
       </div>
       <Card className="w-full max-w-md">
@@ -253,27 +181,6 @@ export default function Register() {
               </p>
               {errors.name && (
                 <p className="text-sm text-red-500">{errors.name}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="birthdate">{t("register.birthdate")}</Label>
-              <Input
-                id="birthdate"
-                name="birthdate"
-                type="text"
-                placeholder="YYYY/MM/DD"
-                value={formData.birthdate}
-                onChange={handleChange}
-                disabled={loading}
-                maxLength={10}
-                className={cn(errors.birthdate && "border-red-500")}
-              />
-              <p className="text-xs text-muted-foreground">
-                {t("register.birthdateHint")}
-              </p>
-              {errors.birthdate && (
-                <p className="text-sm text-red-500">{errors.birthdate}</p>
               )}
             </div>
 

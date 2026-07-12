@@ -92,13 +92,14 @@ func (m *mockUserStore) GetPassword(_ context.Context, id string) (string, error
 	return p, nil
 }
 
-func (m *mockUserStore) SoftDeleteUser(_ context.Context, id string) error {
+func (m *mockUserStore) DeleteUser(_ context.Context, id string) error {
 	u, ok := m.users[id]
 	if !ok {
 		return storage.ErrNotFound
 	}
-	now := scalar.Now()
-	u.DeletedAt = &now
+	delete(m.users, id)
+	delete(m.emails, u.Email)
+	delete(m.passwords, id)
 	return nil
 }
 
@@ -106,7 +107,7 @@ func (m *mockUserStore) IsAdmin(_ context.Context, _ string) (bool, error) {
 	return false, nil
 }
 
-func (m *mockUserStore) ListActiveUsers(_ context.Context) ([]*storage.User, error) {
+func (m *mockUserStore) ListUsers(_ context.Context) ([]*storage.User, error) {
 	return nil, nil
 }
 
@@ -132,7 +133,6 @@ func seedUser(t *testing.T, store *mockUserStore, id, email, password string) *s
 		Email:     email,
 		Password:  hashed,
 		Name:      &name,
-		Birthdate: scalar.FromTime(time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)),
 		CreatedAt: scalar.Now(),
 		UpdatedAt: scalar.Now(),
 	}
@@ -174,17 +174,6 @@ func TestLogin(t *testing.T) {
 			setup:    func(_ *mockUserStore) {},
 			wantErr:  true,
 		},
-		{
-			name:     "deleted account",
-			email:    "deleted@example.com",
-			password: "V@lidPass1234",
-			setup: func(s *mockUserStore) {
-				u := seedUser(t, s, "user-2", "deleted@example.com", "V@lidPass1234")
-				now := scalar.Now()
-				u.DeletedAt = &now
-			},
-			wantErr: true,
-		},
 	}
 
 	for _, tt := range tests {
@@ -206,73 +195,6 @@ func TestLogin(t *testing.T) {
 			}
 			if !tt.wantToken {
 				return
-			}
-			if result.Token == "" {
-				t.Error("expected non-empty token")
-			}
-			if result.User == nil {
-				t.Error("expected user in payload")
-			}
-		})
-	}
-}
-
-func TestRefreshToken(t *testing.T) {
-	t.Parallel()
-
-	tests := []struct {
-		name    string
-		userID  string
-		setup   func(*mockUserStore)
-		wantErr bool
-	}{
-		{
-			name:   "valid user",
-			userID: "user-1",
-			setup:  func(s *mockUserStore) { seedUser(t, s, "user-1", "test@example.com", "pass") },
-		},
-		{
-			name:    "unknown user",
-			userID:  "nonexistent",
-			setup:   func(_ *mockUserStore) {},
-			wantErr: true,
-		},
-		{
-			name:   "deleted user",
-			userID: "user-2",
-			setup: func(s *mockUserStore) {
-				u := seedUser(t, s, "user-2", "del@example.com", "pass")
-				now := scalar.Now()
-				u.DeletedAt = &now
-			},
-			wantErr: true,
-		},
-		{
-			name:   "store error",
-			userID: "user-3",
-			setup: func(s *mockUserStore) {
-				s.getErr = errors.New("db down")
-			},
-			wantErr: true,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-			store := newMockUserStore()
-			tt.setup(store)
-			svc := newTestService(store)
-
-			result, err := svc.RefreshToken(context.Background(), tt.userID)
-			if tt.wantErr {
-				if err == nil {
-					t.Fatal("expected error, got nil")
-				}
-				return
-			}
-			if err != nil {
-				t.Fatalf("unexpected error: %v", err)
 			}
 			if result.Token == "" {
 				t.Error("expected non-empty token")
@@ -411,10 +333,9 @@ func TestDeleteAccount(t *testing.T) {
 				t.Error("expected true")
 			}
 
-			// Verify user is soft-deleted
-			u := store.users[tt.userID]
-			if u.DeletedAt == nil {
-				t.Error("expected DeletedAt to be set after deletion")
+			// Verify the account is permanently removed.
+			if _, exists := store.users[tt.userID]; exists {
+				t.Error("expected user to be removed after deletion")
 			}
 		})
 	}
@@ -489,8 +410,7 @@ func TestRegister(t *testing.T) {
 			tt.setup(store)
 			svc := newTestService(store)
 
-			birthdate := scalar.FromTime(time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC))
-			result, err := svc.Register(context.Background(), "127.0.0.1", tt.email, tt.pass, tt.uname, birthdate)
+			result, err := svc.Register(context.Background(), "127.0.0.1", tt.email, tt.pass, tt.uname)
 			if tt.wantErr {
 				if err == nil {
 					t.Fatal("expected error, got nil")

@@ -81,9 +81,9 @@ func (m *mockExportStore) UpdateUser(_ context.Context, _ *storage.User, _ ...st
 }
 func (m *mockExportStore) UpdatePassword(_ context.Context, _, _ string) error     { return nil }
 func (m *mockExportStore) GetPassword(_ context.Context, _ string) (string, error) { return "", nil }
-func (m *mockExportStore) SoftDeleteUser(_ context.Context, _ string) error        { return nil }
+func (m *mockExportStore) DeleteUser(_ context.Context, _ string) error            { return nil }
 func (m *mockExportStore) IsAdmin(_ context.Context, _ string) (bool, error)       { return false, nil }
-func (m *mockExportStore) ListActiveUsers(_ context.Context) ([]*storage.User, error) {
+func (m *mockExportStore) ListUsers(_ context.Context) ([]*storage.User, error) {
 	return nil, nil
 }
 func (m *mockExportStore) IsActiveUser(_ context.Context, _ string, _ time.Time) (bool, error) {
@@ -261,7 +261,6 @@ func TestExportData(t *testing.T) {
 			ID:        "u1",
 			Email:     "test@example.com",
 			Name:      &name,
-			Birthdate: scalar.Now(),
 			CreatedAt: scalar.Now(),
 			UpdatedAt: scalar.Now(),
 		}

@@ -3,7 +3,7 @@ import { useMutation } from "@apollo/client";
 import { useNavigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../contexts/AuthContext";
-import { LOGIN } from "../graphql/queries";
+import { LOGIN } from "../graphql";
 import { trackEvent } from "../lib/analytics";
 import { translateError } from "../lib/error-messages";
 import { Button } from "../components/ui/button";
@@ -17,6 +17,7 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { ThemeToggle } from "../components/ui/theme-toggle";
+import LanguageSelector from "../components/LanguageSelector";
 import { cn } from "../lib/utils";
 
 export default function Login() {
@@ -28,7 +29,7 @@ export default function Login() {
 
   const navigate = useNavigate();
   const { login } = useAuth();
-  const { t, i18n } = useTranslation("auth");
+  const { t } = useTranslation("auth");
   const { t: tCommon } = useTranslation("common");
 
   const [loginMutation, { loading }] = useMutation(LOGIN, {
@@ -80,16 +81,7 @@ export default function Login() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-background p-4 relative">
       <div className="absolute top-4 right-4 flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-xs px-2 h-7 text-muted-foreground"
-          onClick={() => {
-            i18n.changeLanguage(i18n.language === "ja" ? "en" : "ja");
-          }}
-        >
-          {i18n.language === "ja" ? "🇺🇸 EN" : "🇯🇵 JA"}
-        </Button>
+        <LanguageSelector />
         <ThemeToggle />
       </div>
       <Card className="w-full max-w-md">

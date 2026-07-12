@@ -57,8 +57,8 @@ func (r *artistResolver) IsFavorite(ctx context.Context, obj *storage.Artist) (*
 }
 
 // Register is the resolver for the register field.
-func (r *mutationResolver) Register(ctx context.Context, email string, password string, name string, birthdate scalar.DateTime) (*storage.AuthPayload, error) {
-	payload, err := r.AuthService.Register(ctx, middleware.ClientIPFromContext(ctx, HTTPRequestKey), email, password, name, birthdate)
+func (r *mutationResolver) Register(ctx context.Context, email string, password string, name string) (*storage.AuthPayload, error) {
+	payload, err := r.AuthService.Register(ctx, middleware.ClientIPFromContext(ctx, HTTPRequestKey), email, password, name)
 	if err != nil {
 		return nil, err
 	}
@@ -82,30 +82,13 @@ func (r *mutationResolver) Logout(ctx context.Context) (bool, error) {
 	return true, nil
 }
 
-// RefreshToken is the resolver for the refreshToken field.
-func (r *mutationResolver) RefreshToken(ctx context.Context) (*storage.AuthPayload, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	if err := r.RateLimiter.Check("refresh:"+userID, 10, 3600); err != nil {
-		return nil, apperror.Forbidden(err.Error())
-	}
-	payload, err := r.AuthService.RefreshToken(ctx, userID)
-	if err != nil {
-		return nil, err
-	}
-	SetTokenCookie(ctx, payload.Token, r.SecureCookie)
-	return payload, nil
-}
-
 // UpdateUser is the resolver for the updateUser field.
-func (r *mutationResolver) UpdateUser(ctx context.Context, id string, email *string, name *string, birthdate *scalar.DateTime, defaultMachineType *storage.MachineType) (*storage.User, error) {
+func (r *mutationResolver) UpdateUser(ctx context.Context, id string, email *string, name *string, defaultMachineType *storage.MachineType, clearDefaultMachineType *bool) (*storage.User, error) {
 	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
 	if err != nil {
 		return nil, err
 	}
-	return r.UserService.UpdateUser(ctx, userID, id, email, name, birthdate, defaultMachineType)
+	return r.UserService.UpdateUser(ctx, userID, id, email, name, defaultMachineType, clearDefaultMachineType)
 }
 
 // UpsertArtist is the resolver for the upsertArtist field.
@@ -222,7 +205,14 @@ func (r *mutationResolver) DeleteAccount(ctx context.Context, password string) (
 	if err := r.RateLimiter.Check("delacc:"+userID, 3, 3600); err != nil {
 		return false, apperror.Forbidden(err.Error())
 	}
-	return r.AuthService.DeleteAccount(ctx, userID, password)
+	deleted, err := r.AuthService.DeleteAccount(ctx, userID, password)
+	if err != nil {
+		return false, err
+	}
+	if deleted {
+		ClearTokenCookie(ctx, r.SecureCookie)
+	}
+	return deleted, nil
 }
 
 // ExtractReviewFromImage is the resolver for the extractReviewFromImage field.
@@ -476,7 +466,12 @@ func (r *songResolver) Artist(ctx context.Context, obj *storage.Song) (*storage.
 	if obj.LoadedArtist != nil {
 		return obj.LoadedArtist, nil
 	}
-	return r.ArtistService.GetArtist(ctx, obj.ArtistID)
+	thunk := dataloader.For(ctx).ArtistByID.Load(ctx, obj.ArtistID)
+	artist, err := thunk()
+	if err != nil {
+		return nil, err
+	}
+	return artist, nil
 }
 
 // ReviewCount is the resolver for the reviewCount field.

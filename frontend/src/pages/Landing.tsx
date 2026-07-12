@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../contexts/AuthContext";
 import { Button } from "../components/ui/button";
 import { ThemeToggle } from "../components/ui/theme-toggle";
+import LanguageSelector from "../components/LanguageSelector";
 import { BarChart3, Mic2, Languages, Activity, Menu, X } from "lucide-react";
 
 const features = [
@@ -14,15 +15,12 @@ const features = [
 ] as const;
 
 export default function Landing() {
-  const { t, i18n } = useTranslation("auth");
+  const { t } = useTranslation("auth");
   const { user, loading } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
 
   if (loading) return null;
   if (user) return <Navigate to="/dashboard" replace />;
-
-  const lang = i18n.language === "ja" ? "en" : "ja";
-  const langLabel = i18n.language === "ja" ? "🇺🇸 EN" : "🇯🇵 JA";
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -34,14 +32,7 @@ export default function Landing() {
           </Link>
 
           <div className="hidden sm:flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-xs px-2 h-7 text-muted-foreground"
-              onClick={() => i18n.changeLanguage(lang)}
-            >
-              {langLabel}
-            </Button>
+            <LanguageSelector />
             <ThemeToggle />
             <Link to="/login">
               <Button variant="ghost" size="sm">
@@ -71,15 +62,8 @@ export default function Landing() {
 
         {menuOpen && (
           <div className="sm:hidden border-t border-border bg-background px-6 py-4 space-y-3">
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-xs px-2 h-7 text-muted-foreground"
-                onClick={() => i18n.changeLanguage(lang)}
-              >
-                {langLabel}
-              </Button>
+            <div className="flex items-center justify-between gap-3">
+              <LanguageSelector />
               <ThemeToggle />
             </div>
             <Link

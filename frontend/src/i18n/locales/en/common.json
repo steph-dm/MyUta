@@ -5,6 +5,7 @@
         "songs": "Songs",
         "reviews": "Reviews"
     },
+    "language": "Language",
     "actions": {
         "save": "Save",
         "cancel": "Cancel",
@@ -60,7 +61,6 @@
             "passwordNeedsSpecial": "Password must contain a special character",
             "invalidEmail": "Invalid email format",
             "nameLength": "Name must be between 1 and 20 characters",
-            "tooYoung": "You must be at least 13 years old",
             "importTooLarge": "Import data cannot exceed 5MB",
             "scoreRange": "Score must be between 0 and 100",
             "invalidDate": "Invalid date format"

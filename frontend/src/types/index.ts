@@ -75,7 +75,6 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  birthdate: string;
   isAdmin: boolean;
   defaultMachineType: MachineType | null;
   createdAt: string;

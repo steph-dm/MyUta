@@ -6,7 +6,7 @@ import (
 	"github.com/steph-dm/MyUta/backend/pkg/youtube"
 )
 
-//go:generate go run github.com/99designs/gqlgen generate
+//go:generate go tool gqlgen generate
 type Resolver struct {
 	AuthService   service.AuthServicer
 	UserService   service.UserServicer

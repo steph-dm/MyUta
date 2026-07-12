@@ -2,6 +2,8 @@ module github.com/steph-dm/MyUta/backend
 
 go 1.26
 
+tool github.com/99designs/gqlgen
+
 require (
 	github.com/99designs/gqlgen v0.17.88
 	github.com/golang-jwt/jwt/v5 v5.3.1
@@ -9,6 +11,7 @@ require (
 	github.com/graph-gophers/dataloader/v7 v7.1.3
 	github.com/joho/godotenv v1.5.1
 	github.com/pressly/goose/v3 v3.27.0
+	github.com/stretchr/testify v1.11.1
 	github.com/testcontainers/testcontainers-go/modules/postgres v0.41.0
 	github.com/uptrace/bun v1.2.17
 	github.com/uptrace/bun/dialect/pgdialect v1.2.17
@@ -68,11 +71,11 @@ require (
 	github.com/shirou/gopsutil/v4 v4.26.2 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/sosodev/duration v1.4.0 // indirect
-	github.com/stretchr/testify v1.11.1 // indirect
 	github.com/testcontainers/testcontainers-go v0.41.0 // indirect
 	github.com/tklauser/go-sysconf v0.3.16 // indirect
 	github.com/tklauser/numcpus v0.11.0 // indirect
 	github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc // indirect
+	github.com/urfave/cli/v3 v3.7.0 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.4.1 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect

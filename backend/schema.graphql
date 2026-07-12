@@ -35,7 +35,6 @@ type User {
   email: String!
   name: String
   reviews: [Review!]!
-  birthdate: DateTime!
   isAdmin: Boolean!
   defaultMachineType: MachineType
   createdAt: DateTime!
@@ -175,21 +174,18 @@ type Mutation {
     email: String!
     password: String!
     name: String!
-    birthdate: DateTime!
   ): AuthPayload!
 
   login(email: String!, password: String!): AuthPayload!
 
   logout: Boolean!
 
-  refreshToken: AuthPayload!
-
   updateUser(
     id: ID!
     email: String
     name: String
-    birthdate: DateTime
     defaultMachineType: MachineType
+    clearDefaultMachineType: Boolean
   ): User!
 
   upsertArtist(name: String!): Artist!

@@ -3,7 +3,6 @@
     "personalInfo": "個人情報",
     "email": "メールアドレス",
     "username": "ユーザー名",
-    "birthdate": "生年月日",
     "memberSince": "{{date}}から会員",
     "changePassword": {
         "title": "パスワード変更",
@@ -34,8 +33,6 @@
         "title": "設定",
         "language": "言語",
         "languageDescription": "表示言語を選択してください",
-        "english": "English",
-        "japanese": "日本語",
         "theme": "テーマ"
     },
     "stats": {

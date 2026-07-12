@@ -94,7 +94,6 @@ func seedUser(t *testing.T, id, email string) *storage.User {
 		Email:     email,
 		Name:      &name,
 		Password:  "$2a$10$placeholder",
-		Birthdate: now,
 		CreatedAt: now,
 		UpdatedAt: now,
 	}
@@ -198,25 +197,72 @@ func TestUserCRUD(t *testing.T) {
 	}
 }
 
-func TestSoftDelete(t *testing.T) {
+func TestDeleteUser(t *testing.T) {
 	truncate(t)
 	ctx := context.Background()
 
 	userID := uuid.NewString()
 	seedUser(t, userID, "delete@example.com")
 
-	if err := testStore.SoftDeleteUser(ctx, userID); err != nil {
-		t.Fatalf("SoftDeleteUser: %v", err)
+	if err := testStore.DeleteUser(ctx, userID); err != nil {
+		t.Fatalf("DeleteUser: %v", err)
 	}
 
 	_, err := testStore.GetUser(ctx, userID)
 	if err == nil {
-		t.Fatal("expected error after soft delete")
+		t.Fatal("expected error after permanent delete")
 	}
 
 	active, err := testStore.IsActiveUser(ctx, userID, time.Now())
 	if err == nil && active {
-		t.Error("expected inactive after soft delete")
+		t.Error("expected inactive after permanent delete")
+	}
+}
+
+func TestTenantRelationshipsRejectCrossUserReferences(t *testing.T) {
+	truncate(t)
+	ctx := context.Background()
+
+	user1ID := uuid.NewString()
+	user2ID := uuid.NewString()
+	seedUser(t, user1ID, "tenant-one@example.com")
+	seedUser(t, user2ID, "tenant-two@example.com")
+	artist2 := seedArtist(t, user2ID, "Other User Artist")
+	song2 := seedSong(t, user2ID, artist2.ID, "Other User Song")
+	now := scalar.Now()
+
+	crossUserSong := &storage.Song{
+		ID:        uuid.NewString(),
+		Title:     "Invalid Song",
+		ArtistID:  artist2.ID,
+		UserID:    user1ID,
+		Genres:    []storage.Genre{storage.GenrePop},
+		CreatedAt: now,
+		UpdatedAt: now,
+	}
+	if err := testStore.CreateSong(ctx, crossUserSong); err == nil {
+		t.Fatal("expected database to reject a song linked to another user's artist")
+	}
+
+	crossUserReview := &storage.Review{
+		ID:          uuid.NewString(),
+		Date:        now,
+		UserID:      user1ID,
+		SongID:      song2.ID,
+		Score:       90,
+		MachineType: storage.MachineTypeDAM,
+		Issues:      []storage.Issue{},
+		CreatedAt:   now,
+		UpdatedAt:   now,
+	}
+	if err := testStore.CreateReview(ctx, crossUserReview); err == nil {
+		t.Fatal("expected database to reject a review linked to another user's song")
+	}
+	if _, err := testStore.ToggleFavoriteSong(ctx, user1ID, song2.ID); err == nil {
+		t.Fatal("expected database to reject favoriting another user's song")
+	}
+	if _, err := testStore.ToggleFavoriteArtist(ctx, user1ID, artist2.ID); err == nil {
+		t.Fatal("expected database to reject favoriting another user's artist")
 	}
 }
 

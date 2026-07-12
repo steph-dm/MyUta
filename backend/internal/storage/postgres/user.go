@@ -2,6 +2,8 @@ package postgres
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 	"slices"
 	"time"
@@ -14,7 +16,6 @@ func (s *Store) GetUser(ctx context.Context, id string) (*storage.User, error) {
 	user := new(storage.User)
 	err := s.DB.NewSelect().Model(user).
 		Where("id = ?", id).
-		Where(`"deletedAt" IS NULL`).
 		Scan(ctx)
 	if err != nil {
 		return nil, storage.WrapNotFound(err, "user")
@@ -98,10 +99,8 @@ func (s *Store) GetPassword(ctx context.Context, id string) (string, error) {
 	return password, nil
 }
 
-func (s *Store) SoftDeleteUser(ctx context.Context, id string) error {
-	if _, err := s.DB.NewUpdate().Model((*storage.User)(nil)).
-		Set(`"deletedAt" = NOW()`).
-		Set(`"updatedAt" = NOW()`).
+func (s *Store) DeleteUser(ctx context.Context, id string) error {
+	if _, err := s.DB.NewDelete().Model((*storage.User)(nil)).
 		Where("id = ?", id).
 		Exec(ctx); err != nil {
 		return fmt.Errorf("can't delete user: %w", err)
@@ -121,10 +120,9 @@ func (s *Store) IsAdmin(ctx context.Context, id string) (bool, error) {
 	return isAdmin, nil
 }
 
-func (s *Store) ListActiveUsers(ctx context.Context) ([]*storage.User, error) {
+func (s *Store) ListUsers(ctx context.Context) ([]*storage.User, error) {
 	var users []*storage.User
 	err := s.DB.NewSelect().Model(&users).
-		Where(`"deletedAt" IS NULL`).
 		OrderExpr(`"createdAt" DESC`).
 		Scan(ctx)
 	if err != nil {
@@ -138,9 +136,11 @@ func (s *Store) IsActiveUser(ctx context.Context, id string, tokenIssuedAt time.
 	err := s.DB.NewSelect().Model(&user).
 		ColumnExpr(`"passwordChangedAt"`).
 		Where("id = ?", id).
-		Where(`"deletedAt" IS NULL`).
 		Scan(ctx)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return false, nil
+		}
 		return false, fmt.Errorf("can't check active user: %w", err)
 	}
 	if user.PasswordChangedAt != nil && !tokenIssuedAt.IsZero() {

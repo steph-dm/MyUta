@@ -7,7 +7,6 @@ import (
 
 	"github.com/steph-dm/MyUta/backend/internal/storage"
 	"github.com/steph-dm/MyUta/backend/pkg/apperror"
-	"github.com/steph-dm/MyUta/backend/pkg/scalar"
 	"github.com/steph-dm/MyUta/backend/pkg/validator"
 )
 
@@ -23,9 +22,6 @@ func (s *UserService) Me(ctx context.Context, userID string) (*storage.User, err
 	user, err := s.store.GetUser(ctx, userID)
 	if err != nil {
 		return nil, fmt.Errorf("can't get user: %w", err)
-	}
-	if user.DeletedAt != nil {
-		return nil, nil
 	}
 	return user, nil
 }
@@ -43,14 +39,14 @@ func (s *UserService) ListUsers(ctx context.Context, callerID string) ([]*storag
 	if err := s.RequireAdmin(ctx, callerID); err != nil {
 		return nil, err
 	}
-	return s.store.ListActiveUsers(ctx)
+	return s.store.ListUsers(ctx)
 }
 
 func (s *UserService) GetUserByID(ctx context.Context, id string) (*storage.User, error) {
 	return s.store.GetUser(ctx, id)
 }
 
-func (s *UserService) UpdateUser(ctx context.Context, callerID, targetID string, email, name *string, birthdate *scalar.DateTime, defaultMachineType *storage.MachineType) (*storage.User, error) {
+func (s *UserService) UpdateUser(ctx context.Context, callerID, targetID string, email, name *string, defaultMachineType *storage.MachineType, clearDefaultMachineType *bool) (*storage.User, error) {
 	if callerID != targetID {
 		return nil, apperror.Forbidden("Not authorized to update this user")
 	}
@@ -91,12 +87,12 @@ func (s *UserService) UpdateUser(ctx context.Context, callerID, targetID string,
 		user.Name = &trimmedName
 		columns = append(columns, "name")
 	}
-	if birthdate != nil {
-		if err := validator.Birthdate(birthdate.Time); err != nil {
-			return nil, err
-		}
-		user.Birthdate = *birthdate
-		columns = append(columns, "birthdate")
+	if clearDefaultMachineType != nil && *clearDefaultMachineType && defaultMachineType != nil {
+		return nil, apperror.BadInput("Cannot set and clear the default machine at the same time", "defaultMachineType")
+	}
+	if clearDefaultMachineType != nil && *clearDefaultMachineType {
+		user.DefaultMachineType = nil
+		columns = append(columns, "defaultMachineType")
 	}
 	if defaultMachineType != nil {
 		user.DefaultMachineType = defaultMachineType

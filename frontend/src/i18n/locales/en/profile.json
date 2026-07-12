@@ -3,7 +3,6 @@
     "personalInfo": "Personal Information",
     "email": "Email",
     "username": "Username",
-    "birthdate": "Date of Birth",
     "memberSince": "Member since {{date}}",
     "changePassword": {
         "title": "Change Password",
@@ -34,8 +33,6 @@
         "title": "Preferences",
         "language": "Language",
         "languageDescription": "Choose your preferred display language",
-        "english": "English",
-        "japanese": "日本語",
         "theme": "Theme"
     },
     "stats": {

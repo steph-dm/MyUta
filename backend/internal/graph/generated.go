@@ -110,12 +110,11 @@ type ComplexityRoot struct {
 		ImportData             func(childComplexity int, jsonData string) int
 		Login                  func(childComplexity int, email string, password string) int
 		Logout                 func(childComplexity int) int
-		RefreshToken           func(childComplexity int) int
-		Register               func(childComplexity int, email string, password string, name string, birthdate scalar.DateTime) int
+		Register               func(childComplexity int, email string, password string, name string) int
 		ToggleFavorite         func(childComplexity int, songID string) int
 		ToggleFavoriteArtist   func(childComplexity int, artistID string) int
 		UpdateArtist           func(childComplexity int, id string, name string) int
-		UpdateUser             func(childComplexity int, id string, email *string, name *string, birthdate *scalar.DateTime, defaultMachineType *storage.MachineType) int
+		UpdateUser             func(childComplexity int, id string, email *string, name *string, defaultMachineType *storage.MachineType, clearDefaultMachineType *bool) int
 		UpsertArtist           func(childComplexity int, name string) int
 		UpsertReview           func(childComplexity int, id *string, songID string, date scalar.DateTime, score float64, machineType storage.MachineType, issues []storage.Issue, notes *string) int
 		UpsertSong             func(childComplexity int, id *string, title string, artistID string, genres []storage.Genre, youtubeURL *string, generatedYoutube *bool) int
@@ -183,7 +182,6 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
-		Birthdate          func(childComplexity int) int
 		CreatedAt          func(childComplexity int) int
 		DefaultMachineType func(childComplexity int) int
 		Email              func(childComplexity int) int
@@ -209,11 +207,10 @@ type ArtistResolver interface {
 	IsFavorite(ctx context.Context, obj *storage.Artist) (*bool, error)
 }
 type MutationResolver interface {
-	Register(ctx context.Context, email string, password string, name string, birthdate scalar.DateTime) (*storage.AuthPayload, error)
+	Register(ctx context.Context, email string, password string, name string) (*storage.AuthPayload, error)
 	Login(ctx context.Context, email string, password string) (*storage.AuthPayload, error)
 	Logout(ctx context.Context) (bool, error)
-	RefreshToken(ctx context.Context) (*storage.AuthPayload, error)
-	UpdateUser(ctx context.Context, id string, email *string, name *string, birthdate *scalar.DateTime, defaultMachineType *storage.MachineType) (*storage.User, error)
+	UpdateUser(ctx context.Context, id string, email *string, name *string, defaultMachineType *storage.MachineType, clearDefaultMachineType *bool) (*storage.User, error)
 	UpsertArtist(ctx context.Context, name string) (*storage.Artist, error)
 	UpdateArtist(ctx context.Context, id string, name string) (*storage.Artist, error)
 	UpsertSong(ctx context.Context, id *string, title string, artistID string, genres []storage.Genre, youtubeURL *string, generatedYoutube *bool) (*storage.Song, error)
@@ -603,12 +600,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.ComplexityRoot.Mutation.Logout(childComplexity), true
-	case "Mutation.refreshToken":
-		if e.ComplexityRoot.Mutation.RefreshToken == nil {
-			break
-		}
-
-		return e.ComplexityRoot.Mutation.RefreshToken(childComplexity), true
 	case "Mutation.register":
 		if e.ComplexityRoot.Mutation.Register == nil {
 			break
@@ -619,7 +610,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.ComplexityRoot.Mutation.Register(childComplexity, args["email"].(string), args["password"].(string), args["name"].(string), args["birthdate"].(scalar.DateTime)), true
+		return e.ComplexityRoot.Mutation.Register(childComplexity, args["email"].(string), args["password"].(string), args["name"].(string)), true
 	case "Mutation.toggleFavorite":
 		if e.ComplexityRoot.Mutation.ToggleFavorite == nil {
 			break
@@ -663,7 +654,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.ComplexityRoot.Mutation.UpdateUser(childComplexity, args["id"].(string), args["email"].(*string), args["name"].(*string), args["birthdate"].(*scalar.DateTime), args["defaultMachineType"].(*storage.MachineType)), true
+		return e.ComplexityRoot.Mutation.UpdateUser(childComplexity, args["id"].(string), args["email"].(*string), args["name"].(*string), args["defaultMachineType"].(*storage.MachineType), args["clearDefaultMachineType"].(*bool)), true
 	case "Mutation.upsertArtist":
 		if e.ComplexityRoot.Mutation.UpsertArtist == nil {
 			break
@@ -1052,12 +1043,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.ComplexityRoot.Song.YouTubeURL(childComplexity), true
 
-	case "User.birthdate":
-		if e.ComplexityRoot.User.Birthdate == nil {
-			break
-		}
-
-		return e.ComplexityRoot.User.Birthdate(childComplexity), true
 	case "User.createdAt":
 		if e.ComplexityRoot.User.CreatedAt == nil {
 			break
@@ -1257,7 +1242,6 @@ type User {
   email: String!
   name: String
   reviews: [Review!]!
-  birthdate: DateTime!
   isAdmin: Boolean!
   defaultMachineType: MachineType
   createdAt: DateTime!
@@ -1397,21 +1381,18 @@ type Mutation {
     email: String!
     password: String!
     name: String!
-    birthdate: DateTime!
   ): AuthPayload!
 
   login(email: String!, password: String!): AuthPayload!
 
   logout: Boolean!
 
-  refreshToken: AuthPayload!
-
   updateUser(
     id: ID!
     email: String
     name: String
-    birthdate: DateTime
     defaultMachineType: MachineType
+    clearDefaultMachineType: Boolean
   ): User!
 
   upsertArtist(name: String!): Artist!
@@ -1583,11 +1564,6 @@ func (ec *executionContext) field_Mutation_register_args(ctx context.Context, ra
 		return nil, err
 	}
 	args["name"] = arg2
-	arg3, err := graphql.ProcessArgField(ctx, rawArgs, "birthdate", ec.unmarshalNDateTime2githubᚗcomᚋstephᚑdmᚋMyUtaᚋbackendᚋpkgᚋscalarᚐDateTime)
-	if err != nil {
-		return nil, err
-	}
-	args["birthdate"] = arg3
 	return args, nil
 }
 
@@ -1647,16 +1623,16 @@ func (ec *executionContext) field_Mutation_updateUser_args(ctx context.Context, 
 		return nil, err
 	}
 	args["name"] = arg2
-	arg3, err := graphql.ProcessArgField(ctx, rawArgs, "birthdate", ec.unmarshalODateTime2ᚖgithubᚗcomᚋstephᚑdmᚋMyUtaᚋbackendᚋpkgᚋscalarᚐDateTime)
+	arg3, err := graphql.ProcessArgField(ctx, rawArgs, "defaultMachineType", ec.unmarshalOMachineType2ᚖgithubᚗcomᚋstephᚑdmᚋMyUtaᚋbackendᚋinternalᚋstorageᚐMachineType)
 	if err != nil {
 		return nil, err
 	}
-	args["birthdate"] = arg3
-	arg4, err := graphql.ProcessArgField(ctx, rawArgs, "defaultMachineType", ec.unmarshalOMachineType2ᚖgithubᚗcomᚋstephᚑdmᚋMyUtaᚋbackendᚋinternalᚋstorageᚐMachineType)
+	args["defaultMachineType"] = arg3
+	arg4, err := graphql.ProcessArgField(ctx, rawArgs, "clearDefaultMachineType", ec.unmarshalOBoolean2ᚖbool)
 	if err != nil {
 		return nil, err
 	}
-	args["defaultMachineType"] = arg4
+	args["clearDefaultMachineType"] = arg4
 	return args, nil
 }
 
@@ -2235,8 +2211,6 @@ func (ec *executionContext) fieldContext_AuthPayload_user(_ context.Context, fie
 				return ec.fieldContext_User_name(ctx, field)
 			case "reviews":
 				return ec.fieldContext_User_reviews(ctx, field)
-			case "birthdate":
-				return ec.fieldContext_User_birthdate(ctx, field)
 			case "isAdmin":
 				return ec.fieldContext_User_isAdmin(ctx, field)
 			case "defaultMachineType":
@@ -3030,7 +3004,7 @@ func (ec *executionContext) _Mutation_register(ctx context.Context, field graphq
 		ec.fieldContext_Mutation_register,
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.Resolvers.Mutation().Register(ctx, fc.Args["email"].(string), fc.Args["password"].(string), fc.Args["name"].(string), fc.Args["birthdate"].(scalar.DateTime))
+			return ec.Resolvers.Mutation().Register(ctx, fc.Args["email"].(string), fc.Args["password"].(string), fc.Args["name"].(string))
 		},
 		nil,
 		ec.marshalNAuthPayload2ᚖgithubᚗcomᚋstephᚑdmᚋMyUtaᚋbackendᚋinternalᚋstorageᚐAuthPayload,
@@ -3145,41 +3119,6 @@ func (ec *executionContext) fieldContext_Mutation_logout(_ context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_refreshToken(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Mutation_refreshToken,
-		func(ctx context.Context) (any, error) {
-			return ec.Resolvers.Mutation().RefreshToken(ctx)
-		},
-		nil,
-		ec.marshalNAuthPayload2ᚖgithubᚗcomᚋstephᚑdmᚋMyUtaᚋbackendᚋinternalᚋstorageᚐAuthPayload,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Mutation_refreshToken(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "token":
-				return ec.fieldContext_AuthPayload_token(ctx, field)
-			case "user":
-				return ec.fieldContext_AuthPayload_user(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type AuthPayload", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -3188,7 +3127,7 @@ func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field grap
 		ec.fieldContext_Mutation_updateUser,
 		func(ctx context.Context) (any, error) {
 			fc := graphql.GetFieldContext(ctx)
-			return ec.Resolvers.Mutation().UpdateUser(ctx, fc.Args["id"].(string), fc.Args["email"].(*string), fc.Args["name"].(*string), fc.Args["birthdate"].(*scalar.DateTime), fc.Args["defaultMachineType"].(*storage.MachineType))
+			return ec.Resolvers.Mutation().UpdateUser(ctx, fc.Args["id"].(string), fc.Args["email"].(*string), fc.Args["name"].(*string), fc.Args["defaultMachineType"].(*storage.MachineType), fc.Args["clearDefaultMachineType"].(*bool))
 		},
 		nil,
 		ec.marshalNUser2ᚖgithubᚗcomᚋstephᚑdmᚋMyUtaᚋbackendᚋinternalᚋstorageᚐUser,
@@ -3213,8 +3152,6 @@ func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context
 				return ec.fieldContext_User_name(ctx, field)
 			case "reviews":
 				return ec.fieldContext_User_reviews(ctx, field)
-			case "birthdate":
-				return ec.fieldContext_User_birthdate(ctx, field)
 			case "isAdmin":
 				return ec.fieldContext_User_isAdmin(ctx, field)
 			case "defaultMachineType":
@@ -4021,8 +3958,6 @@ func (ec *executionContext) fieldContext_Query_me(_ context.Context, field graph
 				return ec.fieldContext_User_name(ctx, field)
 			case "reviews":
 				return ec.fieldContext_User_reviews(ctx, field)
-			case "birthdate":
-				return ec.fieldContext_User_birthdate(ctx, field)
 			case "isAdmin":
 				return ec.fieldContext_User_isAdmin(ctx, field)
 			case "defaultMachineType":
@@ -4070,8 +4005,6 @@ func (ec *executionContext) fieldContext_Query_users(_ context.Context, field gr
 				return ec.fieldContext_User_name(ctx, field)
 			case "reviews":
 				return ec.fieldContext_User_reviews(ctx, field)
-			case "birthdate":
-				return ec.fieldContext_User_birthdate(ctx, field)
 			case "isAdmin":
 				return ec.fieldContext_User_isAdmin(ctx, field)
 			case "defaultMachineType":
@@ -4120,8 +4053,6 @@ func (ec *executionContext) fieldContext_Query_user(ctx context.Context, field g
 				return ec.fieldContext_User_name(ctx, field)
 			case "reviews":
 				return ec.fieldContext_User_reviews(ctx, field)
-			case "birthdate":
-				return ec.fieldContext_User_birthdate(ctx, field)
 			case "isAdmin":
 				return ec.fieldContext_User_isAdmin(ctx, field)
 			case "defaultMachineType":
@@ -5181,8 +5112,6 @@ func (ec *executionContext) fieldContext_Review_user(_ context.Context, field gr
 				return ec.fieldContext_User_name(ctx, field)
 			case "reviews":
 				return ec.fieldContext_User_reviews(ctx, field)
-			case "birthdate":
-				return ec.fieldContext_User_birthdate(ctx, field)
 			case "isAdmin":
 				return ec.fieldContext_User_isAdmin(ctx, field)
 			case "defaultMachineType":
@@ -5520,8 +5449,6 @@ func (ec *executionContext) fieldContext_ReviewWithSong_user(_ context.Context, 
 				return ec.fieldContext_User_name(ctx, field)
 			case "reviews":
 				return ec.fieldContext_User_reviews(ctx, field)
-			case "birthdate":
-				return ec.fieldContext_User_birthdate(ctx, field)
 			case "isAdmin":
 				return ec.fieldContext_User_isAdmin(ctx, field)
 			case "defaultMachineType":
@@ -6225,35 +6152,6 @@ func (ec *executionContext) fieldContext_User_reviews(_ context.Context, field g
 				return ec.fieldContext_Review_updatedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Review", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _User_birthdate(ctx context.Context, field graphql.CollectedField, obj *storage.User) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_User_birthdate,
-		func(ctx context.Context) (any, error) {
-			return obj.Birthdate, nil
-		},
-		nil,
-		ec.marshalNDateTime2githubᚗcomᚋstephᚑdmᚋMyUtaᚋbackendᚋpkgᚋscalarᚐDateTime,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_User_birthdate(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "User",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type DateTime does not have child fields")
 		},
 	}
 	return fc, nil
@@ -8499,13 +8397,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "refreshToken":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_refreshToken(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "updateUser":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateUser(ctx, field)
@@ -9574,11 +9465,6 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "birthdate":
-			out.Values[i] = ec._User_birthdate(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "isAdmin":
 			out.Values[i] = ec._User_isAdmin(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -10711,24 +10597,6 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	_ = sel
 	_ = ctx
 	res := graphql.MarshalBoolean(*v)
-	return res
-}
-
-func (ec *executionContext) unmarshalODateTime2ᚖgithubᚗcomᚋstephᚑdmᚋMyUtaᚋbackendᚋpkgᚋscalarᚐDateTime(ctx context.Context, v any) (*scalar.DateTime, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := scalar.UnmarshalDateTime(v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalODateTime2ᚖgithubᚗcomᚋstephᚑdmᚋMyUtaᚋbackendᚋpkgᚋscalarᚐDateTime(ctx context.Context, sel ast.SelectionSet, v *scalar.DateTime) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	_ = sel
-	_ = ctx
-	res := scalar.MarshalDateTime(*v)
 	return res
 }
 

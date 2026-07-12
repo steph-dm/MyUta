@@ -38,7 +38,6 @@ func (s *ExportService) ExportData(ctx context.Context, userID string) (string, 
 
 	type userProfile struct {
 		Name        *string `json:"name"`
-		Birthdate   string  `json:"birthdate"`
 		MachineType any     `json:"defaultMachineType"`
 		CreatedAt   string  `json:"createdAt"`
 	}
@@ -55,7 +54,6 @@ func (s *ExportService) ExportData(ctx context.Context, userID string) (string, 
 		}
 		profile = userProfile{
 			Name:        user.Name,
-			Birthdate:   user.Birthdate.Format(time.RFC3339),
 			MachineType: user.DefaultMachineType,
 			CreatedAt:   user.CreatedAt.Format(time.RFC3339),
 		}

@@ -26,7 +26,7 @@ func NewAuthService(store storage.UserStorer, cfg *config.Config, rl *middleware
 	return &AuthService{store: store, config: cfg, rateLimiter: rl}
 }
 
-func (s *AuthService) Register(ctx context.Context, clientIP, email, password, name string, birthdate scalar.DateTime) (*storage.AuthPayload, error) {
+func (s *AuthService) Register(ctx context.Context, clientIP, email, password, name string) (*storage.AuthPayload, error) {
 	if err := s.rateLimiter.Check("register:"+clientIP, 5, 900); err != nil {
 		return nil, apperror.Forbidden(err.Error())
 	}
@@ -43,10 +43,6 @@ func (s *AuthService) Register(ctx context.Context, clientIP, email, password, n
 	if err := validator.Name(name); err != nil {
 		return nil, err
 	}
-	if err := validator.Birthdate(birthdate.Time); err != nil {
-		return nil, err
-	}
-
 	exists, err := s.store.EmailExists(ctx, email)
 	if err != nil {
 		return nil, fmt.Errorf("can't check email: %w", err)
@@ -75,7 +71,6 @@ func (s *AuthService) Register(ctx context.Context, clientIP, email, password, n
 		Email:     email,
 		Password:  hashed,
 		Name:      &trimmedName,
-		Birthdate: birthdate,
 		IsAdmin:   false,
 		CreatedAt: now,
 		UpdatedAt: now,
@@ -109,32 +104,8 @@ func (s *AuthService) Login(ctx context.Context, clientIP, email, password strin
 		}
 		return nil, fmt.Errorf("can't get user: %w", err)
 	}
-	if user.DeletedAt != nil {
-		return nil, apperror.Forbidden("This account has been deactivated")
-	}
-
 	if !auth.ComparePasswords(password, user.Password) {
 		return nil, apperror.Unauthenticated("Invalid email or password")
-	}
-
-	token, err := auth.GenerateToken(user.ID, s.config.JWTSecret)
-	if err != nil {
-		return nil, fmt.Errorf("can't generate token: %w", err)
-	}
-
-	return &storage.AuthPayload{Token: token, User: user}, nil
-}
-
-func (s *AuthService) RefreshToken(ctx context.Context, userID string) (*storage.AuthPayload, error) {
-	user, err := s.store.GetUser(ctx, userID)
-	if err != nil {
-		if errors.Is(err, storage.ErrNotFound) {
-			return nil, apperror.Unauthenticated("User not found")
-		}
-		return nil, fmt.Errorf("can't get user: %w", err)
-	}
-	if user.DeletedAt != nil {
-		return nil, apperror.Forbidden("This account has been deactivated")
 	}
 
 	token, err := auth.GenerateToken(user.ID, s.config.JWTSecret)
@@ -182,7 +153,7 @@ func (s *AuthService) DeleteAccount(ctx context.Context, userID, password string
 		return false, apperror.BadInput("Password is incorrect", "password")
 	}
 
-	if err := s.store.SoftDeleteUser(ctx, userID); err != nil {
+	if err := s.store.DeleteUser(ctx, userID); err != nil {
 		return false, fmt.Errorf("can't delete account: %w", err)
 	}
 	return true, nil
