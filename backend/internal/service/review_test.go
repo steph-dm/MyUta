@@ -210,6 +210,29 @@ func seedReview(store *mockReviewStore, id, userID, songID string, score float64
 	return r
 }
 
+func TestUpsertReview_CantReviewOtherUsersSong(t *testing.T) {
+	t.Parallel()
+
+	store := newMockReviewStore()
+	store.songs["s1"] = &storage.Song{ID: "s1", UserID: "u2", ArtistID: "a1"}
+	svc := service.NewReviewService(store)
+
+	_, err := svc.UpsertReview(
+		context.Background(),
+		"u1",
+		nil,
+		"s1",
+		scalar.FromTime(time.Now().Add(-time.Hour)),
+		90,
+		storage.MachineTypeDAM,
+		nil,
+		nil,
+	)
+	if err == nil {
+		t.Fatal("expected forbidden error for another user's song")
+	}
+}
+
 // --- Tests ---
 
 func TestGetReview(t *testing.T) {

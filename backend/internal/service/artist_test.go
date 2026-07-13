@@ -109,9 +109,9 @@ func (m *mockArtistStore) CreateUser(context.Context, *storage.User) error      
 func (m *mockArtistStore) UpdateUser(context.Context, *storage.User, ...string) error { return nil }
 func (m *mockArtistStore) UpdatePassword(context.Context, string, string) error       { return nil }
 func (m *mockArtistStore) GetPassword(context.Context, string) (string, error)        { return "", nil }
-func (m *mockArtistStore) SoftDeleteUser(context.Context, string) error               { return nil }
+func (m *mockArtistStore) DeleteUser(context.Context, string) error                   { return nil }
 func (m *mockArtistStore) IsAdmin(context.Context, string) (bool, error)              { return false, nil }
-func (m *mockArtistStore) ListActiveUsers(context.Context) ([]*storage.User, error)   { return nil, nil }
+func (m *mockArtistStore) ListUsers(context.Context) ([]*storage.User, error)         { return nil, nil }
 func (m *mockArtistStore) IsActiveUser(context.Context, string, time.Time) (bool, error) {
 	return true, nil
 }
@@ -468,5 +468,17 @@ func TestToggleFavoriteArtist_NotFound(t *testing.T) {
 	_, err := svc.ToggleFavorite(context.Background(), "u-1", "nonexistent")
 	if err == nil {
 		t.Fatal("expected error for nonexistent artist")
+	}
+}
+
+func TestToggleFavoriteArtist_CantFavoriteOtherUsersArtist(t *testing.T) {
+	t.Parallel()
+	store := newMockArtistStore()
+	seedArtist(store, "a-1", "u-2", "YOASOBI")
+	svc := service.NewArtistService(store)
+
+	_, err := svc.ToggleFavorite(context.Background(), "u-1", "a-1")
+	if err == nil {
+		t.Fatal("expected forbidden error for another user's artist")
 	}
 }

@@ -13,11 +13,24 @@ import (
 	"github.com/steph-dm/MyUta/backend/pkg/validator"
 )
 
-type ArtistService struct {
-	store storage.Storer
+type artistStore interface {
+	GetArtist(ctx context.Context, id string) (*storage.Artist, error)
+	GetArtistByName(ctx context.Context, userID, name string) (*storage.Artist, error)
+	CreateArtist(ctx context.Context, artist *storage.Artist) error
+	UpdateArtist(ctx context.Context, artist *storage.Artist) error
+	DeleteArtist(ctx context.Context, id string) error
+	ListArtists(ctx context.Context, userID string, take, skip *int) ([]*storage.Artist, error)
+	ListSongsByArtist(ctx context.Context, userID, artistID string) ([]*storage.Song, error)
+	ListSongsByArtistIDs(ctx context.Context, userID string, artistIDs []string) ([]*storage.Song, error)
+	ToggleFavoriteArtist(ctx context.Context, userID, artistID string) (bool, error)
+	ListFavoriteArtists(ctx context.Context, userID string) ([]*storage.Artist, error)
 }
 
-func NewArtistService(store storage.Storer) *ArtistService {
+type ArtistService struct {
+	store artistStore
+}
+
+func NewArtistService(store artistStore) *ArtistService {
 	return &ArtistService{store: store}
 }
 

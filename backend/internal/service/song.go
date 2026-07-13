@@ -13,11 +13,29 @@ import (
 	"github.com/steph-dm/MyUta/backend/pkg/validator"
 )
 
-type SongService struct {
-	store storage.Storer
+type songStore interface {
+	GetSong(ctx context.Context, id string) (*storage.Song, error)
+	CreateSong(ctx context.Context, song *storage.Song) error
+	UpdateSong(ctx context.Context, song *storage.Song) error
+	UpdateSongFields(ctx context.Context, id string, genres []string, youtubeURL *string, generatedYT bool) error
+	DeleteSong(ctx context.Context, id string) error
+	ListSongs(ctx context.Context, userID string, take, skip *int) ([]*storage.Song, error)
+	ListSongsByArtist(ctx context.Context, userID, artistID string) ([]*storage.Song, error)
+	CountSongsByArtist(ctx context.Context, userID, artistID string) (int, error)
+	GetArtist(ctx context.Context, id string) (*storage.Artist, error)
+	DeleteArtist(ctx context.Context, id string) error
+	MultiGetArtists(ctx context.Context, ids []string) ([]*storage.Artist, error)
+	ListReviewsWithSongBySong(ctx context.Context, songID, userID string) ([]*storage.ReviewWithSong, error)
+	ReviewCount(ctx context.Context, userID, songID string) (int, error)
+	ToggleFavoriteSong(ctx context.Context, userID, songID string) (bool, error)
+	ListFavoriteSongs(ctx context.Context, userID string) ([]*storage.Song, error)
 }
 
-func NewSongService(store storage.Storer) *SongService {
+type SongService struct {
+	store songStore
+}
+
+func NewSongService(store songStore) *SongService {
 	return &SongService{store: store}
 }
 

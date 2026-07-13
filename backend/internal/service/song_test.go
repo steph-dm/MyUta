@@ -250,9 +250,9 @@ func (m *mockSongStore) CreateUser(_ context.Context, _ *storage.User) error    
 func (m *mockSongStore) UpdateUser(_ context.Context, _ *storage.User, _ ...string) error { return nil }
 func (m *mockSongStore) UpdatePassword(_ context.Context, _, _ string) error              { return nil }
 func (m *mockSongStore) GetPassword(_ context.Context, _ string) (string, error)          { return "", nil }
-func (m *mockSongStore) SoftDeleteUser(_ context.Context, _ string) error                 { return nil }
+func (m *mockSongStore) DeleteUser(_ context.Context, _ string) error                     { return nil }
 func (m *mockSongStore) IsAdmin(_ context.Context, _ string) (bool, error)                { return false, nil }
-func (m *mockSongStore) ListActiveUsers(_ context.Context) ([]*storage.User, error)       { return nil, nil }
+func (m *mockSongStore) ListUsers(_ context.Context) ([]*storage.User, error)             { return nil, nil }
 func (m *mockSongStore) IsActiveUser(_ context.Context, _ string, _ time.Time) (bool, error) {
 	return true, nil
 }
@@ -277,6 +277,7 @@ func addSong(store *mockSongStore, id, userID, artistID, title string) *storage.
 func addArtist(store *mockSongStore, id, name string) {
 	store.artists[id] = &storage.Artist{
 		ID:        id,
+		UserID:    "u1",
 		Name:      name,
 		CreatedAt: scalar.Now(),
 		UpdatedAt: scalar.Now(),
@@ -519,6 +520,34 @@ func TestUpsertSong_ArtistNotFound(t *testing.T) {
 	_, err := svc.UpsertSong(context.Background(), "u1", nil, "Song", "missing", []storage.Genre{storage.GenrePop}, nil, nil)
 	if err == nil {
 		t.Fatal("expected error for missing artist")
+	}
+}
+
+func TestUpsertSong_CantUseOtherUsersArtist(t *testing.T) {
+	t.Parallel()
+
+	store := newMockSongStore()
+	addArtist(store, "a1", "Ado")
+	store.artists["a1"].UserID = "u2"
+	svc := service.NewSongService(store)
+
+	_, err := svc.UpsertSong(context.Background(), "u1", nil, "Song", "a1", []storage.Genre{storage.GenrePop}, nil, nil)
+	if err == nil {
+		t.Fatal("expected forbidden error for another user's artist")
+	}
+}
+
+func TestToggleFavorite_CantFavoriteOtherUsersSong(t *testing.T) {
+	t.Parallel()
+
+	store := newMockSongStore()
+	addArtist(store, "a1", "Ado")
+	addSong(store, "s1", "u2", "a1", "Usseewa")
+	svc := service.NewSongService(store)
+
+	_, err := svc.ToggleFavorite(context.Background(), "u1", "s1")
+	if err == nil {
+		t.Fatal("expected forbidden error for another user's song")
 	}
 }
 
