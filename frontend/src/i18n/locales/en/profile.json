@@ -1,87 +1,80 @@
 {
-    "title": "Profile",
-    "personalInfo": "Personal Information",
-    "email": "Email",
-    "username": "Username",
-    "memberSince": "Member since {{date}}",
-    "changePassword": {
-        "title": "Change Password",
-        "current": "Current Password",
-        "currentPlaceholder": "Enter current password",
-        "new": "New Password",
-        "newPlaceholder": "Enter new password",
-        "confirm": "Confirm New Password",
-        "confirmPlaceholder": "Re-enter new password",
-        "submit": "Change Password",
-        "submitting": "Changing...",
-        "success": "Password changed successfully",
-        "error": "Failed to change password",
-        "mismatch": "Passwords do not match"
-    },
-    "dangerZone": {
-        "title": "Danger Zone",
-        "deleteAccount": "Delete Account",
-        "deleteDesc": "Permanently delete your account and all associated data. This action cannot be undone.",
-        "deleteConfirmTitle": "Delete your account?",
-        "deleteConfirmDesc": "Your account, all reviews, songs, and data will be permanently deleted. Enter your password to confirm.",
-        "password": "Password",
-        "passwordPlaceholder": "Enter your password to confirm",
-        "deleting": "Deleting...",
-        "deleteButton": "Delete Account"
-    },
-    "preferences": {
-        "title": "Preferences",
-        "language": "Language",
-        "languageDescription": "Choose your preferred display language",
-        "theme": "Theme"
-    },
-    "stats": {
-        "title": "Your Stats",
-        "totalReviews": "Total Reviews",
-        "totalSongs": "Total Songs",
-        "totalArtists": "Total Artists",
-        "averageScore": "Average Score",
-        "artistCount_one": "{{count}} artist",
-        "artistCount_other": "{{count}} artists",
-        "noData": "N/A"
-    },
-    "data": {
-        "title": "Data Management",
-        "export": "Export Data",
-        "exportDesc": "Download all your data as a JSON file.",
-        "import": "Import Data",
-        "importDesc": "Import data from a previously exported JSON file.",
-        "importTooltip": "Use this to import data previously exported from MyUta",
-        "exporting": "Exporting...",
-        "importing": "Importing...",
-        "exportSuccess": "Data exported successfully",
-        "importSuccess": "Data imported successfully",
-        "importError": "Failed to import data",
-        "invalidJson": "Invalid JSON file",
-        "importedCount_one": "Imported {{count}} review",
-        "importedCount_other": "Imported {{count}} reviews",
-        "skipped": ", {{count}} skipped",
-        "importWarnings_one": "{{count}} warning during import",
-        "importWarnings_other": "{{count}} warnings during import",
-        "exportError": "Couldn't export data"
-    },
-    "toast": {
-        "profileSaved": "Profile saved",
-        "profileSaveFailed": "Couldn't save profile",
-        "passwordUpdated": "Password updated",
-        "passwordUpdateFailed": "Couldn't change password",
-        "deleteAccountFailed": "Couldn't delete account"
-    },
-    "defaultMachine": "Default Karaoke Machine",
-    "defaultMachineDesc": "Auto-selected when adding reviews",
-    "none": "None",
-    "namePlaceholder": "Your Name",
+  "title": "Profile",
+  "memberSince": "Member since {{date}}",
+  "stats": {
+    "totalReviews": "Takes",
+    "library": "Library",
+    "libraryValue": "{{songs}} songs · {{artists}} artists",
+    "average": "Average"
+  },
+  "recent": {
+    "title": "Recent activity",
+    "description": "Your last 5 takes"
+  },
+  "favorites": {
+    "title": "Favourites",
+    "songs_one": "{{count}} song",
+    "songs_other": "{{count}} songs",
+    "artists": "Artists",
+    "none": "No favourites yet. Tap the heart on a song or artist."
+  },
+  "personal": {
+    "title": "Personal information",
+    "name": "Display name",
     "characters": "{{count}}/{{max}} characters",
-    "saving": "Saving...",
-    "recentActivity": "Recent Activity",
-    "last5Reviews": "Last 5 reviews",
-    "favorites": "Favorites",
-    "favoriteSongsCount_one": "{{count}} favorited song",
-    "favoriteSongsCount_other": "{{count}} favorited songs",
-    "enterPassword": "Enter password"
+    "defaultMachine": "Default machine",
+    "defaultMachineDesc": "Pre-selected when you log a take.",
+    "none": "None",
+    "saved": "Profile saved"
+  },
+  "email": {
+    "title": "E-mail address",
+    "current": "Current address",
+    "verified": "Confirmed",
+    "unverified": "Not confirmed yet",
+    "resend": "Send confirmation again",
+    "resent": "Confirmation e-mail sent",
+    "new": "New address",
+    "password": "Current password",
+    "submit": "Change address",
+    "sent": "Open the link we sent to {{email}} to finish the change.",
+    "changed": "E-mail address changed"
+  },
+  "password": {
+    "title": "Password",
+    "current": "Current password",
+    "submit": "Change password",
+    "changed": "Password changed. Other devices were signed out."
+  },
+  "sessions": {
+    "title": "Sessions",
+    "description": "Sign out on every device, for example after using a shared computer.",
+    "submit": "Sign out everywhere"
+  },
+  "preferences": {
+    "language": "Language",
+    "languageDesc": "Saved in your profile and used for e-mails and screenshot notes."
+  },
+  "data": {
+    "title": "Your data",
+    "export": "Export",
+    "exportDesc": "Download all your takes, favourites and goals.",
+    "import": "Import",
+    "importDesc": "Add takes from a MyUta export (JSON or CSV). Takes that already exist are skipped.",
+    "importing": "Importing…",
+    "resultTitle": "Import finished",
+    "resultImported": "{{count}} takes imported",
+    "resultDuplicate": "{{count}} already existed",
+    "resultSkipped": "{{count}} skipped because of errors",
+    "resultFavorites": "{{favorites}} favourites, {{goals}} goals",
+    "errorRow": "{{section}} #{{row}}"
+  },
+  "delete": {
+    "title": "Delete account",
+    "description": "Deletes your account and all your data permanently.",
+    "button": "Delete my account",
+    "confirmTitle": "Delete your account?",
+    "confirmDesc": "All {{reviews}} takes, your songs, artists, favourites and goals will be deleted. Export your data first if you want to keep it. This cannot be undone.",
+    "password": "Enter your password to confirm"
+  }
 }

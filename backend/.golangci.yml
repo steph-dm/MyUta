@@ -1,0 +1,42 @@
+# golangci-lint v2 configuration (CI pins the version in .github/workflows/ci.yml)
+version: "2"
+
+run:
+  build-tags:
+    - integration
+
+linters:
+  default: standard # errcheck, govet, ineffassign, staticcheck, unused
+  enable:
+    - bodyclose
+    - errorlint
+    - gosec
+    - misspell
+    - nilerr
+    - revive
+    - sqlclosecheck
+    - unconvert
+    - usestdlibvars
+  settings:
+    gosec:
+      excludes:
+        - G104 # unhandled errors are covered by errcheck
+    revive:
+      rules:
+        - name: exported
+          disabled: true # internal packages; comments where useful, not on every symbol
+        - name: package-comments
+          disabled: true
+  exclusions:
+    generated: lax
+    paths:
+      - internal/graph/generated.go
+      - internal/graph/model/models_gen.go
+    rules:
+      - path: (_test\.go|internal/testutil/)
+        linters: [gosec, errcheck, bodyclose] # GetRaw closes the body itself
+
+formatters:
+  enable:
+    - gofmt
+    - goimports

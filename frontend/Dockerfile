@@ -1,37 +1,34 @@
 # syntax=docker/dockerfile:1
 
+# --- build ----------------------------------------------------------------------------
 FROM node:22-alpine AS builder
-
+# npm 10 crashes resolving vitest's optional peers; the project pins npm 11 (package.json).
+RUN npm install -g npm@11.21.3
 WORKDIR /app
-
 COPY package.json package-lock.json ./
-RUN npm ci
-
+RUN npm ci --no-audit --no-fund
 COPY . .
-
-ARG VITE_UMAMI_SCRIPT_URL
-ARG VITE_UMAMI_WEBSITE_ID
-
+# Analytics are compiled in; empty values disable them.
+ARG VITE_UMAMI_SCRIPT_URL=""
+ARG VITE_UMAMI_WEBSITE_ID=""
+ENV VITE_UMAMI_SCRIPT_URL=$VITE_UMAMI_SCRIPT_URL VITE_UMAMI_WEBSITE_ID=$VITE_UMAMI_WEBSITE_ID
 RUN npm run build
 
-# --- Production ---
-FROM nginx:1.27-alpine3.21
+# --- runtime --------------------------------------------------------------------------
+FROM nginxinc/nginx-unprivileged:1.28-alpine
 
-RUN adduser -D -u 1001 appuser && \
-    chown -R appuser:appuser /var/cache/nginx /var/log/nginx /etc/nginx/conf.d && \
-    touch /var/run/nginx.pid && chown appuser:appuser /var/run/nginx.pid
-
-COPY nginx.conf /etc/nginx/templates/default.conf.template
+COPY nginx/default.conf /etc/nginx/templates/conf.d/default.conf.template
+COPY nginx/security-headers.conf /etc/nginx/templates/snippets/security-headers.conf.template
 COPY --from=builder /app/build /usr/share/nginx/html
-RUN chown -R appuser:appuser /usr/share/nginx/html
 
-USER appuser
-
-ENV PORT=8080
-ENV BACKEND_URL=http://localhost:4000
+ENV PORT=8080 \
+    BACKEND_URL=http://backend:4000 \
+    NGINX_RESOLVER=127.0.0.11 \
+    REAL_IP_FROM=127.0.0.1/32 \
+    CSP_ANALYTICS_ORIGIN="" \
+    # templates/<path>.template is rendered to /etc/nginx/<path> at start-up
+    NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx
 EXPOSE 8080
 
 HEALTHCHECK --interval=10s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget -q -O /dev/null http://127.0.0.1:8080/healthz || exit 1
-
-CMD ["nginx", "-g", "daemon off;"]
+    CMD wget -q -O /dev/null "http://127.0.0.1:${PORT}/nginx-health" || exit 1

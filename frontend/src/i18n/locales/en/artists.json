@@ -1,42 +1,38 @@
 {
-    "title": "Artists",
-    "catalog_one": "{{count}} artist in your catalog",
-    "catalog_other": "{{count}} artists in your catalog",
-    "searchPlaceholder": "Search artists...",
-    "empty": {
-        "title": "No songs yet",
-        "description": "No songs available for this artist yet.",
-        "noArtists": "No artists yet",
-        "noArtistsDesc": "Artists will appear here once songs are added.",
-        "noResults": "No matching artists",
-        "noResultsDesc": "Try adjusting your search."
-    },
-    "card": {
-        "songsAvailable_one": "{{count}} song",
-        "songsAvailable_other": "{{count}} songs",
-        "addToFavorites": "Add to favorites",
-        "removeFromFavorites": "Remove from favorites",
-        "editArtist": "Edit artist"
-    },
-    "modal": {
-        "editTitle": "Edit Artist",
-        "editDescription": "Update the artist's name.",
-        "name": "Name",
-        "namePlaceholder": "Artist name...",
-        "save": "Save Changes",
-        "saving": "Saving...",
-        "cancel": "Cancel",
-        "updateSuccess": "Artist updated",
-        "updateFailed": "Couldn't update this artist"
-    },
-    "detail": {
-        "songs": "Songs",
-        "reviews": "Reviews",
-        "averageScore": "Average Score",
-        "totalReviews": "Total Reviews",
-        "noSongs": "No songs yet",
-        "noSongsDesc": "This artist doesn't have any songs yet."
-    },
-    "notFound": "Artist not found",
-    "backToArtists": "Back to Artists"
+  "title": "Artists",
+  "catalog_one": "{{count}} artist",
+  "catalog_other": "{{count}} artists",
+  "search": "Search artists…",
+  "empty": {
+    "none": "No artists yet",
+    "noneDesc": "Artists are added when you log a take."
+  },
+  "card": {
+    "songs_one": "{{count}} song",
+    "songs_other": "{{count}} songs",
+    "edit": "Rename artist"
+  },
+  "detail": {
+    "back": "All artists",
+    "notFound": "This artist does not exist.",
+    "noSongs": "No songs yet",
+    "noSongsDesc": "Log a take to add a song."
+  },
+  "edit": {
+    "title": "Rename artist",
+    "name": "Name",
+    "saved": "Artist renamed"
+  },
+  "merge": {
+    "title": "\"{{name}}\" already exists",
+    "description": "Merge the two artists? All songs and takes move to \"{{name}}\"; songs with the same title are combined.",
+    "confirm": "Merge",
+    "done": "Artists merged"
+  },
+  "delete": {
+    "button": "Delete artist",
+    "title": "Delete \"{{name}}\"?",
+    "description": "{{songs}} songs and {{reviews}} takes will be deleted. This cannot be undone.",
+    "done": "Artist deleted"
+  }
 }

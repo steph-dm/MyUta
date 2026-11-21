@@ -1,23 +1,26 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="utf-8">
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/logo192.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)">
-    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
-    <meta name="description" content="マイウタ — Track your karaoke performances and progress">
-    <meta name="application-name" content="マイウタ">
-    <link rel="manifest" href="/manifest.json">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/logo192.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#fafafa" />
+    <meta
+      name="description"
+      content="マイウタ (MyUta) — track your karaoke scores on DAM, JOYSOUND and K-STAGE"
+    />
+    <meta name="application-name" content="マイウタ" />
+    <link rel="manifest" href="/manifest.json" />
     <title>マイウタ</title>
-</head>
-
-<body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <!-- Applies the saved theme and language before the first paint (no flash). -->
+    <script src="/theme-init.js"></script>
+  </head>
+  <body>
+    <noscript
+      >マイウタ needs JavaScript. / マイウタを使うにはJavaScriptを有効にしてください。</noscript
+    >
     <div id="root"></div>
     <script type="module" src="/src/index.tsx"></script>
-</body>
-
+  </body>
 </html>

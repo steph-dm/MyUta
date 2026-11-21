@@ -1,4 +1,5 @@
-# gqlgen configuration — https://gqlgen.com/config/
+# gqlgen configuration - https://gqlgen.com/config/
+# Regenerate after editing schema.graphql:  go generate ./...   (or: make generate)
 schema:
   - schema.graphql
 
@@ -16,83 +17,75 @@ resolver:
   package: graph
   filename_template: "{name}.resolvers.go"
 
-# Map scalars and types to our custom Go types.
+# Scalars and types bound to existing Go types. Everything not listed here
+# (inputs, pages, ServerInfo, SongGoal) is generated into internal/graph/model.
 models:
-  ID:
-    model:
-      - github.com/99designs/gqlgen/graphql.ID
+  Date:
+    model: github.com/steph-dm/MyUta/backend/internal/scalar.Date
   DateTime:
-    model:
-      - github.com/steph-dm/MyUta/backend/pkg/scalar.DateTime
+    model: github.com/steph-dm/MyUta/backend/internal/scalar.DateTime
+  Upload:
+    model: github.com/99designs/gqlgen/graphql.Upload
   Genre:
-    model:
-      - github.com/steph-dm/MyUta/backend/internal/storage.Genre
+    model: github.com/steph-dm/MyUta/backend/internal/domain.Genre
   Issue:
-    model:
-      - github.com/steph-dm/MyUta/backend/internal/storage.Issue
+    model: github.com/steph-dm/MyUta/backend/internal/domain.Issue
   MachineType:
-    model:
-      - github.com/steph-dm/MyUta/backend/internal/storage.MachineType
+    model: github.com/steph-dm/MyUta/backend/internal/domain.MachineType
+  MachineKind:
+    model: github.com/steph-dm/MyUta/backend/internal/domain.MachineKind
+  Machine:
+    model: github.com/steph-dm/MyUta/backend/internal/domain.Machine
+  ScoreDetails:
+    model: github.com/steph-dm/MyUta/backend/internal/domain.ScoreDetails
+  ScoreDetailsInput:
+    model: github.com/steph-dm/MyUta/backend/internal/domain.ScoreDetails
   User:
-    model:
-      - github.com/steph-dm/MyUta/backend/internal/storage.User
+    model: github.com/steph-dm/MyUta/backend/internal/storage.User
     fields:
-      reviews:
-        resolver: true
-  AuthPayload:
-    model:
-      - github.com/steph-dm/MyUta/backend/internal/storage.AuthPayload
+      emailVerified: { resolver: true }
+      language: { resolver: true }
   Artist:
-    model:
-      - github.com/steph-dm/MyUta/backend/internal/storage.Artist
+    model: github.com/steph-dm/MyUta/backend/internal/storage.Artist
     fields:
-      songs:
-        resolver: true
-      songCount:
-        resolver: true
-      isFavorite:
-        resolver: true
+      songs: { resolver: true }
+      songCount: { resolver: true }
+      reviewCount: { resolver: true }
+      isFavorite: { resolver: true }
   Song:
-    model:
-      - github.com/steph-dm/MyUta/backend/internal/storage.Song
+    model: github.com/steph-dm/MyUta/backend/internal/storage.Song
     fields:
-      artist:
-        resolver: true
-      reviews:
-        resolver: true
-      reviewCount:
-        resolver: true
-      isFavorite:
-        resolver: true
+      artist: { resolver: true }
+      reviewCount: { resolver: true }
+      reviews: { resolver: true }
+      isFavorite: { resolver: true }
+      goals: { resolver: true }
   Review:
-    model:
-      - github.com/steph-dm/MyUta/backend/internal/storage.Review
+    model: github.com/steph-dm/MyUta/backend/internal/storage.Review
     fields:
-      user:
-        resolver: true
-  ReviewWithSong:
-    model:
-      - github.com/steph-dm/MyUta/backend/internal/storage.ReviewWithSong
-    fields:
-      user:
-        resolver: true
-      song:
-        resolver: true
-  YouTubeResult:
-    model:
-      - github.com/steph-dm/MyUta/backend/pkg/youtube.Result
-  ExtractedReview:
-    model:
-      - github.com/steph-dm/MyUta/backend/internal/service.ExtractedReview
-  DashboardStats:
-    model:
-      - github.com/steph-dm/MyUta/backend/internal/storage.DashboardStats
+      date: { fieldName: PerformedOn }
+      song: { resolver: true }
+      isPersonalBest: { resolver: true }
+  MachineStat:
+    model: github.com/steph-dm/MyUta/backend/internal/storage.MachineStat
   MostPracticedSong:
-    model:
-      - github.com/steph-dm/MyUta/backend/internal/storage.MostPracticedSong
+    model: github.com/steph-dm/MyUta/backend/internal/storage.MostPracticedSong
   IssueStat:
-    model:
-      - github.com/steph-dm/MyUta/backend/internal/storage.IssueStat
+    model: github.com/steph-dm/MyUta/backend/internal/storage.IssueStat
+  DashboardStats:
+    model: github.com/steph-dm/MyUta/backend/internal/storage.DashboardStats
+  YouTubeResult:
+    model: github.com/steph-dm/MyUta/backend/internal/youtube.Result
+  ExtractedReview:
+    model: github.com/steph-dm/MyUta/backend/internal/ocr.Result
+    fields:
+      date: { fieldName: Date }
+  ImportRowError:
+    model: github.com/steph-dm/MyUta/backend/internal/service.RowError
   ImportResult:
-    model:
-      - github.com/steph-dm/MyUta/backend/internal/storage.ImportResult
+    model: github.com/steph-dm/MyUta/backend/internal/service.ImportResult
+  ChangeEmailResult:
+    model: github.com/steph-dm/MyUta/backend/internal/service.ChangeEmailResult
+  ProfileInput:
+    fields:
+      defaultMachineType: { omittable: true }

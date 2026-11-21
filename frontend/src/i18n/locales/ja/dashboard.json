@@ -1,35 +1,26 @@
 {
-    "title": "ダッシュボード",
-    "welcome": "おかえりなさい、{{name}}",
-    "stats": {
-        "totalSongs": "曲数",
-        "totalReviews": "採点回数",
-        "totalArtists": "アーティスト数",
-        "averageScore": "平均点",
-        "highestScore": "最高点",
-        "favoriteArtists": "お気に入りアーティスト",
-        "favoriteSongs": "お気に入り曲"
-    },
-    "recentReviews": "マイカラオケ採点記録",
-    "noRecentReviews": "採点記録がありません",
-    "startReviewing": "カラオケの採点記録をつけましょう！",
-    "topSongs": "よく歌う曲",
-    "noTopSongs": "採点記録がまだありません",
-    "commonIssues": "よくある課題",
-    "noIssues": "課題の記録がまだありません",
-    "viewAll": "すべて表示",
-    "lastSession": "最終練習",
-    "never": "なし",
-    "quickStats": "概要",
-    "overview": "概要",
-    "scoreDistribution": "採点履歴",
-    "sessions30Days": "セッション数（30日間）",
-    "vsPrevious30Days": "前の30日間と比較",
-    "noPriorData": "比較データなし",
-    "noSessionsYet": "セッションなし",
-    "mostPracticed": "最も練習した曲",
-    "by": " / ",
-    "reviews": "回",
-    "areasNeedWork": "重点的に練習すべき課題",
-    "times": "回"
+  "welcome": "ようこそ、{{name}}さん！",
+  "startReviewing": "最初の採点を記録すると、ここに統計が表示されます。",
+  "stats": {
+    "totalReviews": "採点数",
+    "average": "平均",
+    "best": "最高 {{score}}",
+    "library": "{{songs}}曲・{{artists}}アーティスト"
+  },
+  "sessions": {
+    "title": "歌った日数（30日間）",
+    "vsPrevious": "前の30日間と比べて {{arrow}} {{diff}}",
+    "noPriorData": "前の30日間のデータはありません",
+    "none": "まだ記録がありません"
+  },
+  "mostPracticed": "最も練習した曲",
+  "mostPracticedValue": "{{artist}}「{{title}}」（{{count}}回）",
+  "recent": {
+    "title": "最近の採点",
+    "description": "機種ごとの最近の採点"
+  },
+  "issues": {
+    "title": "よくある課題",
+    "description": "各曲の最新の採点から"
+  }
 }

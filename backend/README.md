@@ -1,49 +1,37 @@
-# MyUta Backend
+# MyUta backend
 
-Go + GraphQL API using gqlgen and Bun ORM on PostgreSQL.
-
-## Running it
+Go 1.26 GraphQL API (gqlgen) on PostgreSQL. Structure: see `../docs/architecture.md`.
 
 ```bash
-cp .env.example .env   # fill in DATABASE_URL and JWT_SECRET at minimum
-docker compose up postgres -d   # from project root
-go run ./cmd/server
+cp .env.example .env
+go run ./cmd/server                    # http://localhost:4000 (GraphiQL at / in development)
+go run ./cmd/migrate status            # migrations
+go run ./cmd/migrate create add_thing  # new migration file
+go test ./...                          # unit tests
+TEST_DATABASE_URL=postgres://…/postgres go test -tags integration ./...   # with PostgreSQL
+go tool gqlgen generate                # after editing schema.graphql
+golangci-lint run ./...
 ```
 
-Migrations run on startup. GraphQL playground is at `http://localhost:4000/` in dev mode, API at `/graphql`, health check at `/healthz`.
+GraphiQL needs the header `{"X-MyUta-Client": "graphiql"}` (CSRF protection).
 
-Check `.env.example` for all config options.
+## Endpoints
 
-## Code generation
+| Path | |
+| --- | --- |
+| `POST /graphql` | JSON or multipart (uploads). GET is not accepted. |
+| `GET /export?format=json\|csv` | file download for the signed-in user |
+| `GET /healthz` | 200 when the database answers |
+| `GET /livez` | 200 when the process runs |
 
-After editing `schema.graphql`:
+## Errors
 
-```bash
-go run github.com/99designs/gqlgen generate
-```
+Every error has `extensions.code` (`BAD_USER_INPUT`, `UNAUTHENTICATED`, `NOT_FOUND`,
+`CONFLICT`, `RATE_LIMITED`, `FEATURE_DISABLED`, `SERVICE_UNAVAILABLE`, `PAYLOAD_TOO_LARGE`,
+`INTERNAL_SERVER_ERROR`, plus gqlgen's validation codes). Application errors also carry a
+stable `reason` (e.g. `EMAIL_TAKEN`, `DUPLICATE_SONG`) and `field`; see `internal/apperror`.
 
-or just `go generate ./...`. If it complains about missing modules, run `go get github.com/99designs/gqlgen` first.
+## Limits
 
-## Tests
-
-```bash
-go test ./...
-```
-
-## Sample data
-
-`seed_test_data.sql` — 15 artists, 33 songs, 50 reviews.
-
-```bash
-make seed
-```
-
-Login: `taro.tanaka@example.com` / `password123`
-
-## Layout
-
-`cmd/server/` — entry point
-`internal/service/` — business logic
-`internal/storage/` — database layer
-`internal/graph/` — GraphQL resolvers + generated code
-`schema.graphql` — schema definition
+Query cost 2000 (lists cost page size × fields), depth 10, 15 root fields; JSON bodies 1 MB,
+uploads 10 MB; imports up to 5000 takes.

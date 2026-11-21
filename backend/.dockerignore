@@ -1,5 +1,11 @@
+# Not needed to build the server image
 .env
 .env.*
 *.md
 Dockerfile
 .dockerignore
+.golangci.yml
+seed_test_data.sql
+bin/
+**/*_test.go
+internal/testutil/

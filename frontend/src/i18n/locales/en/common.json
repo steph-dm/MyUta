@@ -1,85 +1,160 @@
 {
-    "nav": {
-        "dashboard": "Dashboard",
-        "artists": "Artists",
-        "songs": "Songs",
-        "reviews": "Reviews"
+  "appName": "MyUta",
+  "nav": {
+    "dashboard": "Dashboard",
+    "songs": "Songs",
+    "artists": "Artists",
+    "reviews": "Takes",
+    "profile": "Profile",
+    "main": "Main navigation"
+  },
+  "actions": {
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "deleting": "Deleting…",
+    "close": "Close",
+    "retry": "Retry",
+    "logout": "Log out",
+    "play": "Play",
+    "stop": "Stop",
+    "share": "Share score card",
+    "remove": "Remove {{name}}",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "expandSidebar": "Expand sidebar",
+    "collapseSidebar": "Collapse sidebar",
+    "toggleTheme": "Dark mode",
+    "addFavorite": "Add to favourites",
+    "removeFavorite": "Remove from favourites"
+  },
+  "language": "Language",
+  "languages": {
+    "en": "English",
+    "ja": "日本語"
+  },
+  "genres": {
+    "ANIME": "Anime",
+    "CLASSICAL": "Classical",
+    "ELECTRO": "Electronic",
+    "FOLK": "Folk",
+    "HIPHOP": "Hip-hop",
+    "JAZZ": "Jazz",
+    "POP": "Pop",
+    "ROCK": "Rock"
+  },
+  "issues": {
+    "BRIDGE": "Bridge",
+    "CHORUS": "Chorus",
+    "EXPRESSIVENESS": "Expressiveness",
+    "INTRO": "Intro",
+    "MELODY": "Pitch",
+    "OUTRO": "Outro",
+    "RANGE": "Range",
+    "REVIEW": "Overall",
+    "RHYTHM": "Rhythm",
+    "SPEED": "Speed",
+    "VERSE": "Verse"
+  },
+  "sort": {
+    "label": "Sort",
+    "aToZ": "A → Z",
+    "zToA": "Z → A",
+    "recent": "Recently sung"
+  },
+  "pagination": {
+    "showing": "{{from}}–{{to}} of {{total}}",
+    "page": "Page {{page}} of {{pages}}",
+    "previous": "Previous page",
+    "next": "Next page",
+    "perPage": "Rows per page"
+  },
+  "empty": {
+    "noResults": "No results",
+    "noResultsDesc": "Try other search words or clear the filters."
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "loadFailed": "The data could not be loaded.",
+    "unexpected": "An unexpected error occurred.",
+    "notFoundTitle": "Page not found",
+    "notFoundDesc": "This page does not exist or has moved.",
+    "backHome": "Back to the start page",
+    "codes": {
+      "BAD_USER_INPUT": "Please check the highlighted fields.",
+      "UNAUTHENTICATED": "Please sign in again.",
+      "FORBIDDEN": "You are not allowed to do this.",
+      "NOT_FOUND": "It no longer exists. It may have been deleted.",
+      "CONFLICT": "This conflicts with existing data.",
+      "RATE_LIMITED": "Too many attempts. Try again in {{seconds}} seconds.",
+      "FEATURE_DISABLED": "This feature is not available on this server.",
+      "SERVICE_UNAVAILABLE": "The service is temporarily unavailable. Please retry.",
+      "PAYLOAD_TOO_LARGE": "The file is too large (maximum {{maxMb}} MB).",
+      "NETWORK_ERROR": "No connection to the server.",
+      "INTERNAL_SERVER_ERROR": "Something went wrong on the server."
     },
-    "language": "Language",
-    "actions": {
-        "save": "Save",
-        "cancel": "Cancel",
-        "delete": "Delete",
-        "edit": "Edit",
-        "clear": "Clear",
-        "close": "Close",
-        "confirm": "Confirm",
-        "search": "Search",
-        "loading": "Loading...",
-        "logout": "Logout",
-        "profile": "Profile",
-        "back": "Back",
-        "add": "Add",
-        "export": "Export",
-        "import": "Import",
-        "closeMenu": "Close menu",
-        "openMenu": "Open menu",
-        "play": "Play",
-        "stop": "Stop",
-        "closePlayer": "Close player",
-        "toggleTheme": "Toggle theme",
-        "expandSidebar": "Expand sidebar",
-        "collapseSidebar": "Collapse sidebar"
-    },
-    "empty": {
-        "noResults": "No results found",
-        "tryAdjusting": "Try adjusting your search or filters."
-    },
-    "errors": {
-        "generic": "Something went wrong",
-        "unexpectedMessage": "An unexpected error occurred. Please try again.",
-        "tryAgain": "Try Again",
-        "notFound": "Page not found",
-        "notFoundDesc": "The page you're looking for doesn't exist or has been moved.",
-        "backHome": "Back to Dashboard",
-        "invalidUrl": "Invalid URL",
-        "loadFailed": "Failed to load data",
-        "api": {
-            "invalidCredentials": "Invalid email or password",
-            "emailTaken": "Email already in use",
-            "nameTaken": "Name already taken",
-            "wrongCurrentPassword": "Current password is incorrect",
-            "wrongPassword": "Password is incorrect",
-            "accountDeactivated": "This account has been deactivated",
-            "notAuthorized": "You don't have permission to do this",
-            "notFound": "The requested item was not found",
-            "passwordTooShort": "Password must be at least 12 characters",
-            "passwordTooLong": "Password cannot exceed 72 characters",
-            "passwordNeedsLowercase": "Password must contain a lowercase letter",
-            "passwordNeedsUppercase": "Password must contain an uppercase letter",
-            "passwordNeedsNumber": "Password must contain a number",
-            "passwordNeedsSpecial": "Password must contain a special character",
-            "invalidEmail": "Invalid email format",
-            "nameLength": "Name must be between 1 and 20 characters",
-            "importTooLarge": "Import data cannot exceed 5MB",
-            "scoreRange": "Score must be between 0 and 100",
-            "invalidDate": "Invalid date format"
-        }
-    },
-    "confirm": {
-        "deleteTitle": "Are you sure?",
-        "deleteDesc": "This action cannot be undone.",
-        "bulkDeleteDesc": "Delete {{count}} selected items? This action cannot be undone."
-    },
-    "sort": {
-        "aToZ": "A to Z",
-        "zToA": "Z to A",
-        "newest": "Newest first",
-        "oldest": "Oldest first",
-        "highScore": "Highest score",
-        "lowScore": "Lowest score"
-    },
-    "showing": "Showing {{count}} of {{total}}",
-    "itemCount_one": "{{count}} {{item}}",
-    "itemCount_other": "{{count}} {{item}}"
+    "reasons": {
+      "INVALID_CREDENTIALS": "Wrong e-mail address or password.",
+      "WRONG_PASSWORD": "The password is not correct.",
+      "EMAIL_TAKEN": "This e-mail address is already registered.",
+      "INVALID_EMAIL": "Enter a valid e-mail address.",
+      "PASSWORD_TOO_SHORT": "Use at least 12 characters.",
+      "PASSWORD_TOO_LONG": "The password is too long (72 bytes at most).",
+      "NAME_LENGTH": "Use 1 to 30 characters.",
+      "TITLE_LENGTH": "Use 1 to 200 characters.",
+      "ARTIST_NAME_LENGTH": "Use 1 to 200 characters.",
+      "NOTES_LENGTH": "Notes can be 1000 characters at most.",
+      "VARIANT_LENGTH": "Use 100 characters at most.",
+      "SCORE_RANGE": "Enter a score between 0 and 100.",
+      "KEY_CHANGE_RANGE": "Key change must be between -12 and +12.",
+      "DETAILS_RANGE": "Breakdown values must be between 0 and 100.",
+      "DATE_INVALID": "Enter a valid date.",
+      "DATE_IN_FUTURE": "The date cannot be in the future.",
+      "INVALID_GENRE": "Unknown genre.",
+      "INVALID_ISSUE": "Unknown issue.",
+      "INVALID_MACHINE": "Unknown machine.",
+      "INVALID_LANGUAGE": "Unsupported language.",
+      "INVALID_YOUTUBE_URL": "Enter a YouTube video link (https://…).",
+      "SONG_REQUIRED": "Choose a song.",
+      "DUPLICATE_SONG": "This artist already has a song with this title.",
+      "ARTIST_EXISTS": "Another artist already has this name.",
+      "SAME_ARTIST": "Choose two different artists.",
+      "BATCH_SIZE": "Select between 1 and 100 items.",
+      "PAGINATION": "Invalid page.",
+      "INVALID_IMPORT": "This file is not a MyUta export (JSON or CSV).",
+      "IMPORT_TOO_MANY_ROWS": "The file has too many takes for one import.",
+      "INVALID_TOKEN": "This link is invalid or has expired.",
+      "INVALID_IMAGE": "Choose a PNG, JPEG, WebP or GIF image.",
+      "OCR_UNREADABLE": "No karaoke result could be read from this image.",
+      "UPSTREAM_RATE_LIMITED": "The external service is busy. Try again later.",
+      "UPSTREAM_FAILED": "The external service did not answer. Please retry.",
+      "CSRF_HEADER_MISSING": "The request was blocked. Reload the page.",
+      "QUERY_TOO_DEEP": "The request is too complex.",
+      "TOO_MANY_FIELDS": "The request is too complex.",
+      "INVALID_ID": "Not found."
+    }
+  },
+  "session": {
+    "expiredTitle": "Your session has ended",
+    "expiredDesc": "Sign in again to continue. What you typed on this page is kept.",
+    "unavailable": "The server cannot be reached right now. Your data is safe; please retry in a moment."
+  },
+  "player": {
+    "title": "Player",
+    "openOnYouTube": "Open on YouTube",
+    "unavailable": "This video cannot be played here.",
+    "queue": "{{index}} / {{total}}",
+    "next": "Next song",
+    "previous": "Previous song"
+  },
+  "confirm": {
+    "discardTitle": "Discard your changes?",
+    "discardDesc": "What you entered will be lost.",
+    "discard": "Discard",
+    "keepEditing": "Keep editing"
+  },
+  "privacy": {
+    "analytics": "This site counts page views and feature use with cookieless analytics. No song titles, names or e-mail addresses are sent."
+  }
 }

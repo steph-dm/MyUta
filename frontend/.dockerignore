@@ -1,6 +1,6 @@
-# Build artifacts excluded from Docker context
 node_modules
 build
+coverage
 .env
 .env.*
 *.md

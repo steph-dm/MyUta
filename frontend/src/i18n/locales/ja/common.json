@@ -1,85 +1,160 @@
 {
-    "nav": {
-        "dashboard": "ダッシュボード",
-        "artists": "アーティスト",
-        "songs": "曲",
-        "reviews": "採点記録"
+  "appName": "マイウタ",
+  "nav": {
+    "dashboard": "ダッシュボード",
+    "songs": "曲",
+    "artists": "アーティスト",
+    "reviews": "採点記録",
+    "profile": "プロフィール",
+    "main": "メインナビゲーション"
+  },
+  "actions": {
+    "save": "保存",
+    "saving": "保存中…",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "deleting": "削除中…",
+    "close": "閉じる",
+    "retry": "再試行",
+    "logout": "ログアウト",
+    "play": "再生",
+    "stop": "停止",
+    "share": "採点結果を共有",
+    "remove": "{{name}}を削除",
+    "openMenu": "メニューを開く",
+    "closeMenu": "メニューを閉じる",
+    "expandSidebar": "サイドバーを展開",
+    "collapseSidebar": "サイドバーを折りたたむ",
+    "toggleTheme": "ダークモード",
+    "addFavorite": "お気に入りに追加",
+    "removeFavorite": "お気に入りから削除"
+  },
+  "language": "言語",
+  "languages": {
+    "en": "English",
+    "ja": "日本語"
+  },
+  "genres": {
+    "ANIME": "アニメ",
+    "CLASSICAL": "クラシック",
+    "ELECTRO": "エレクトロ",
+    "FOLK": "フォーク",
+    "HIPHOP": "ヒップホップ",
+    "JAZZ": "ジャズ",
+    "POP": "ポップ",
+    "ROCK": "ロック"
+  },
+  "issues": {
+    "BRIDGE": "Cメロ",
+    "CHORUS": "サビ",
+    "EXPRESSIVENESS": "表現力",
+    "INTRO": "イントロ",
+    "MELODY": "音程",
+    "OUTRO": "アウトロ",
+    "RANGE": "音域",
+    "REVIEW": "総合",
+    "RHYTHM": "リズム",
+    "SPEED": "テンポ",
+    "VERSE": "Aメロ・Bメロ"
+  },
+  "sort": {
+    "label": "並び替え",
+    "aToZ": "昇順",
+    "zToA": "降順",
+    "recent": "最近歌った順"
+  },
+  "pagination": {
+    "showing": "{{total}}件中 {{from}}～{{to}}件",
+    "page": "{{pages}}ページ中 {{page}}ページ",
+    "previous": "前のページ",
+    "next": "次のページ",
+    "perPage": "表示件数"
+  },
+  "empty": {
+    "noResults": "結果が見つかりません",
+    "noResultsDesc": "検索語を変えるか、フィルターをクリアしてください。"
+  },
+  "errors": {
+    "generic": "エラーが発生しました。もう一度お試しください。",
+    "loadFailed": "データを読み込めませんでした。",
+    "unexpected": "予期しないエラーが発生しました。",
+    "notFoundTitle": "ページが見つかりません",
+    "notFoundDesc": "お探しのページは存在しないか、移動されました。",
+    "backHome": "トップページに戻る",
+    "codes": {
+      "BAD_USER_INPUT": "入力内容を確認してください。",
+      "UNAUTHENTICATED": "もう一度サインインしてください。",
+      "FORBIDDEN": "この操作は許可されていません。",
+      "NOT_FOUND": "見つかりません。削除された可能性があります。",
+      "CONFLICT": "既存のデータと重複しています。",
+      "RATE_LIMITED": "試行回数が多すぎます。{{seconds}}秒後にもう一度お試しください。",
+      "FEATURE_DISABLED": "この機能はこのサーバーでは利用できません。",
+      "SERVICE_UNAVAILABLE": "サービスに一時的に接続できません。再試行してください。",
+      "PAYLOAD_TOO_LARGE": "ファイルが大きすぎます（最大{{maxMb}}MB）。",
+      "NETWORK_ERROR": "サーバーに接続できません。",
+      "INTERNAL_SERVER_ERROR": "サーバーでエラーが発生しました。"
     },
-    "language": "言語",
-    "actions": {
-        "save": "保存",
-        "cancel": "キャンセル",
-        "delete": "削除",
-        "edit": "編集",
-        "clear": "クリア",
-        "close": "閉じる",
-        "confirm": "確認",
-        "search": "検索",
-        "loading": "読み込み中...",
-        "logout": "ログアウト",
-        "profile": "プロフィール",
-        "back": "戻る",
-        "add": "追加",
-        "export": "エクスポート",
-        "import": "インポート",
-        "closeMenu": "メニューを閉じる",
-        "openMenu": "メニューを開く",
-        "play": "再生",
-        "stop": "停止",
-        "closePlayer": "プレーヤーを閉じる",
-        "toggleTheme": "テーマを切り替える",
-        "expandSidebar": "サイドバーを展開",
-        "collapseSidebar": "サイドバーを折りたたむ"
-    },
-    "empty": {
-        "noResults": "結果が見つかりません",
-        "tryAdjusting": "検索条件やフィルターを変更してみてください。"
-    },
-    "errors": {
-        "generic": "エラーが発生しました",
-        "unexpectedMessage": "予期しないエラーが発生しました。もう一度お試しください。",
-        "tryAgain": "再試行",
-        "notFound": "ページが見つかりません",
-        "notFoundDesc": "お探しのページは存在しないか、移動されました。",
-        "backHome": "ダッシュボードに戻る",
-        "invalidUrl": "無効なURL",
-        "loadFailed": "データの読み込みに失敗しました",
-        "api": {
-            "invalidCredentials": "メールアドレスまたはパスワードが正しくありません",
-            "emailTaken": "このメールアドレスは既に使用されています",
-            "nameTaken": "この名前は既に使用されています",
-            "wrongCurrentPassword": "現在のパスワードが正しくありません",
-            "wrongPassword": "パスワードが正しくありません",
-            "accountDeactivated": "このアカウントは無効化されています",
-            "notAuthorized": "この操作を行う権限がありません",
-            "notFound": "指定された項目が見つかりません",
-            "passwordTooShort": "パスワードは12文字以上にしてください",
-            "passwordTooLong": "パスワードは72文字以下にしてください",
-            "passwordNeedsLowercase": "パスワードに小文字を含めてください",
-            "passwordNeedsUppercase": "パスワードに大文字を含めてください",
-            "passwordNeedsNumber": "パスワードに数字を含めてください",
-            "passwordNeedsSpecial": "パスワードに特殊文字を含めてください",
-            "invalidEmail": "メールアドレスの形式が正しくありません",
-            "nameLength": "名前は1〜20文字にしてください",
-            "importTooLarge": "インポートデータは5MB以下にしてください",
-            "scoreRange": "スコアは0〜100の範囲で入力してください",
-            "invalidDate": "日付の形式が正しくありません"
-        }
-    },
-    "confirm": {
-        "deleteTitle": "本当に削除しますか？",
-        "deleteDesc": "この操作は取り消せません。",
-        "bulkDeleteDesc": "{{count}}件の選択項目を削除しますか？この操作は取り消せません。"
-    },
-    "sort": {
-        "aToZ": "あ → ん",
-        "zToA": "ん → あ",
-        "newest": "新しい順",
-        "oldest": "古い順",
-        "highScore": "高得点順",
-        "lowScore": "低得点順"
-    },
-    "showing": "{{total}}件中{{count}}件表示",
-    "itemCount_one": "{{count}}{{item}}",
-    "itemCount_other": "{{count}}{{item}}"
+    "reasons": {
+      "INVALID_CREDENTIALS": "メールアドレスまたはパスワードが正しくありません。",
+      "WRONG_PASSWORD": "パスワードが正しくありません。",
+      "EMAIL_TAKEN": "このメールアドレスは既に登録されています。",
+      "INVALID_EMAIL": "有効なメールアドレスを入力してください。",
+      "PASSWORD_TOO_SHORT": "12文字以上にしてください。",
+      "PASSWORD_TOO_LONG": "パスワードが長すぎます（最大72バイト）。",
+      "NAME_LENGTH": "1〜30文字で入力してください。",
+      "TITLE_LENGTH": "1〜200文字で入力してください。",
+      "ARTIST_NAME_LENGTH": "1〜200文字で入力してください。",
+      "NOTES_LENGTH": "メモは1000文字までです。",
+      "VARIANT_LENGTH": "100文字以内で入力してください。",
+      "SCORE_RANGE": "0〜100の得点を入力してください。",
+      "KEY_CHANGE_RANGE": "キーは-12〜+12の範囲です。",
+      "DETAILS_RANGE": "内訳は0〜100の値にしてください。",
+      "DATE_INVALID": "有効な日付を入力してください。",
+      "DATE_IN_FUTURE": "未来の日付は指定できません。",
+      "INVALID_GENRE": "不明なジャンルです。",
+      "INVALID_ISSUE": "不明な課題です。",
+      "INVALID_MACHINE": "不明な機種です。",
+      "INVALID_LANGUAGE": "対応していない言語です。",
+      "INVALID_YOUTUBE_URL": "YouTube動画のリンク（https://…）を入力してください。",
+      "SONG_REQUIRED": "曲を選択してください。",
+      "DUPLICATE_SONG": "このアーティストには同じタイトルの曲があります。",
+      "ARTIST_EXISTS": "同じ名前のアーティストが既にあります。",
+      "SAME_ARTIST": "別々のアーティストを選んでください。",
+      "BATCH_SIZE": "1〜100件を選択してください。",
+      "PAGINATION": "ページの指定が正しくありません。",
+      "INVALID_IMPORT": "マイウタのエクスポートファイル（JSONまたはCSV）ではありません。",
+      "IMPORT_TOO_MANY_ROWS": "1回でインポートできる件数を超えています。",
+      "INVALID_TOKEN": "このリンクは無効か、有効期限が切れています。",
+      "INVALID_IMAGE": "PNG・JPEG・WebP・GIF画像を選択してください。",
+      "OCR_UNREADABLE": "この画像から採点結果を読み取れませんでした。",
+      "UPSTREAM_RATE_LIMITED": "外部サービスが混み合っています。しばらくしてからお試しください。",
+      "UPSTREAM_FAILED": "外部サービスが応答しませんでした。再試行してください。",
+      "CSRF_HEADER_MISSING": "リクエストがブロックされました。ページを再読み込みしてください。",
+      "QUERY_TOO_DEEP": "リクエストが複雑すぎます。",
+      "TOO_MANY_FIELDS": "リクエストが複雑すぎます。",
+      "INVALID_ID": "見つかりません。"
+    }
+  },
+  "session": {
+    "expiredTitle": "セッションの有効期限が切れました",
+    "expiredDesc": "続けるにはもう一度サインインしてください。このページの入力内容は保持されます。",
+    "unavailable": "現在サーバーに接続できません。データは失われていません。しばらくしてから再試行してください。"
+  },
+  "player": {
+    "title": "プレーヤー",
+    "openOnYouTube": "YouTubeで開く",
+    "unavailable": "この動画はここでは再生できません。",
+    "queue": "{{index}} / {{total}}",
+    "next": "次の曲",
+    "previous": "前の曲"
+  },
+  "confirm": {
+    "discardTitle": "変更を破棄しますか？",
+    "discardDesc": "入力した内容は失われます。",
+    "discard": "破棄",
+    "keepEditing": "編集を続ける"
+  },
+  "privacy": {
+    "analytics": "このサイトはCookieを使わない解析でページ閲覧数と機能の利用回数を計測しています。曲名・名前・メールアドレスは送信されません。"
+  }
 }

@@ -1,4 +1,12 @@
+"""A calendar day, e.g. "2026-11-21". No time zone: it is the day the user chose."""
+scalar Date
+"""An instant, RFC 3339 in UTC."""
 scalar DateTime
+"""A file sent with a multipart request (GraphQL multipart request spec)."""
+scalar Upload
+
+"""The field requires a signed-in user (UNAUTHENTICATED otherwise)."""
+directive @auth on FIELD_DEFINITION
 
 enum Genre {
   ANIME
@@ -25,25 +33,50 @@ enum Issue {
   VERSE
 }
 
+"""Scoring system. Adding one: see docs/adding-a-machine.md."""
 enum MachineType {
   DAM
   JOYSOUND
+  KSTAGE
+}
+
+enum MachineKind {
+  VENUE
+  HOME
+}
+
+enum Language {
+  en
+  ja
+}
+
+type Machine {
+  code: MachineType!
+  label: String!
+  kind: MachineKind!
+}
+
+"""What this server supports. Clients hide features that are disabled."""
+type ServerInfo {
+  ocrEnabled: Boolean!
+  youtubeSearchEnabled: Boolean!
+  mailEnabled: Boolean!
+  passwordMinLength: Int!
+  passwordMaxBytes: Int!
+  maxUploadBytes: Int!
+  maxImportRows: Int!
+  machines: [Machine!]!
 }
 
 type User {
   id: ID!
   email: String!
-  name: String
-  reviews: [Review!]!
-  isAdmin: Boolean!
+  emailVerified: Boolean!
+  name: String!
   defaultMachineType: MachineType
+  language: Language
   createdAt: DateTime!
   updatedAt: DateTime!
-}
-
-type AuthPayload {
-  token: String!
-  user: User!
 }
 
 type Artist {
@@ -51,7 +84,8 @@ type Artist {
   name: String!
   songs: [Song!]!
   songCount: Int!
-  isFavorite: Boolean
+  reviewCount: Int!
+  isFavorite: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -64,36 +98,151 @@ type Song {
   youtubeUrl: String
   generatedYoutube: Boolean!
   reviewCount: Int!
-  reviews: [ReviewWithSong!]!
-  isFavorite: Boolean
+  """All takes of this song, newest first."""
+  reviews: [Review!]!
+  isFavorite: Boolean!
+  goals: [SongGoal!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
 
+type SongGoal {
+  machineType: MachineType!
+  targetScore: Float!
+  bestScore: Float
+  achieved: Boolean!
+}
+
+"""Breakdown shown on a result screen. Percentages are 0-100."""
+type ScoreDetails {
+  pitch: Float
+  stability: Float
+  rhythm: Float
+  expression: Float
+  techniques: Float
+  articulation: Float
+  totalPoints: Int
+  grade: String
+}
+
+input ScoreDetailsInput {
+  pitch: Float
+  stability: Float
+  rhythm: Float
+  expression: Float
+  techniques: Float
+  articulation: Float
+  totalPoints: Int
+  grade: String
+}
+
+"""One take of a song."""
 type Review {
   id: ID!
-  date: DateTime!
-  user: User!
-  userId: String!
-  songId: String!
-  score: Float!
-  machineType: MachineType!
-  issues: [Issue!]!
-  notes: String
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type ReviewWithSong {
-  id: ID!
-  date: DateTime!
-  user: User!
+  date: Date!
   song: Song!
   score: Float!
   machineType: MachineType!
+  """Transposition in semitones (-12..12)."""
+  keyChange: Int!
+  """Free label for the version sung, e.g. a map difficulty or mod."""
+  variant: String
   issues: [Issue!]!
   notes: String
+  details: ScoreDetails
+  """True when no other take of this song on this machine scored higher."""
+  isPersonalBest: Boolean!
   createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type ReviewPage {
+  items: [Review!]!
+  totalCount: Int!
+}
+
+type SongPage {
+  items: [Song!]!
+  totalCount: Int!
+}
+
+type ArtistPage {
+  items: [Artist!]!
+  totalCount: Int!
+}
+
+input ReviewFilter {
+  machineType: MachineType
+  songId: ID
+  artistId: ID
+  """Matches song titles and artist names (case and width insensitive)."""
+  search: String
+  genres: [Genre!]
+  dateFrom: Date
+  dateTo: Date
+}
+
+enum ReviewSort {
+  DATE_DESC
+  DATE_ASC
+  SCORE_DESC
+  SCORE_ASC
+}
+
+input SongFilter {
+  search: String
+  genres: [Genre!]
+  favoritesOnly: Boolean
+  artistId: ID
+}
+
+enum SongSort {
+  TITLE_ASC
+  TITLE_DESC
+  RECENT
+}
+
+input ArtistFilter {
+  search: String
+  favoritesOnly: Boolean
+}
+
+enum ArtistSort {
+  NAME_ASC
+  NAME_DESC
+}
+
+type MachineStat {
+  machineType: MachineType!
+  reviewCount: Int!
+  averageScore: Float!
+  bestScore: Float!
+}
+
+type MostPracticedSong {
+  songId: ID!
+  title: String!
+  artistName: String!
+  count: Int!
+}
+
+type IssueStat {
+  issue: Issue!
+  count: Int!
+}
+
+type DashboardStats {
+  totalReviews: Int!
+  totalSongs: Int!
+  totalArtists: Int!
+  """Distinct days with at least one take, in the last 30 days."""
+  sessionsLast30Days: Int!
+  """Same for the 30 days before that."""
+  sessionsPrev30Days: Int!
+  mostPracticed: MostPracticedSong
+  """Issues of the latest take of each song."""
+  commonIssues: [IssueStat!]!
+  machineStats: [MachineStat!]!
 }
 
 type YouTubeResult {
@@ -109,116 +258,131 @@ type ExtractedReview {
   artistName: String!
   songTitleAlt: String
   artistNameAlt: String
-  score: Float!
-  date: String!
-  machineType: MachineType!
+  score: Float
+  date: Date
+  machineType: MachineType
   notes: String
   genres: [Genre!]!
   issues: [Issue!]!
+  details: ScoreDetails
 }
 
-type DashboardStats {
-  totalReviews: Int!
-  damAvgScore: Float
-  joysoundAvgScore: Float
-  sessionsThisMonth: Int!
-  sessionsPrevMonth: Int!
-  mostPracticed: MostPracticedSong
-  commonIssues: [IssueStat!]!
-}
-
-type MostPracticedSong {
-  songId: ID!
-  title: String!
-  artistName: String!
-  count: Int!
-}
-
-type IssueStat {
-  issue: Issue!
-  count: Int!
+type ImportRowError {
+  section: String!
+  row: Int!
+  field: String
+  code: String!
+  message: String!
 }
 
 type ImportResult {
   reviewsImported: Int!
+  reviewsDuplicate: Int!
   reviewsSkipped: Int!
-  errors: [String!]!
+  favoritesImported: Int!
+  goalsImported: Int!
+  errors: [ImportRowError!]!
+}
+
+type ChangeEmailResult {
+  user: User!
+  """True when a confirmation link was e-mailed; the address changes once it is opened."""
+  verificationSent: Boolean!
+}
+
+input RegisterInput {
+  email: String!
+  password: String!
+  name: String!
+  language: Language
+}
+
+input ProfileInput {
+  name: String
+  """Explicit null clears the default machine; omit to keep it."""
+  defaultMachineType: MachineType
+  language: Language
+}
+
+input SongInput {
+  title: String!
+  artistName: String!
+  genres: [Genre!]!
+  youtubeUrl: String
+  generatedYoutube: Boolean
+}
+
+"""Either an existing song (songId) or a song described by artist and title."""
+input SongRefInput {
+  songId: ID
+  song: SongInput
+}
+
+input ReviewInput {
+  date: Date!
+  score: Float!
+  machineType: MachineType!
+  keyChange: Int = 0
+  variant: String
+  issues: [Issue!]!
+  notes: String
+  details: ScoreDetailsInput
 }
 
 type Query {
+  serverInfo: ServerInfo!
+  """The signed-in user, or null."""
   me: User
 
-  users: [User!]!
-  user(id: ID!): User
-
-  artists(take: Int, skip: Int): [Artist!]!
-  artist(id: ID!): Artist
-  songs(take: Int, skip: Int): [Song!]!
-  song(id: ID!): Song
-
-  reviews: [Review!]!
-  review(id: ID!): Review
-  myReviews(userId: ID!): [ReviewWithSong!]!
-  reviewsBySong(songId: ID!): [ReviewWithSong!]!
-  recentReviews(days: Int = 7): [ReviewWithSong!]!
-  searchYoutube(artist: String!, song: String!): [YouTubeResult!]!
-  songWithReviews(id: ID!): Song
-  myFavorites: [Song!]!
-  myFavoriteArtists: [Artist!]!
-  exportData: String!
-  dashboardStats: DashboardStats!
+  artists(filter: ArtistFilter, sort: ArtistSort = NAME_ASC, limit: Int = 50, offset: Int = 0): ArtistPage! @auth
+  artist(id: ID!): Artist @auth
+  songs(filter: SongFilter, sort: SongSort = TITLE_ASC, limit: Int = 50, offset: Int = 0): SongPage! @auth
+  song(id: ID!): Song @auth
+  reviews(filter: ReviewFilter, sort: ReviewSort = DATE_DESC, limit: Int = 20, offset: Int = 0): ReviewPage! @auth
+  review(id: ID!): Review @auth
+  myFavoriteSongs: [Song!]! @auth
+  myFavoriteArtists: [Artist!]! @auth
+  dashboardStats: DashboardStats! @auth
 }
 
 type Mutation {
-  register(
-    email: String!
-    password: String!
-    name: String!
-  ): AuthPayload!
-
-  login(email: String!, password: String!): AuthPayload!
-
+  register(input: RegisterInput!): User!
+  login(email: String!, password: String!): User!
   logout: Boolean!
+  logoutEverywhere: Boolean! @auth
+  requestPasswordReset(email: String!): Boolean!
+  resetPassword(token: String!, newPassword: String!): Boolean!
+  verifyEmail(token: String!): Boolean!
+  resendVerificationEmail: Boolean! @auth
 
-  updateUser(
-    id: ID!
-    email: String
-    name: String
-    defaultMachineType: MachineType
-    clearDefaultMachineType: Boolean
-  ): User!
+  updateProfile(input: ProfileInput!): User! @auth
+  changeEmail(newEmail: String!, password: String!): ChangeEmailResult! @auth
+  changePassword(currentPassword: String!, newPassword: String!): Boolean! @auth
+  deleteAccount(password: String!): Boolean! @auth
 
-  upsertArtist(name: String!): Artist!
+  """Records a take; creates the artist and song when needed. All or nothing."""
+  logReview(song: SongRefInput!, review: ReviewInput!): Review! @auth
+  updateReview(id: ID!, input: ReviewInput!): Review! @auth
+  """Returns the number of deleted reviews."""
+  deleteReviews(ids: [ID!]!): Int! @auth
 
-  updateArtist(id: ID!, name: String!): Artist!
+  updateSong(id: ID!, input: SongInput!): Song! @auth
+  """Deletes the song and its reviews. Returns the id."""
+  deleteSong(id: ID!): ID! @auth
+  setSongFavorite(songId: ID!, favorite: Boolean!): Song! @auth
+  """Sets the target score for a machine; null removes the goal."""
+  setSongGoal(songId: ID!, machineType: MachineType!, targetScore: Float): Song! @auth
 
-  upsertSong(
-    id: ID
-    title: String!
-    artistId: ID!
-    genres: [Genre!]!
-    youtubeUrl: String
-    generatedYoutube: Boolean
-  ): Song!
+  """CONFLICT (reason ARTIST_EXISTS, extensions.existingArtistId) when the name is taken."""
+  updateArtist(id: ID!, name: String!): Artist! @auth
+  """Moves everything from source to target and deletes source."""
+  mergeArtists(sourceId: ID!, targetId: ID!): Artist! @auth
+  """Deletes the artist with its songs and reviews. Returns the id."""
+  deleteArtist(id: ID!): ID! @auth
+  setArtistFavorite(artistId: ID!, favorite: Boolean!): Artist! @auth
 
-  upsertReview(
-    id: ID
-    songId: ID!
-    date: DateTime!
-    score: Float!
-    machineType: MachineType!
-    issues: [Issue!]!
-    notes: String
-  ): Review!
-
-  deleteSong(id: ID!): Song
-  deleteArtist(id: ID!): Artist
-  deleteReview(id: ID!): Review
-  toggleFavorite(songId: ID!): Boolean!
-  toggleFavoriteArtist(artistId: ID!): Boolean!
-  changePassword(currentPassword: String!, newPassword: String!): Boolean!
-  deleteReviews(ids: [ID!]!): Int!
-  deleteAccount(password: String!): Boolean!
-  extractReviewFromImage(imageBase64: String!): ExtractedReview!
-  importData(jsonData: String!): ImportResult!
+  searchYoutube(artist: String!, song: String!): [YouTubeResult!]! @auth
+  extractReviewFromImage(image: Upload!): ExtractedReview! @auth
+  """Imports a MyUta JSON export (version 1 or 2) or CSV."""
+  importData(file: Upload!): ImportResult! @auth
 }

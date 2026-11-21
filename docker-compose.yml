@@ -1,56 +1,48 @@
+# Self-hosting / local production-like stack:  cp .env.example .env  &&  make up
+# Only the frontend (nginx) is published; it proxies /graphql and /export to the backend.
 services:
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
     ports:
-      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432" # local tools only (make dev-backend, tests)
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
-      retries: 5
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: '1.0'
+      retries: 10
 
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    build: ./backend
     restart: unless-stopped
     depends_on:
       postgres:
         condition: service_healthy
     environment:
       DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable"
-      JWT_SECRET: ${JWT_SECRET}
+      APP_ENV: ${APP_ENV:-production}
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env (openssl rand -base64 48)}
       PORT: "4000"
-      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
-      APP_ENV: ${APP_ENV:-development}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-172.16.0.0/12,192.168.0.0/16,10.0.0.0/8,fc00::/7}
+      RUN_MIGRATIONS: ${RUN_MIGRATIONS:-true}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
       YOUTUBE_API_KEY: ${YOUTUBE_API_KEY:-}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
-      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-haiku-4-5-20251001}
-    ports:
-      - "4000:4000"
-    healthcheck:
-      test: [ "CMD-SHELL", "wget -q -O /dev/null http://localhost:4000/healthz || exit 1" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-    deploy:
-      resources:
-        limits:
-          memory: 256M
-          cpus: '1.0'
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-haiku-5-5}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USERNAME: ${SMTP_USERNAME:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_FROM: ${SMTP_FROM:-}
+    # no "ports": reachable only through the frontend proxy
     read_only: true
     tmpfs:
       - /tmp
@@ -58,26 +50,25 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      args:
+        VITE_UMAMI_SCRIPT_URL: ${VITE_UMAMI_SCRIPT_URL:-}
+        VITE_UMAMI_WEBSITE_ID: ${VITE_UMAMI_WEBSITE_ID:-}
     restart: unless-stopped
     depends_on:
       backend:
         condition: service_healthy
     environment:
       BACKEND_URL: http://backend:4000
+      NGINX_RESOLVER: 127.0.0.11
+      REAL_IP_FROM: ${REAL_IP_FROM:-127.0.0.1/32}
+      CSP_ANALYTICS_ORIGIN: ${CSP_ANALYTICS_ORIGIN:-}
     ports:
       - "${FRONTEND_PORT:-3000}:8080"
-    deploy:
-      resources:
-        limits:
-          memory: 128M
-          cpus: '0.5'
     read_only: true
     tmpfs:
-      - /tmp:rw,uid=1001,gid=1001,mode=1777
-      - /var/cache/nginx:rw,uid=1001,gid=1001,mode=755
-      - /var/run:rw,uid=1001,gid=1001,mode=755
-      - /etc/nginx/conf.d:rw,uid=1001,gid=1001,mode=755
+      - /tmp
+      - /etc/nginx/conf.d
+      - /etc/nginx/snippets
 
 volumes:
   pgdata:

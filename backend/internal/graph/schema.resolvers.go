@@ -8,516 +8,319 @@ package graph
 import (
 	"context"
 
-	"github.com/steph-dm/MyUta/backend/internal/graph/dataloader"
+	"github.com/99designs/gqlgen/graphql"
+	"github.com/steph-dm/MyUta/backend/internal/domain"
+	"github.com/steph-dm/MyUta/backend/internal/graph/loaders"
+	"github.com/steph-dm/MyUta/backend/internal/graph/model"
+	"github.com/steph-dm/MyUta/backend/internal/ocr"
 	"github.com/steph-dm/MyUta/backend/internal/service"
 	"github.com/steph-dm/MyUta/backend/internal/storage"
-	"github.com/steph-dm/MyUta/backend/pkg/apperror"
-	"github.com/steph-dm/MyUta/backend/pkg/auth"
-	"github.com/steph-dm/MyUta/backend/pkg/middleware"
-	"github.com/steph-dm/MyUta/backend/pkg/scalar"
-	"github.com/steph-dm/MyUta/backend/pkg/validator"
-	"github.com/steph-dm/MyUta/backend/pkg/youtube"
+	"github.com/steph-dm/MyUta/backend/internal/youtube"
 )
 
 // Songs is the resolver for the songs field.
 func (r *artistResolver) Songs(ctx context.Context, obj *storage.Artist) ([]*storage.Song, error) {
-	if obj.LoadedSongs != nil {
-		return obj.LoadedSongs, nil
-	}
-	userID := auth.UserIDFromContext(ctx)
-	if userID == "" {
-		return nil, nil
-	}
-	return r.SongService.ListByArtist(ctx, userID, obj.ID)
+	return loaders.For(ctx).SongsByArtist.Load(ctx, obj.ID)()
 }
 
 // SongCount is the resolver for the songCount field.
 func (r *artistResolver) SongCount(ctx context.Context, obj *storage.Artist) (int, error) {
-	if obj.SongCount != nil {
-		return *obj.SongCount, nil
-	}
-	if obj.LoadedSongs != nil {
-		return len(obj.LoadedSongs), nil
-	}
-	userID := auth.UserIDFromContext(ctx)
-	return r.SongService.CountByArtist(ctx, userID, obj.ID)
+	return loaders.For(ctx).SongCountByArtist.Load(ctx, obj.ID)()
+}
+
+// ReviewCount is the resolver for the reviewCount field.
+func (r *artistResolver) ReviewCount(ctx context.Context, obj *storage.Artist) (int, error) {
+	return loaders.For(ctx).ReviewCountByArtist.Load(ctx, obj.ID)()
 }
 
 // IsFavorite is the resolver for the isFavorite field.
-func (r *artistResolver) IsFavorite(ctx context.Context, obj *storage.Artist) (*bool, error) {
-	userID := auth.UserIDFromContext(ctx)
-	if userID == "" {
-		return nil, nil
-	}
-	result, err := dataloader.For(ctx).FavoriteArtist.Load(ctx, obj.ID)()
-	if err != nil {
-		return nil, err
-	}
-	return &result, nil
+func (r *artistResolver) IsFavorite(ctx context.Context, obj *storage.Artist) (bool, error) {
+	return loaders.For(ctx).ArtistFavorite.Load(ctx, obj.ID)()
 }
 
 // Register is the resolver for the register field.
-func (r *mutationResolver) Register(ctx context.Context, email string, password string, name string) (*storage.AuthPayload, error) {
-	payload, err := r.AuthService.Register(ctx, middleware.ClientIPFromContext(ctx, HTTPRequestKey), email, password, name)
-	if err != nil {
-		return nil, err
-	}
-	SetTokenCookie(ctx, payload.Token, r.SecureCookie)
-	return payload, nil
+func (r *mutationResolver) Register(ctx context.Context, input model.RegisterInput) (*storage.User, error) {
+	return r.Services.Account.Register(ctx, service.RegisterInput{
+		Email: input.Email, Password: input.Password, Name: input.Name, Language: langPtr(input.Language),
+	})
 }
 
 // Login is the resolver for the login field.
-func (r *mutationResolver) Login(ctx context.Context, email string, password string) (*storage.AuthPayload, error) {
-	payload, err := r.AuthService.Login(ctx, middleware.ClientIPFromContext(ctx, HTTPRequestKey), email, password)
-	if err != nil {
-		return nil, err
-	}
-	SetTokenCookie(ctx, payload.Token, r.SecureCookie)
-	return payload, nil
+func (r *mutationResolver) Login(ctx context.Context, email string, password string) (*storage.User, error) {
+	return r.Services.Account.Login(ctx, email, password)
 }
 
 // Logout is the resolver for the logout field.
 func (r *mutationResolver) Logout(ctx context.Context) (bool, error) {
-	ClearTokenCookie(ctx, r.SecureCookie)
-	return true, nil
+	return true, r.Services.Account.Logout(ctx)
 }
 
-// UpdateUser is the resolver for the updateUser field.
-func (r *mutationResolver) UpdateUser(ctx context.Context, id string, email *string, name *string, defaultMachineType *storage.MachineType, clearDefaultMachineType *bool) (*storage.User, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	return r.UserService.UpdateUser(ctx, userID, id, email, name, defaultMachineType, clearDefaultMachineType)
+// LogoutEverywhere is the resolver for the logoutEverywhere field.
+func (r *mutationResolver) LogoutEverywhere(ctx context.Context) (bool, error) {
+	return true, r.Services.Account.LogoutEverywhere(ctx)
 }
 
-// UpsertArtist is the resolver for the upsertArtist field.
-func (r *mutationResolver) UpsertArtist(ctx context.Context, name string) (*storage.Artist, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	return r.ArtistService.UpsertArtist(ctx, userID, name)
+// RequestPasswordReset is the resolver for the requestPasswordReset field.
+func (r *mutationResolver) RequestPasswordReset(ctx context.Context, email string) (bool, error) {
+	return true, r.Services.Account.RequestPasswordReset(ctx, email)
 }
 
-// UpdateArtist is the resolver for the updateArtist field.
-func (r *mutationResolver) UpdateArtist(ctx context.Context, id string, name string) (*storage.Artist, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	return r.ArtistService.UpdateArtist(ctx, userID, id, name)
+// ResetPassword is the resolver for the resetPassword field.
+func (r *mutationResolver) ResetPassword(ctx context.Context, token string, newPassword string) (bool, error) {
+	return true, r.Services.Account.ResetPassword(ctx, token, newPassword)
 }
 
-// UpsertSong is the resolver for the upsertSong field.
-func (r *mutationResolver) UpsertSong(ctx context.Context, id *string, title string, artistID string, genres []storage.Genre, youtubeURL *string, generatedYoutube *bool) (*storage.Song, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	return r.SongService.UpsertSong(ctx, userID, id, title, artistID, genres, youtubeURL, generatedYoutube)
+// VerifyEmail is the resolver for the verifyEmail field.
+func (r *mutationResolver) VerifyEmail(ctx context.Context, token string) (bool, error) {
+	return true, r.Services.Account.VerifyEmail(ctx, token)
 }
 
-// UpsertReview is the resolver for the upsertReview field.
-func (r *mutationResolver) UpsertReview(ctx context.Context, id *string, songID string, date scalar.DateTime, score float64, machineType storage.MachineType, issues []storage.Issue, notes *string) (*storage.Review, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	return r.ReviewService.UpsertReview(ctx, userID, id, songID, date, score, machineType, issues, notes)
+// ResendVerificationEmail is the resolver for the resendVerificationEmail field.
+func (r *mutationResolver) ResendVerificationEmail(ctx context.Context) (bool, error) {
+	return true, r.Services.Account.ResendVerification(ctx)
 }
 
-// DeleteSong is the resolver for the deleteSong field.
-func (r *mutationResolver) DeleteSong(ctx context.Context, id string) (*storage.Song, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	return r.SongService.DeleteSong(ctx, userID, id)
+// UpdateProfile is the resolver for the updateProfile field.
+func (r *mutationResolver) UpdateProfile(ctx context.Context, input model.ProfileInput) (*storage.User, error) {
+	machine, set := input.DefaultMachineType.ValueOK()
+	return r.Services.Account.UpdateProfile(ctx, service.ProfileInput{
+		Name: input.Name, DefaultMachineSet: set, DefaultMachine: machine, Language: langPtr(input.Language),
+	})
 }
 
-// DeleteArtist is the resolver for the deleteArtist field.
-func (r *mutationResolver) DeleteArtist(ctx context.Context, id string) (*storage.Artist, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	return r.ArtistService.DeleteArtist(ctx, userID, id)
-}
-
-// DeleteReview is the resolver for the deleteReview field.
-func (r *mutationResolver) DeleteReview(ctx context.Context, id string) (*storage.Review, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	return r.ReviewService.DeleteReview(ctx, userID, id)
-}
-
-// ToggleFavorite is the resolver for the toggleFavorite field.
-func (r *mutationResolver) ToggleFavorite(ctx context.Context, songID string) (bool, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return false, err
-	}
-	return r.SongService.ToggleFavorite(ctx, userID, songID)
-}
-
-// ToggleFavoriteArtist is the resolver for the toggleFavoriteArtist field.
-func (r *mutationResolver) ToggleFavoriteArtist(ctx context.Context, artistID string) (bool, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return false, err
-	}
-	return r.ArtistService.ToggleFavorite(ctx, userID, artistID)
+// ChangeEmail is the resolver for the changeEmail field.
+func (r *mutationResolver) ChangeEmail(ctx context.Context, newEmail string, password string) (*service.ChangeEmailResult, error) {
+	return r.Services.Account.ChangeEmail(ctx, newEmail, password)
 }
 
 // ChangePassword is the resolver for the changePassword field.
 func (r *mutationResolver) ChangePassword(ctx context.Context, currentPassword string, newPassword string) (bool, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return false, err
-	}
-	if err := r.RateLimiter.Check("chgpwd:"+userID, 5, 3600); err != nil {
-		return false, apperror.Forbidden(err.Error())
-	}
-	return r.AuthService.ChangePassword(ctx, userID, currentPassword, newPassword)
-}
-
-// DeleteReviews is the resolver for the deleteReviews field.
-func (r *mutationResolver) DeleteReviews(ctx context.Context, ids []string) (int, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return 0, err
-	}
-	if err := validator.BatchSize(ids); err != nil {
-		return 0, err
-	}
-	return r.ReviewService.DeleteReviews(ctx, userID, ids)
+	return true, r.Services.Account.ChangePassword(ctx, currentPassword, newPassword)
 }
 
 // DeleteAccount is the resolver for the deleteAccount field.
 func (r *mutationResolver) DeleteAccount(ctx context.Context, password string) (bool, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return false, err
-	}
-	if err := r.RateLimiter.Check("delacc:"+userID, 3, 3600); err != nil {
-		return false, apperror.Forbidden(err.Error())
-	}
-	deleted, err := r.AuthService.DeleteAccount(ctx, userID, password)
-	if err != nil {
-		return false, err
-	}
-	if deleted {
-		ClearTokenCookie(ctx, r.SecureCookie)
-	}
-	return deleted, nil
+	return true, r.Services.Account.DeleteAccount(ctx, password)
+}
+
+// LogReview is the resolver for the logReview field.
+func (r *mutationResolver) LogReview(ctx context.Context, song model.SongRefInput, review model.ReviewInput) (*storage.Review, error) {
+	return r.Services.Reviews.LogReview(ctx, service.SongRef{SongID: song.SongID, Song: songInput(song.Song)}, reviewInput(review))
+}
+
+// UpdateReview is the resolver for the updateReview field.
+func (r *mutationResolver) UpdateReview(ctx context.Context, id string, input model.ReviewInput) (*storage.Review, error) {
+	return r.Services.Reviews.UpdateReview(ctx, id, reviewInput(input))
+}
+
+// DeleteReviews is the resolver for the deleteReviews field.
+func (r *mutationResolver) DeleteReviews(ctx context.Context, ids []string) (int, error) {
+	return r.Services.Reviews.DeleteReviews(ctx, ids)
+}
+
+// UpdateSong is the resolver for the updateSong field.
+func (r *mutationResolver) UpdateSong(ctx context.Context, id string, input model.SongInput) (*storage.Song, error) {
+	return r.Services.Library.UpdateSong(ctx, id, *songInput(&input))
+}
+
+// DeleteSong is the resolver for the deleteSong field.
+func (r *mutationResolver) DeleteSong(ctx context.Context, id string) (string, error) {
+	return id, r.Services.Library.DeleteSong(ctx, id)
+}
+
+// SetSongFavorite is the resolver for the setSongFavorite field.
+func (r *mutationResolver) SetSongFavorite(ctx context.Context, songID string, favorite bool) (*storage.Song, error) {
+	return r.Services.Library.SetSongFavorite(ctx, songID, favorite)
+}
+
+// SetSongGoal is the resolver for the setSongGoal field.
+func (r *mutationResolver) SetSongGoal(ctx context.Context, songID string, machineType domain.MachineType, targetScore *float64) (*storage.Song, error) {
+	return r.Services.Library.SetGoal(ctx, songID, machineType, targetScore)
+}
+
+// UpdateArtist is the resolver for the updateArtist field.
+func (r *mutationResolver) UpdateArtist(ctx context.Context, id string, name string) (*storage.Artist, error) {
+	return r.Services.Library.RenameArtist(ctx, id, name)
+}
+
+// MergeArtists is the resolver for the mergeArtists field.
+func (r *mutationResolver) MergeArtists(ctx context.Context, sourceID string, targetID string) (*storage.Artist, error) {
+	return r.Services.Library.MergeArtists(ctx, sourceID, targetID)
+}
+
+// DeleteArtist is the resolver for the deleteArtist field.
+func (r *mutationResolver) DeleteArtist(ctx context.Context, id string) (string, error) {
+	return id, r.Services.Library.DeleteArtist(ctx, id)
+}
+
+// SetArtistFavorite is the resolver for the setArtistFavorite field.
+func (r *mutationResolver) SetArtistFavorite(ctx context.Context, artistID string, favorite bool) (*storage.Artist, error) {
+	return r.Services.Library.SetArtistFavorite(ctx, artistID, favorite)
+}
+
+// SearchYoutube is the resolver for the searchYoutube field.
+func (r *mutationResolver) SearchYoutube(ctx context.Context, artist string, song string) ([]*youtube.Result, error) {
+	return r.Services.Media.SearchYouTube(ctx, artist, song)
 }
 
 // ExtractReviewFromImage is the resolver for the extractReviewFromImage field.
-func (r *mutationResolver) ExtractReviewFromImage(ctx context.Context, imageBase64 string) (*service.ExtractedReview, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	if err := r.RateLimiter.Check("ocr:"+userID, 10, 3600); err != nil {
-		return nil, apperror.Forbidden(err.Error())
-	}
-	if imageBase64 == "" {
-		return nil, apperror.BadInput("No image provided", "imageBase64")
-	}
-	if len(imageBase64) > 10*1024*1024 {
-		return nil, apperror.BadInput("Image too large. Maximum size is 10MB.", "imageBase64")
-	}
-	if r.OCR == nil {
-		return nil, apperror.Internal("Anthropic API key not configured")
-	}
-	return r.OCR.ExtractReview(ctx, imageBase64)
+func (r *mutationResolver) ExtractReviewFromImage(ctx context.Context, image graphql.Upload) (*ocr.Result, error) {
+	return r.Services.Media.ExtractReview(ctx, image.File)
 }
 
 // ImportData is the resolver for the importData field.
-func (r *mutationResolver) ImportData(ctx context.Context, jsonData string) (*storage.ImportResult, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	if err := r.RateLimiter.Check("import:"+userID, 5, 3600); err != nil {
-		return nil, apperror.Forbidden(err.Error())
-	}
-	if err := validator.ImportSize(jsonData); err != nil {
-		return nil, err
-	}
-	return r.ExportService.ImportData(ctx, userID, jsonData)
+func (r *mutationResolver) ImportData(ctx context.Context, file graphql.Upload) (*service.ImportResult, error) {
+	return r.Services.Data.Import(ctx, file.Filename, file.File)
+}
+
+// ServerInfo is the resolver for the serverInfo field.
+func (r *queryResolver) ServerInfo(ctx context.Context) (*model.ServerInfo, error) {
+	return serverInfo(r.Services), nil
 }
 
 // Me is the resolver for the me field.
 func (r *queryResolver) Me(ctx context.Context) (*storage.User, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	return r.UserService.Me(ctx, userID)
-}
-
-// Users is the resolver for the users field.
-func (r *queryResolver) Users(ctx context.Context) ([]*storage.User, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	return r.UserService.ListUsers(ctx, userID)
-}
-
-// User is the resolver for the user field.
-func (r *queryResolver) User(ctx context.Context, id string) (*storage.User, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	return r.UserService.GetUser(ctx, userID, id)
+	return r.Services.Account.Me(ctx)
 }
 
 // Artists is the resolver for the artists field.
-func (r *queryResolver) Artists(ctx context.Context, take *int, skip *int) ([]*storage.Artist, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
+func (r *queryResolver) Artists(ctx context.Context, filter *model.ArtistFilter, sort *model.ArtistSort, limit *int, offset *int) (*model.ArtistPage, error) {
+	s := storage.ArtistSortNameAsc
+	if sort != nil {
+		s = storage.ArtistSort(*sort)
+	}
+	items, total, err := r.Services.Library.ListArtists(ctx, artistFilter(filter), s, page(limit, offset, 50))
 	if err != nil {
 		return nil, err
 	}
-	if err := validator.Pagination(take, skip); err != nil {
-		return nil, err
-	}
-	return r.ArtistService.ListArtists(ctx, userID, take, skip)
+	return &model.ArtistPage{Items: items, TotalCount: total}, nil
 }
 
 // Artist is the resolver for the artist field.
 func (r *queryResolver) Artist(ctx context.Context, id string) (*storage.Artist, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	return r.ArtistService.GetArtistWithSongs(ctx, userID, id)
+	return r.Services.Library.GetArtist(ctx, id)
 }
 
 // Songs is the resolver for the songs field.
-func (r *queryResolver) Songs(ctx context.Context, take *int, skip *int) ([]*storage.Song, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
+func (r *queryResolver) Songs(ctx context.Context, filter *model.SongFilter, sort *model.SongSort, limit *int, offset *int) (*model.SongPage, error) {
+	s := storage.SongSortTitleAsc
+	if sort != nil {
+		s = storage.SongSort(*sort)
+	}
+	items, total, err := r.Services.Library.ListSongs(ctx, songFilter(filter), s, page(limit, offset, 50))
 	if err != nil {
 		return nil, err
 	}
-	if err := validator.Pagination(take, skip); err != nil {
-		return nil, err
-	}
-	return r.SongService.ListSongs(ctx, userID, take, skip)
+	return &model.SongPage{Items: items, TotalCount: total}, nil
 }
 
 // Song is the resolver for the song field.
 func (r *queryResolver) Song(ctx context.Context, id string) (*storage.Song, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	return r.SongService.GetSong(ctx, userID, id)
+	return r.Services.Library.GetSong(ctx, id)
 }
 
 // Reviews is the resolver for the reviews field.
-func (r *queryResolver) Reviews(ctx context.Context) ([]*storage.Review, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
+func (r *queryResolver) Reviews(ctx context.Context, filter *model.ReviewFilter, sort *model.ReviewSort, limit *int, offset *int) (*model.ReviewPage, error) {
+	s := storage.ReviewSortDateDesc
+	if sort != nil {
+		s = storage.ReviewSort(*sort)
+	}
+	items, total, err := r.Services.Reviews.ListReviews(ctx, reviewFilter(filter), s, page(limit, offset, 20))
 	if err != nil {
 		return nil, err
 	}
-	return r.ReviewService.ListReviews(ctx, userID)
+	return &model.ReviewPage{Items: items, TotalCount: total}, nil
 }
 
 // Review is the resolver for the review field.
 func (r *queryResolver) Review(ctx context.Context, id string) (*storage.Review, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	return r.ReviewService.GetReview(ctx, userID, id)
+	return r.Services.Reviews.GetReview(ctx, id)
 }
 
-// MyReviews is the resolver for the myReviews field.
-func (r *queryResolver) MyReviews(ctx context.Context, userID string) ([]*storage.ReviewWithSong, error) {
-	currentUserID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	return r.ReviewService.MyReviews(ctx, currentUserID, userID)
-}
-
-// ReviewsBySong is the resolver for the reviewsBySong field.
-func (r *queryResolver) ReviewsBySong(ctx context.Context, songID string) ([]*storage.ReviewWithSong, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	return r.ReviewService.ReviewsBySong(ctx, userID, songID)
-}
-
-// RecentReviews is the resolver for the recentReviews field.
-func (r *queryResolver) RecentReviews(ctx context.Context, days *int) ([]*storage.ReviewWithSong, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	if err := validator.Days(days); err != nil {
-		return nil, err
-	}
-	return r.ReviewService.RecentReviews(ctx, userID, days)
-}
-
-// SearchYoutube is the resolver for the searchYoutube field.
-func (r *queryResolver) SearchYoutube(ctx context.Context, artist string, song string) ([]*youtube.Result, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	if err := r.RateLimiter.Check("youtube:"+userID, 30, 3600); err != nil {
-		return nil, apperror.Forbidden(err.Error())
-	}
-	if r.YouTube == nil {
-		return nil, apperror.Internal("YouTube API key not configured")
-	}
-	return r.YouTube.Search(ctx, artist, song)
-}
-
-// SongWithReviews is the resolver for the songWithReviews field.
-func (r *queryResolver) SongWithReviews(ctx context.Context, id string) (*storage.Song, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	return r.ReviewService.SongWithReviews(ctx, userID, id)
-}
-
-// MyFavorites is the resolver for the myFavorites field.
-func (r *queryResolver) MyFavorites(ctx context.Context) ([]*storage.Song, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	return r.SongService.MyFavorites(ctx, userID)
+// MyFavoriteSongs is the resolver for the myFavoriteSongs field.
+func (r *queryResolver) MyFavoriteSongs(ctx context.Context) ([]*storage.Song, error) {
+	return r.Services.Library.FavoriteSongs(ctx)
 }
 
 // MyFavoriteArtists is the resolver for the myFavoriteArtists field.
 func (r *queryResolver) MyFavoriteArtists(ctx context.Context) ([]*storage.Artist, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	return r.ArtistService.MyFavoriteArtists(ctx, userID)
-}
-
-// ExportData is the resolver for the exportData field.
-func (r *queryResolver) ExportData(ctx context.Context) (string, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return "", err
-	}
-	return r.ExportService.ExportData(ctx, userID)
+	return r.Services.Library.FavoriteArtists(ctx)
 }
 
 // DashboardStats is the resolver for the dashboardStats field.
 func (r *queryResolver) DashboardStats(ctx context.Context) (*storage.DashboardStats, error) {
-	userID, err := auth.RequireAuth(auth.UserIDFromContext(ctx))
-	if err != nil {
-		return nil, err
-	}
-	return r.ReviewService.DashboardStats(ctx, userID)
-}
-
-// User is the resolver for the user field.
-func (r *reviewResolver) User(ctx context.Context, obj *storage.Review) (*storage.User, error) {
-	if obj.LoadedUser != nil {
-		return obj.LoadedUser, nil
-	}
-	callerID := auth.UserIDFromContext(ctx)
-	if callerID == "" || callerID != obj.UserID {
-		return nil, nil
-	}
-	return r.UserService.GetUserByID(ctx, obj.UserID)
-}
-
-// User is the resolver for the user field.
-func (r *reviewWithSongResolver) User(ctx context.Context, obj *storage.ReviewWithSong) (*storage.User, error) {
-	if obj.LoadedUser != nil {
-		return obj.LoadedUser, nil
-	}
-	callerID := auth.UserIDFromContext(ctx)
-	if callerID == "" || callerID != obj.UserID {
-		return nil, nil
-	}
-	return r.UserService.GetUserByID(ctx, obj.UserID)
+	return r.Services.Reviews.DashboardStats(ctx)
 }
 
 // Song is the resolver for the song field.
-func (r *reviewWithSongResolver) Song(ctx context.Context, obj *storage.ReviewWithSong) (*storage.Song, error) {
-	if obj.LoadedSong != nil {
-		return obj.LoadedSong, nil
+func (r *reviewResolver) Song(ctx context.Context, obj *storage.Review) (*storage.Song, error) {
+	return loaders.For(ctx).SongByID.Load(ctx, obj.SongID)()
+}
+
+// IsPersonalBest is the resolver for the isPersonalBest field.
+func (r *reviewResolver) IsPersonalBest(ctx context.Context, obj *storage.Review) (bool, error) {
+	best, err := loaders.For(ctx).BestBySong.Load(ctx, obj.SongID)()
+	if err != nil {
+		return false, err
 	}
-	userID := auth.UserIDFromContext(ctx)
-	return r.SongService.GetSong(ctx, userID, obj.SongID)
+	return obj.Score >= best[obj.MachineType], nil
 }
 
 // Artist is the resolver for the artist field.
 func (r *songResolver) Artist(ctx context.Context, obj *storage.Song) (*storage.Artist, error) {
-	if obj.LoadedArtist != nil {
-		return obj.LoadedArtist, nil
-	}
-	thunk := dataloader.For(ctx).ArtistByID.Load(ctx, obj.ArtistID)
-	artist, err := thunk()
-	if err != nil {
-		return nil, err
-	}
-	return artist, nil
+	return loaders.For(ctx).ArtistByID.Load(ctx, obj.ArtistID)()
 }
 
 // ReviewCount is the resolver for the reviewCount field.
 func (r *songResolver) ReviewCount(ctx context.Context, obj *storage.Song) (int, error) {
-	if obj.ReviewCount != nil {
-		return *obj.ReviewCount, nil
-	}
-	if obj.LoadedReviews != nil {
-		return len(obj.LoadedReviews), nil
-	}
-	userID := auth.UserIDFromContext(ctx)
-	return r.ReviewService.ReviewCount(ctx, userID, obj.ID)
+	return loaders.For(ctx).ReviewCountBySong.Load(ctx, obj.ID)()
 }
 
 // Reviews is the resolver for the reviews field.
-func (r *songResolver) Reviews(ctx context.Context, obj *storage.Song) ([]*storage.ReviewWithSong, error) {
-	if obj.LoadedReviews != nil {
-		return obj.LoadedReviews, nil
-	}
-	userID := auth.UserIDFromContext(ctx)
-	if userID == "" {
-		return nil, nil
-	}
-	return r.ReviewService.ReviewsBySong(ctx, userID, obj.ID)
+func (r *songResolver) Reviews(ctx context.Context, obj *storage.Song) ([]*storage.Review, error) {
+	return loaders.For(ctx).ReviewsBySong.Load(ctx, obj.ID)()
 }
 
 // IsFavorite is the resolver for the isFavorite field.
-func (r *songResolver) IsFavorite(ctx context.Context, obj *storage.Song) (*bool, error) {
-	userID := auth.UserIDFromContext(ctx)
-	if userID == "" {
-		return nil, nil
+func (r *songResolver) IsFavorite(ctx context.Context, obj *storage.Song) (bool, error) {
+	return loaders.For(ctx).SongFavorite.Load(ctx, obj.ID)()
+}
+
+// Goals is the resolver for the goals field.
+func (r *songResolver) Goals(ctx context.Context, obj *storage.Song) ([]*model.SongGoal, error) {
+	l := loaders.For(ctx)
+	goals, err := l.GoalsBySong.Load(ctx, obj.ID)()
+	if err != nil || len(goals) == 0 {
+		return []*model.SongGoal{}, err
 	}
-	result, err := dataloader.For(ctx).FavoriteSong.Load(ctx, obj.ID)()
+	best, err := l.BestBySong.Load(ctx, obj.ID)()
 	if err != nil {
 		return nil, err
 	}
-	return &result, nil
+	out := make([]*model.SongGoal, 0, len(goals))
+	for _, g := range goals {
+		sg := &model.SongGoal{MachineType: g.MachineType, TargetScore: g.TargetScore}
+		if b, ok := best[g.MachineType]; ok {
+			sg.BestScore = &b
+			sg.Achieved = b >= g.TargetScore
+		}
+		out = append(out, sg)
+	}
+	return out, nil
 }
 
-// Reviews is the resolver for the reviews field.
-func (r *userResolver) Reviews(ctx context.Context, obj *storage.User) ([]*storage.Review, error) {
-	userID := auth.UserIDFromContext(ctx)
-	if userID == "" || userID != obj.ID {
-		return nil, apperror.Forbidden("Not authorized to view these reviews")
+// EmailVerified is the resolver for the emailVerified field.
+func (r *userResolver) EmailVerified(ctx context.Context, obj *storage.User) (bool, error) {
+	return obj.EmailVerifiedAt != nil, nil
+}
+
+// Language is the resolver for the language field.
+func (r *userResolver) Language(ctx context.Context, obj *storage.User) (*model.Language, error) {
+	if obj.Language == nil {
+		return nil, nil
 	}
-	return r.ReviewService.ReviewsByUser(ctx, obj.ID)
+	l := model.Language(*obj.Language)
+	return &l, nil
 }
 
 // Artist returns ArtistResolver implementation.
@@ -532,9 +335,6 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 // Review returns ReviewResolver implementation.
 func (r *Resolver) Review() ReviewResolver { return &reviewResolver{r} }
 
-// ReviewWithSong returns ReviewWithSongResolver implementation.
-func (r *Resolver) ReviewWithSong() ReviewWithSongResolver { return &reviewWithSongResolver{r} }
-
 // Song returns SongResolver implementation.
 func (r *Resolver) Song() SongResolver { return &songResolver{r} }
 
@@ -545,6 +345,5 @@ type artistResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type reviewResolver struct{ *Resolver }
-type reviewWithSongResolver struct{ *Resolver }
 type songResolver struct{ *Resolver }
 type userResolver struct{ *Resolver }

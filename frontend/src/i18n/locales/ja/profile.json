@@ -1,87 +1,80 @@
 {
-    "title": "プロフィール",
-    "personalInfo": "個人情報",
-    "email": "メールアドレス",
-    "username": "ユーザー名",
-    "memberSince": "{{date}}から会員",
-    "changePassword": {
-        "title": "パスワード変更",
-        "current": "現在のパスワード",
-        "currentPlaceholder": "現在のパスワードを入力",
-        "new": "新しいパスワード",
-        "newPlaceholder": "新しいパスワードを入力",
-        "confirm": "新しいパスワード（確認）",
-        "confirmPlaceholder": "新しいパスワードを再入力",
-        "submit": "パスワードを変更",
-        "submitting": "変更中...",
-        "success": "パスワードが変更されました",
-        "error": "パスワードの変更に失敗しました",
-        "mismatch": "パスワードが一致しません"
-    },
-    "dangerZone": {
-        "title": "危険な操作",
-        "deleteAccount": "アカウント削除",
-        "deleteDesc": "アカウントと関連するすべてのデータを完全に削除します。この操作は取り消せません。",
-        "deleteConfirmTitle": "アカウントを削除しますか？",
-        "deleteConfirmDesc": "アカウント、すべての採点記録、曲、データが完全に削除されます。確認のためパスワードを入力してください。",
-        "password": "パスワード",
-        "passwordPlaceholder": "確認のためパスワードを入力",
-        "deleting": "削除中...",
-        "deleteButton": "アカウントを削除"
-    },
-    "preferences": {
-        "title": "設定",
-        "language": "言語",
-        "languageDescription": "表示言語を選択してください",
-        "theme": "テーマ"
-    },
-    "stats": {
-        "title": "あなたの記録",
-        "totalReviews": "採点回数",
-        "totalSongs": "曲数",
-        "totalArtists": "アーティスト数",
-        "averageScore": "平均点",
-        "artistCount_one": "{{count}}人のアーティスト",
-        "artistCount_other": "{{count}}人のアーティスト",
-        "noData": "N/A"
-    },
-    "data": {
-        "title": "データ管理",
-        "export": "データをエクスポート",
-        "exportDesc": "すべてのデータをJSONファイルとしてダウンロードします。",
-        "import": "データをインポート",
-        "importDesc": "以前エクスポートしたJSONファイルからデータをインポートします。",
-        "importTooltip": "マイウタからエクスポートしたデータを読み込めます",
-        "exporting": "エクスポート中...",
-        "importing": "インポート中...",
-        "exportSuccess": "データのエクスポートに成功しました",
-        "importSuccess": "データのインポートに成功しました",
-        "importError": "データのインポートに失敗しました",
-        "invalidJson": "無効なJSONファイルです",
-        "importedCount_one": "{{count}}件の採点記録をインポートしました",
-        "importedCount_other": "{{count}}件の採点記録をインポートしました",
-        "skipped": "、{{count}}件スキップ",
-        "importWarnings_one": "インポート中に{{count}}件の警告",
-        "importWarnings_other": "インポート中に{{count}}件の警告",
-        "exportError": "データをエクスポートできませんでした"
-    },
-    "toast": {
-        "profileSaved": "プロフィールを保存しました",
-        "profileSaveFailed": "プロフィールの保存に失敗しました",
-        "passwordUpdated": "パスワードを更新しました",
-        "passwordUpdateFailed": "パスワードの変更に失敗しました",
-        "deleteAccountFailed": "アカウントの削除に失敗しました"
-    },
-    "defaultMachine": "デフォルトカラオケ機種",
-    "defaultMachineDesc": "採点追加時に自動選択されます",
-    "none": "なし",
-    "namePlaceholder": "お名前",
+  "title": "プロフィール",
+  "memberSince": "{{date}}から利用",
+  "stats": {
+    "totalReviews": "採点数",
+    "library": "ライブラリ",
+    "libraryValue": "{{songs}}曲・{{artists}}アーティスト",
+    "average": "平均"
+  },
+  "recent": {
+    "title": "最近のアクティビティ",
+    "description": "直近5件の採点"
+  },
+  "favorites": {
+    "title": "お気に入り",
+    "songs_one": "{{count}}曲",
+    "songs_other": "{{count}}曲",
+    "artists": "アーティスト",
+    "none": "まだお気に入りはありません。曲やアーティストのハートをタップしてください。"
+  },
+  "personal": {
+    "title": "個人情報",
+    "name": "表示名",
     "characters": "{{count}}/{{max}}文字",
-    "saving": "保存中...",
-    "recentActivity": "最近の活動",
-    "last5Reviews": "直近5件の採点記録",
-    "favorites": "お気に入り",
-    "favoriteSongsCount_one": "{{count}}曲のお気に入り",
-    "favoriteSongsCount_other": "{{count}}曲のお気に入り",
-    "enterPassword": "パスワードを入力"
+    "defaultMachine": "デフォルトの機種",
+    "defaultMachineDesc": "採点を記録するときに最初に選択されます。",
+    "none": "なし",
+    "saved": "プロフィールを保存しました"
+  },
+  "email": {
+    "title": "メールアドレス",
+    "current": "現在のアドレス",
+    "verified": "確認済み",
+    "unverified": "未確認",
+    "resend": "確認メールを再送",
+    "resent": "確認メールを送信しました",
+    "new": "新しいアドレス",
+    "password": "現在のパスワード",
+    "submit": "アドレスを変更",
+    "sent": "{{email}}に送信したリンクを開くと変更が完了します。",
+    "changed": "メールアドレスを変更しました"
+  },
+  "password": {
+    "title": "パスワード",
+    "current": "現在のパスワード",
+    "submit": "パスワードを変更",
+    "changed": "パスワードを変更しました。他の端末はサインアウトされました。"
+  },
+  "sessions": {
+    "title": "セッション",
+    "description": "共有のパソコンを使った後などに、すべての端末からサインアウトします。",
+    "submit": "すべての端末からサインアウト"
+  },
+  "preferences": {
+    "language": "言語",
+    "languageDesc": "プロフィールに保存され、メールや写真読み取りのメモにも使われます。"
+  },
+  "data": {
+    "title": "データ",
+    "export": "エクスポート",
+    "exportDesc": "すべての採点・お気に入り・目標をダウンロードします。",
+    "import": "インポート",
+    "importDesc": "マイウタのエクスポート（JSON・CSV）から採点を追加します。既にある採点はスキップされます。",
+    "importing": "インポート中…",
+    "resultTitle": "インポート完了",
+    "resultImported": "{{count}}件の採点をインポートしました",
+    "resultDuplicate": "{{count}}件は既に存在していました",
+    "resultSkipped": "{{count}}件はエラーのためスキップしました",
+    "resultFavorites": "お気に入り{{favorites}}件、目標{{goals}}件",
+    "errorRow": "{{section}} {{row}}件目"
+  },
+  "delete": {
+    "title": "アカウントの削除",
+    "description": "アカウントとすべてのデータを完全に削除します。",
+    "button": "アカウントを削除",
+    "confirmTitle": "アカウントを削除しますか？",
+    "confirmDesc": "{{reviews}}件の採点、曲、アーティスト、お気に入り、目標がすべて削除されます。残したい場合は先にエクスポートしてください。この操作は取り消せません。",
+    "password": "確認のためパスワードを入力"
+  }
 }

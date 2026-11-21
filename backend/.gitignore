@@ -3,12 +3,11 @@
 .env.local
 .env.*.local
 
-# Go build artifacts
+# Build artifacts and test output
+/bin/
+/server
+/migrate
 *.test
 *.out
 coverage.html
 vendor/
-
-# Local binaries
-*.exe
-server

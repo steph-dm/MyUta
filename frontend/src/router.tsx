@@ -1,130 +1,49 @@
-import { lazy, Suspense } from "react";
-import { createBrowserRouter } from "react-router-dom";
-import i18n from "./i18n";
-import AppLayout from "./components/layout/AppLayout";
-import Landing from "./pages/Landing";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import ProtectedRoute from "./pages/ProtectedRoute";
-import NotFound from "./pages/NotFound";
-import ErrorBoundary from "./components/shared/ErrorBoundary";
+import { lazy, Suspense, type ReactNode } from "react";
+import { createBrowserRouter, Outlet } from "react-router-dom";
+import AppLayout from "@/components/layout/AppLayout";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { PageSkeleton } from "@/components/shared";
+import { pages } from "@/router-preload";
 
-const Dashboard = lazy(() => import("./pages/Dashboard"));
-const Songs = lazy(() => import("./pages/Songs"));
-const SongDetail = lazy(() => import("./pages/SongDetail"));
-const Reviews = lazy(() => import("./pages/Reviews"));
-const Artist = lazy(() => import("./pages/Artist"));
-const Artists = lazy(() => import("./pages/Artists"));
-const Profile = lazy(() => import("./pages/Profile"));
+const Landing = lazy(pages.landing);
+const Login = lazy(pages.login);
+const Register = lazy(pages.register);
+const ForgotPassword = lazy(pages.forgot);
+const ResetPassword = lazy(pages.reset);
+const VerifyEmail = lazy(pages.verify);
+const Dashboard = lazy(pages.dashboard);
+const Reviews = lazy(pages.reviews);
+const Songs = lazy(pages.songs);
+const SongDetail = lazy(pages.song);
+const Artists = lazy(pages.artists);
+const ArtistDetail = lazy(pages.artist);
+const Profile = lazy(pages.profile);
+const NotFound = lazy(pages.notFound);
 
-const routeImports: Record<string, () => Promise<unknown>> = {
-  "/dashboard": () => import("./pages/Dashboard"),
-  "/songs": () => import("./pages/Songs"),
-  "/reviews": () => import("./pages/Reviews"),
-  "/artists": () => import("./pages/Artists"),
-  "/profile": () => import("./pages/Profile"),
-};
-
-export function preloadRoute(path: string) {
-  routeImports[path]?.();
-}
-
-const Lazy = ({ children }: { children: React.ReactNode }) => (
-  <ErrorBoundary>
-    <Suspense
-      fallback={
-        <div className="flex justify-center py-12 text-muted-foreground">
-          {i18n.t("common:actions.loading")}
-        </div>
-      }
-    >
-      {children}
-    </Suspense>
-  </ErrorBoundary>
-);
-
-const ProtectedLayout = (
-  <ProtectedRoute>
-    <AppLayout />
-  </ProtectedRoute>
-);
+const page = (el: ReactNode) => <Suspense fallback={<PageSkeleton />}>{el}</Suspense>;
 
 export const router = createBrowserRouter([
+  { path: "/", element: page(<Landing />) },
+  { path: "/login", element: page(<Login />) },
+  { path: "/register", element: page(<Register />) },
+  { path: "/forgot-password", element: page(<ForgotPassword />) },
+  { path: "/reset-password", element: page(<ResetPassword />) },
+  { path: "/verify-email", element: page(<VerifyEmail />) },
   {
-    path: "/",
-    element: <Landing />,
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/register",
-    element: <Register />,
-  },
-  {
-    element: ProtectedLayout,
+    element: (
+      <ProtectedRoute>
+        <AppLayout />
+      </ProtectedRoute>
+    ),
     children: [
-      {
-        path: "/dashboard",
-        element: (
-          <Lazy>
-            <Dashboard />
-          </Lazy>
-        ),
-      },
-      {
-        path: "/songs",
-        element: (
-          <Lazy>
-            <Songs />
-          </Lazy>
-        ),
-      },
-      {
-        path: "/songs/:id",
-        element: (
-          <Lazy>
-            <SongDetail />
-          </Lazy>
-        ),
-      },
-      {
-        path: "/reviews",
-        element: (
-          <Lazy>
-            <Reviews />
-          </Lazy>
-        ),
-      },
-      {
-        path: "/artists",
-        element: (
-          <Lazy>
-            <Artists />
-          </Lazy>
-        ),
-      },
-      {
-        path: "/artists/:id",
-        element: (
-          <Lazy>
-            <Artist />
-          </Lazy>
-        ),
-      },
-      {
-        path: "/profile",
-        element: (
-          <Lazy>
-            <Profile />
-          </Lazy>
-        ),
-      },
+      { path: "/dashboard", element: page(<Dashboard />) },
+      { path: "/reviews", element: page(<Reviews />) },
+      { path: "/songs", element: page(<Songs />) },
+      { path: "/songs/:id", element: page(<SongDetail />) },
+      { path: "/artists", element: page(<Artists />) },
+      { path: "/artists/:id", element: page(<ArtistDetail />) },
+      { path: "/profile", element: page(<Profile />) },
     ],
   },
-  {
-    path: "*",
-    element: <NotFound />,
-  },
+  { path: "*", element: <Outlet />, children: [{ path: "*", element: page(<NotFound />) }] },
 ]);

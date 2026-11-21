@@ -1,30 +1,46 @@
 {
+  "id": "/",
   "short_name": "マイウタ",
-  "name": "マイウタ — Karaoke Tracker",
+  "name": "マイウタ — MyUta karaoke tracker",
+  "description": "Track your karaoke scores on DAM, JOYSOUND and K-STAGE",
+  "lang": "ja",
   "icons": [
     {
       "src": "favicon.svg",
-      "type": "image/svg+xml",
-      "sizes": "any"
-    },
-    {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "sizes": "any",
+      "type": "image/svg+xml"
     },
     {
       "src": "logo192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any"
     },
     {
       "src": "logo512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ],
-  "start_url": ".",
+  "start_url": "/dashboard",
+  "scope": "/",
   "display": "standalone",
-  "theme_color": "#1a1a2e",
-  "background_color": "#1a1a2e"
+  "theme_color": "#fafafa",
+  "background_color": "#fafafa",
+  "share_target": {
+    "action": "/share-target",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "files": [
+        {
+          "name": "image",
+          "accept": ["image/*", ".jpg", ".jpeg", ".png", ".webp", ".gif", ".heic", ".heif"]
+        }
+      ]
+    }
+  }
 }

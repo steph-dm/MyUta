@@ -2,8 +2,342 @@
 
 package model
 
+import (
+	"bytes"
+	"fmt"
+	"io"
+	"strconv"
+	"time"
+
+	"github.com/99designs/gqlgen/graphql"
+	"github.com/steph-dm/MyUta/backend/internal/domain"
+	"github.com/steph-dm/MyUta/backend/internal/storage"
+)
+
+type ArtistFilter struct {
+	Search        *string `json:"search,omitempty"`
+	FavoritesOnly *bool   `json:"favoritesOnly,omitempty"`
+}
+
+type ArtistPage struct {
+	Items      []*storage.Artist `json:"items"`
+	TotalCount int               `json:"totalCount"`
+}
+
 type Mutation struct {
 }
 
+type ProfileInput struct {
+	Name *string `json:"name,omitempty"`
+	// Explicit null clears the default machine; omit to keep it.
+	DefaultMachineType graphql.Omittable[*domain.MachineType] `json:"defaultMachineType,omitempty"`
+	Language           *Language                              `json:"language,omitempty"`
+}
+
 type Query struct {
+}
+
+type RegisterInput struct {
+	Email    string    `json:"email"`
+	Password string    `json:"password"`
+	Name     string    `json:"name"`
+	Language *Language `json:"language,omitempty"`
+}
+
+type ReviewFilter struct {
+	MachineType *domain.MachineType `json:"machineType,omitempty"`
+	SongID      *string             `json:"songId,omitempty"`
+	ArtistID    *string             `json:"artistId,omitempty"`
+	// Matches song titles and artist names (case and width insensitive).
+	Search   *string        `json:"search,omitempty"`
+	Genres   []domain.Genre `json:"genres,omitempty"`
+	DateFrom *time.Time     `json:"dateFrom,omitempty"`
+	DateTo   *time.Time     `json:"dateTo,omitempty"`
+}
+
+type ReviewInput struct {
+	Date        time.Time            `json:"date"`
+	Score       float64              `json:"score"`
+	MachineType domain.MachineType   `json:"machineType"`
+	KeyChange   *int                 `json:"keyChange,omitempty"`
+	Variant     *string              `json:"variant,omitempty"`
+	Issues      []domain.Issue       `json:"issues"`
+	Notes       *string              `json:"notes,omitempty"`
+	Details     *domain.ScoreDetails `json:"details,omitempty"`
+}
+
+type ReviewPage struct {
+	Items      []*storage.Review `json:"items"`
+	TotalCount int               `json:"totalCount"`
+}
+
+// What this server supports. Clients hide features that are disabled.
+type ServerInfo struct {
+	OcrEnabled           bool              `json:"ocrEnabled"`
+	YoutubeSearchEnabled bool              `json:"youtubeSearchEnabled"`
+	MailEnabled          bool              `json:"mailEnabled"`
+	PasswordMinLength    int               `json:"passwordMinLength"`
+	PasswordMaxBytes     int               `json:"passwordMaxBytes"`
+	MaxUploadBytes       int               `json:"maxUploadBytes"`
+	MaxImportRows        int               `json:"maxImportRows"`
+	Machines             []*domain.Machine `json:"machines"`
+}
+
+type SongFilter struct {
+	Search        *string        `json:"search,omitempty"`
+	Genres        []domain.Genre `json:"genres,omitempty"`
+	FavoritesOnly *bool          `json:"favoritesOnly,omitempty"`
+	ArtistID      *string        `json:"artistId,omitempty"`
+}
+
+type SongGoal struct {
+	MachineType domain.MachineType `json:"machineType"`
+	TargetScore float64            `json:"targetScore"`
+	BestScore   *float64           `json:"bestScore,omitempty"`
+	Achieved    bool               `json:"achieved"`
+}
+
+type SongInput struct {
+	Title            string         `json:"title"`
+	ArtistName       string         `json:"artistName"`
+	Genres           []domain.Genre `json:"genres"`
+	YoutubeURL       *string        `json:"youtubeUrl,omitempty"`
+	GeneratedYoutube *bool          `json:"generatedYoutube,omitempty"`
+}
+
+type SongPage struct {
+	Items      []*storage.Song `json:"items"`
+	TotalCount int             `json:"totalCount"`
+}
+
+// Either an existing song (songId) or a song described by artist and title.
+type SongRefInput struct {
+	SongID *string    `json:"songId,omitempty"`
+	Song   *SongInput `json:"song,omitempty"`
+}
+
+type ArtistSort string
+
+const (
+	ArtistSortNameAsc  ArtistSort = "NAME_ASC"
+	ArtistSortNameDesc ArtistSort = "NAME_DESC"
+)
+
+var AllArtistSort = []ArtistSort{
+	ArtistSortNameAsc,
+	ArtistSortNameDesc,
+}
+
+func (e ArtistSort) IsValid() bool {
+	switch e {
+	case ArtistSortNameAsc, ArtistSortNameDesc:
+		return true
+	}
+	return false
+}
+
+func (e ArtistSort) String() string {
+	return string(e)
+}
+
+func (e *ArtistSort) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ArtistSort(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ArtistSort", str)
+	}
+	return nil
+}
+
+func (e ArtistSort) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *ArtistSort) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e ArtistSort) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type Language string
+
+const (
+	LanguageEn Language = "en"
+	LanguageJa Language = "ja"
+)
+
+var AllLanguage = []Language{
+	LanguageEn,
+	LanguageJa,
+}
+
+func (e Language) IsValid() bool {
+	switch e {
+	case LanguageEn, LanguageJa:
+		return true
+	}
+	return false
+}
+
+func (e Language) String() string {
+	return string(e)
+}
+
+func (e *Language) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = Language(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Language", str)
+	}
+	return nil
+}
+
+func (e Language) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *Language) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e Language) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type ReviewSort string
+
+const (
+	ReviewSortDateDesc  ReviewSort = "DATE_DESC"
+	ReviewSortDateAsc   ReviewSort = "DATE_ASC"
+	ReviewSortScoreDesc ReviewSort = "SCORE_DESC"
+	ReviewSortScoreAsc  ReviewSort = "SCORE_ASC"
+)
+
+var AllReviewSort = []ReviewSort{
+	ReviewSortDateDesc,
+	ReviewSortDateAsc,
+	ReviewSortScoreDesc,
+	ReviewSortScoreAsc,
+}
+
+func (e ReviewSort) IsValid() bool {
+	switch e {
+	case ReviewSortDateDesc, ReviewSortDateAsc, ReviewSortScoreDesc, ReviewSortScoreAsc:
+		return true
+	}
+	return false
+}
+
+func (e ReviewSort) String() string {
+	return string(e)
+}
+
+func (e *ReviewSort) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ReviewSort(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ReviewSort", str)
+	}
+	return nil
+}
+
+func (e ReviewSort) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *ReviewSort) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e ReviewSort) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type SongSort string
+
+const (
+	SongSortTitleAsc  SongSort = "TITLE_ASC"
+	SongSortTitleDesc SongSort = "TITLE_DESC"
+	SongSortRecent    SongSort = "RECENT"
+)
+
+var AllSongSort = []SongSort{
+	SongSortTitleAsc,
+	SongSortTitleDesc,
+	SongSortRecent,
+}
+
+func (e SongSort) IsValid() bool {
+	switch e {
+	case SongSortTitleAsc, SongSortTitleDesc, SongSortRecent:
+		return true
+	}
+	return false
+}
+
+func (e SongSort) String() string {
+	return string(e)
+}
+
+func (e *SongSort) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = SongSort(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid SongSort", str)
+	}
+	return nil
+}
+
+func (e SongSort) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *SongSort) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e SongSort) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }

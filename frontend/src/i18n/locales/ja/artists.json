@@ -1,40 +1,38 @@
 {
-    "title": "アーティスト",
-    "catalog": "{{count}}人のアーティストを登録中",
-    "searchPlaceholder": "アーティストを検索...",
-    "empty": {
-        "title": "曲がまだありません",
-        "description": "このアーティストにはまだ曲がありません。",
-        "noArtists": "アーティストがいません",
-        "noArtistsDesc": "曲を追加すると、アーティストがここに表示されます。",
-        "noResults": "一致するアーティストがいません",
-        "noResultsDesc": "検索条件を変更してみてください。"
-    },
-    "card": {
-        "songsAvailable": "{{count}}曲",
-        "addToFavorites": "お気に入りに追加",
-        "removeFromFavorites": "お気に入りから削除",
-        "editArtist": "アーティストを編集"
-    },
-    "modal": {
-        "editTitle": "アーティストを編集",
-        "editDescription": "アーティスト名を変更します。",
-        "name": "名前",
-        "namePlaceholder": "アーティスト名...",
-        "save": "変更を保存",
-        "saving": "保存中...",
-        "cancel": "キャンセル",
-        "updateSuccess": "アーティストを更新しました",
-        "updateFailed": "アーティストの更新に失敗しました"
-    },
-    "detail": {
-        "songs": "曲",
-        "reviews": "採点記録",
-        "averageScore": "平均点",
-        "totalReviews": "採点回数",
-        "noSongs": "曲がありません",
-        "noSongsDesc": "このアーティストにはまだ曲がありません。"
-    },
-    "notFound": "アーティストが見つかりません",
-    "backToArtists": "アーティスト一覧に戻る"
+  "title": "アーティスト",
+  "catalog_one": "{{count}}アーティスト",
+  "catalog_other": "{{count}}アーティスト",
+  "search": "アーティストを検索…",
+  "empty": {
+    "none": "まだアーティストがいません",
+    "noneDesc": "採点を記録するとアーティストが追加されます。"
+  },
+  "card": {
+    "songs_one": "{{count}}曲",
+    "songs_other": "{{count}}曲",
+    "edit": "アーティスト名を変更"
+  },
+  "detail": {
+    "back": "アーティスト一覧",
+    "notFound": "このアーティストは存在しません。",
+    "noSongs": "まだ曲がありません",
+    "noSongsDesc": "採点を記録すると曲が追加されます。"
+  },
+  "edit": {
+    "title": "アーティスト名を変更",
+    "name": "名前",
+    "saved": "アーティスト名を変更しました"
+  },
+  "merge": {
+    "title": "「{{name}}」は既に存在します",
+    "description": "2つのアーティストを統合しますか？すべての曲と採点が「{{name}}」に移り、同じタイトルの曲はまとめられます。",
+    "confirm": "統合",
+    "done": "アーティストを統合しました"
+  },
+  "delete": {
+    "button": "アーティストを削除",
+    "title": "「{{name}}」を削除しますか？",
+    "description": "{{songs}}曲と{{reviews}}件の採点記録が削除されます。この操作は取り消せません。",
+    "done": "アーティストを削除しました"
+  }
 }

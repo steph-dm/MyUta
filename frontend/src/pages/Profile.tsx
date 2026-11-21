@@ -1,336 +1,128 @@
+import { Link } from "react-router-dom";
+import { useQuery } from "@apollo/client";
 import { useTranslation } from "react-i18next";
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
-import { toast } from "sonner";
-import { Globe } from "lucide-react";
+import { DASHBOARD, REVIEWS } from "@/graphql/reviews";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import UserAvatar from "@/components/ui/user-avatar";
+import { ListSkeleton, MachineBadge, ScoreBadge } from "@/components/shared";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/card";
-import {
-  GET_MY_REVIEWS,
-  GET_MY_FAVORITES,
-  DELETE_ACCOUNT,
-  EXPORT_DATA,
-  IMPORT_DATA,
-  TOGGLE_FAVORITE,
-} from "../graphql";
-import type { Review, FavoriteSong } from "../types";
-import { useAuth } from "../contexts/AuthContext";
-import { formatDateYYYYMMDD } from "../lib/utils";
-import { trackEvent } from "../lib/analytics";
-import { translateError } from "../lib/error-messages";
-import FloatingPlayer from "../components/shared/FloatingPlayer";
-import UserAvatar from "../components/ui/user-avatar";
-import ProfileStatsCards from "../components/profile/ProfileStatsCards";
-import ProfileRecentActivity from "../components/profile/ProfileRecentActivity";
-import ProfileFavorites from "../components/profile/ProfileFavorites";
-import ProfileDangerZone from "../components/profile/ProfileDangerZone";
-import ProfilePersonalInfo from "../components/profile/ProfilePersonalInfo";
-import ProfileChangePassword from "../components/profile/ProfileChangePassword";
-import LanguageSelector from "../components/LanguageSelector";
-import { useFloatingPlayer } from "../hooks/useFloatingPlayer";
+  DeleteAccountCard,
+  EmailCard,
+  PasswordCard,
+  PersonalInfoCard,
+  SessionsCard,
+} from "@/components/profile/AccountCards";
+import DataCard from "@/components/profile/DataCard";
+import FavoritesCard from "@/components/profile/FavoritesCard";
+import { useAuth } from "@/contexts/AuthContext";
+import { formatDay } from "@/lib/dates";
+import { intlLocale } from "@/i18n";
 
-const Profile = () => {
-  const { user, refetchUser, logout } = useAuth();
+export default function Profile() {
   const { t } = useTranslation("profile");
-
-  const { activePlayerUrl, activePlayerInfo, play, stop } = useFloatingPlayer();
-
-  const [deleteAccount, { loading: deletingAccount }] = useMutation(
-    DELETE_ACCOUNT,
-    {
-      onCompleted: () => {
-        logout();
-      },
-    },
-  );
-
-  const [toggleFavorite] = useMutation(TOGGLE_FAVORITE, {
-    refetchQueries: [{ query: GET_MY_FAVORITES }],
-    update(cache, _, { variables }) {
-      cache.modify({
-        id: cache.identify({ __typename: "Song", id: variables?.songId }),
-        fields: { isFavorite: (prev: boolean) => !prev },
-      });
-    },
+  const { user } = useAuth();
+  const { data: stats } = useQuery(DASHBOARD);
+  const { data: recent, loading } = useQuery(REVIEWS, { variables: { limit: 5 } });
+  if (!user) return null;
+  const s = stats?.dashboardStats;
+  const since = new Date(user.createdAt).toLocaleDateString(intlLocale(), {
+    year: "numeric",
+    month: "long",
   });
-
-  const { data: reviewsData, refetch: refetchReviews } = useQuery(
-    GET_MY_REVIEWS,
-    {
-      variables: { userId: user?.id },
-      skip: !user?.id,
-      fetchPolicy: "cache-and-network",
-    },
-  );
-
-  const { data: favoritesData, refetch: refetchFavorites } = useQuery(
-    GET_MY_FAVORITES,
-    {
-      skip: !user?.id,
-      fetchPolicy: "cache-and-network",
-    },
-  );
-
-  const [fetchExportData, { loading: exporting }] = useLazyQuery(EXPORT_DATA, {
-    fetchPolicy: "network-only",
-  });
-
-  const [importData, { loading: importing }] = useMutation(IMPORT_DATA);
-
-  const today = new Date();
-  const exportFileBaseName = `myuta-export-${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
-
-  const downloadFile = (content: BlobPart, type: string, filename: string) => {
-    const blob = new Blob([content], { type });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = filename;
-    document.body.appendChild(anchor);
-    anchor.click();
-    anchor.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 0);
-  };
-
-  const getExportData = async () => {
-    const { data } = await fetchExportData();
-    return data?.exportData ?? "";
-  };
-
-  const handleExportJSON = async () => {
-    try {
-      const exportData = await getExportData();
-      if (!exportData) {
-        return;
-      }
-      downloadFile(
-        exportData,
-        "application/json",
-        `${exportFileBaseName}.json`,
-      );
-      trackEvent({ name: "export_data" });
-    } catch {
-      toast.error(t("data.exportError"));
-    }
-  };
-
-  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    try {
-      const text = await file.text();
-      JSON.parse(text);
-
-      const { data } = await importData({ variables: { jsonData: text } });
-      const result = data?.importData;
-      if (result) {
-        toast.success(
-          t("data.importedCount", { count: result.reviewsImported }) +
-            (result.reviewsSkipped > 0
-              ? t("data.skipped", { count: result.reviewsSkipped })
-              : ""),
-        );
-        trackEvent({
-          name: "import_data",
-          data: { reviewsImported: result.reviewsImported },
-        });
-        if (result.errors?.length > 0) {
-          toast.warning(
-            t("data.importWarnings", { count: result.errors.length }),
-          );
-        }
-
-        await Promise.all([
-          refetchUser(),
-          refetchReviews(),
-          refetchFavorites(),
-        ]);
-      }
-    } catch (error) {
-      const message =
-        error instanceof SyntaxError
-          ? t("data.invalidJson")
-          : translateError((error as Error).message, t);
-      toast.error(message);
-    } finally {
-      const input = e.target as HTMLInputElement;
-      if (input) input.value = "";
-    }
-  };
-
-  const handleDeleteAccount = async (
-    password: string,
-  ): Promise<string | null> => {
-    if (!password) {
-      return t("dangerZone.passwordPlaceholder");
-    }
-    try {
-      await deleteAccount({ variables: { password } });
-      return null;
-    } catch (error) {
-      toast.error(t("toast.deleteAccountFailed"));
-      return translateError((error as Error).message, t);
-    }
-  };
-
-  const handleExportCSV = async () => {
-    try {
-      const exportData = await getExportData();
-      if (!exportData) {
-        return;
-      }
-
-      const parsed = JSON.parse(exportData);
-
-      interface ExportRow {
-        [key: string]: string | string[] | undefined;
-      }
-
-      const rows: ExportRow[] = parsed.reviews || [];
-      if (rows.length === 0) {
-        return;
-      }
-
-      const headers = [
-        "date",
-        "song",
-        "artist",
-        "score",
-        "machineType",
-        "genres",
-        "issues",
-        "notes",
-        "youtubeUrl",
-      ];
-      const csvLines = [
-        headers.join(","),
-        ...rows.map((row) =>
-          headers
-            .map((header) => {
-              const value =
-                header === "issues" || header === "genres"
-                  ? Array.isArray(row[header])
-                    ? (row[header] as string[]).join(";")
-                    : ""
-                  : (row[header] ?? "");
-              return `"${String(value).replace(/"/g, '""')}"`;
-            })
-            .join(","),
-        ),
-      ];
-
-      downloadFile(
-        csvLines.join("\n"),
-        "text/csv",
-        `${exportFileBaseName}.csv`,
-      );
-    } catch (error) {
-      toast.error(translateError((error as Error).message, t));
-    }
-  };
-
-  if (!user) {
-    return null;
-  }
-
-  const reviews: Review[] = reviewsData?.myReviews || [];
-  const favorites: FavoriteSong[] = favoritesData?.myFavorites || [];
-
-  const damReviews = reviews.filter((r) => r.machineType === "DAM");
-  const joysoundReviews = reviews.filter((r) => r.machineType === "JOYSOUND");
-
-  const recentReviews = reviews.slice(0, 5);
 
   return (
     <div className="space-y-6">
       <Card>
-        <CardContent className="pt-6">
-          <div className="flex items-center gap-6">
-            <UserAvatar
-              name={user.name}
-              email={user.email}
-              size="lg"
-              className="shadow-lg"
-            />
-            <div>
-              <h2 className="text-2xl font-bold text-foreground">
-                {user.name}
-              </h2>
-              <p className="text-muted-foreground">{user.email}</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                {t("memberSince", { date: formatDateYYYYMMDD(user.createdAt) })}
-              </p>
-            </div>
+        <CardContent className="flex flex-col sm:flex-row items-center gap-4 pt-6">
+          <UserAvatar name={user.name} email={user.email} size="lg" />
+          <div className="text-center sm:text-left">
+            <h1 className="text-2xl font-bold">{user.name}</h1>
+            <p className="text-muted-foreground">{user.email}</p>
+            <p className="text-sm text-muted-foreground">{t("memberSince", { date: since })}</p>
           </div>
         </CardContent>
       </Card>
 
-      <ProfileStatsCards
-        reviews={reviews}
-        damReviews={damReviews}
-        joysoundReviews={joysoundReviews}
-      />
-
-      <ProfileRecentActivity recentReviews={recentReviews} />
-
-      <ProfileFavorites
-        favorites={favorites}
-        activePlayerUrl={activePlayerUrl}
-        onTogglePlayer={(url, info) => {
-          if (url) {
-            play(url, info);
-          } else {
-            stop();
-          }
-        }}
-        onRemoveFavorite={(songId) => {
-          toggleFavorite({ variables: { songId } });
-          trackEvent({ name: "toggle_favorite", data: { type: "song" } });
-        }}
-      />
-
-      <ProfilePersonalInfo user={user} onSaved={refetchUser} />
-
-      <ProfileChangePassword />
+      {s && (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardDescription>{t("stats.totalReviews")}</CardDescription>
+              <CardTitle className="text-2xl tabular-nums">{s.totalReviews}</CardTitle>
+            </CardHeader>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2">
+              <CardDescription>{t("stats.library")}</CardDescription>
+              <CardTitle className="text-base">
+                {t("stats.libraryValue", { songs: s.totalSongs, artists: s.totalArtists })}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          {s.machineStats.map((m) => (
+            <Card key={m.machineType}>
+              <CardHeader className="pb-2">
+                <CardDescription className="flex items-center gap-1">
+                  {t("stats.average")}{" "}
+                  <MachineBadge type={m.machineType} className="text-xs px-2 py-0" />
+                </CardDescription>
+                <CardTitle className="text-2xl tabular-nums">{m.averageScore.toFixed(3)}</CardTitle>
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
+      )}
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Globe className="h-5 w-5" /> {t("preferences.language")}
+          <CardTitle as="h2" className="text-lg">
+            {t("recent.title")}
           </CardTitle>
-          <CardDescription>
-            {t("preferences.languageDescription")}
-          </CardDescription>
+          <CardDescription>{t("recent.description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <LanguageSelector />
+          {loading && !recent ? (
+            <ListSkeleton rows={3} />
+          ) : (
+            <ul className="space-y-2">
+              {(recent?.reviews.items ?? []).map((r) => (
+                <li
+                  key={r.id}
+                  className="flex items-center justify-between gap-2 p-3 rounded-lg bg-muted/50"
+                >
+                  <div className="min-w-0">
+                    <Link
+                      to={`/songs/${r.song.id}`}
+                      className="font-medium text-sm hover:underline block truncate"
+                    >
+                      {r.song.title}
+                    </Link>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {r.song.artist.name} · {formatDay(r.date)}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <MachineBadge type={r.machineType} className="text-xs" />
+                    <ScoreBadge
+                      score={r.score}
+                      machine={r.machineType}
+                      personalBest={r.isPersonalBest}
+                    />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
         </CardContent>
       </Card>
 
-      <ProfileDangerZone
-        exporting={exporting}
-        importing={importing}
-        deletingAccount={deletingAccount}
-        onExportJSON={handleExportJSON}
-        onExportCSV={handleExportCSV}
-        onImport={handleImport}
-        onDeleteAccount={handleDeleteAccount}
-      />
-
-      {activePlayerUrl && (
-        <FloatingPlayer
-          url={activePlayerUrl}
-          songInfo={activePlayerInfo}
-          onClose={stop}
-        />
-      )}
+      <FavoritesCard />
+      <PersonalInfoCard key={user.id} user={user} />
+      <EmailCard user={user} />
+      <PasswordCard />
+      <SessionsCard />
+      <DataCard />
+      <DeleteAccountCard reviewCount={s?.totalReviews ?? 0} />
     </div>
   );
-};
-
-export default Profile;
+}
