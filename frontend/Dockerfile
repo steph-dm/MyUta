@@ -15,7 +15,7 @@ ENV VITE_UMAMI_SCRIPT_URL=$VITE_UMAMI_SCRIPT_URL VITE_UMAMI_WEBSITE_ID=$VITE_UMA
 RUN npm run build
 
 # --- runtime --------------------------------------------------------------------------
-FROM nginxinc/nginx-unprivileged:1.28-alpine
+FROM nginxinc/nginx-unprivileged:1.31-alpine
 
 COPY nginx/default.conf /etc/nginx/templates/conf.d/default.conf.template
 COPY nginx/security-headers.conf /etc/nginx/templates/snippets/security-headers.conf.template
