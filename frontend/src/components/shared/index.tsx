@@ -432,7 +432,7 @@ export function MachineSection({
         </button>
       </h3>
       {!collapsed && (
-        <div id={regionId} className="px-4 pb-4 pt-3">       
+        <div id={regionId} className="px-4 pb-4 pt-3">
           {children}
         </div>
       )}
