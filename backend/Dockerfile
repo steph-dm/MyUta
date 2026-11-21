@@ -3,7 +3,7 @@
 # --- build ----------------------------------------------------------------------------
 # Keep the Go version in line with go.mod; bump the patch release regularly
 # (Dependabot opens PRs for this image).
-FROM golang:1.26.11-alpine AS builder
+FROM golang:1.27.4-alpine AS builder
 
 WORKDIR /build
 COPY go.mod go.sum ./
