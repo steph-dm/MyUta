@@ -75,13 +75,13 @@ func (s *Store) ListReviews(ctx context.Context, userID string, f storage.Review
 	}
 	switch sort {
 	case storage.ReviewSortDateAsc:
-		q = q.OrderExpr("r.performed_on ASC, r.created_at ASC")
+		q = q.OrderExpr("r.performed_on ASC, r.created_at ASC, r.id ASC")
 	case storage.ReviewSortScoreDesc:
-		q = q.OrderExpr("r.score DESC, r.performed_on DESC, r.created_at DESC")
+		q = q.OrderExpr("r.score DESC, r.performed_on DESC, r.created_at DESC, r.id DESC")
 	case storage.ReviewSortScoreAsc:
-		q = q.OrderExpr("r.score ASC, r.performed_on DESC, r.created_at DESC")
+		q = q.OrderExpr("r.score ASC, r.performed_on DESC, r.created_at DESC, r.id DESC")
 	default:
-		q = q.OrderExpr("r.performed_on DESC, r.created_at DESC")
+		q = q.OrderExpr("r.performed_on DESC, r.created_at DESC, r.id DESC")
 	}
 	total, err := q.Limit(p.Limit).Offset(p.Offset).ScanAndCount(ctx)
 	return reviews, total, classify(err)

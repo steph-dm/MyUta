@@ -417,7 +417,10 @@ export function MachineSection({
           onClick={() => setUserCollapsed(!collapsed)}
           aria-expanded={!collapsed}
           aria-controls={regionId}
-          className="w-full flex items-center gap-3 p-4 hover:bg-muted/50 transition-colors text-left"
+          className={cn(
+            "w-full flex items-center gap-3 p-4 hover:bg-muted/50 transition-colors text-left",
+            collapsed ? "rounded-lg" : "rounded-t-lg",
+          )}
         >
           {collapsed ? (
             <ChevronRight className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
@@ -429,7 +432,7 @@ export function MachineSection({
         </button>
       </h3>
       {!collapsed && (
-        <div id={regionId} className="px-4 pb-4">
+        <div id={regionId} className="px-4 pb-4 pt-3">       
           {children}
         </div>
       )}

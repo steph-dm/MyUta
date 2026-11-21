@@ -327,12 +327,25 @@ export default function ReviewsTable({ filter: baseFilter, readOnly, hideSong, c
                       </Link>
                     </>
                   )}
-                  <span className="text-xs text-muted-foreground tabular-nums">
-                    {formatDay(r.date)} ·{" "}
-                    <span className={MACHINES[r.machineType].accent}>
-                      {MACHINES[r.machineType].label}
-                    </span>
+                  <span className="block text-xs text-muted-foreground tabular-nums">
+                    {formatDay(r.date)}
+                    {!baseFilter?.machineType && (
+                      <>
+                        {" · "}
+                        <span className={MACHINES[r.machineType].accent}>
+                          {MACHINES[r.machineType].label}
+                        </span>
+                      </>
+                    )}
                   </span>
+                  {(r.keyChange !== 0 || r.variant) && (
+                    <div className="mt-1 flex flex-wrap items-center gap-2">{meta(r)}</div>
+                  )}
+                  {r.issues.length > 0 && (
+                    <div className="mt-2">
+                      <IssueBadges issues={r.issues} />
+                    </div>
+                  )}
                 </div>
                 <ScoreBadge
                   score={r.score}
@@ -340,10 +353,8 @@ export default function ReviewsTable({ filter: baseFilter, readOnly, hideSong, c
                   personalBest={r.isPersonalBest}
                 />
               </div>
-              <div className="flex flex-wrap items-center gap-2">{meta(r)}</div>
-              {r.issues.length > 0 && <IssueBadges issues={r.issues} />}
               <div className="flex items-center justify-end gap-1">
-                {notes(r)}
+                {r.notes && notes(r)}
                 <PlayButton
                   track={{
                     url: r.song.youtubeUrl,

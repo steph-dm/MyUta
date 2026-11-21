@@ -213,7 +213,7 @@ func (s *Store) ListSongs(ctx context.Context, userID string, f storage.SongFilt
 	case storage.SongSortTitleDesc:
 		q = q.OrderExpr("s.title_key DESC, s.id")
 	case storage.SongSortRecent:
-		q = q.OrderExpr("(SELECT max(r.performed_on) FROM reviews r WHERE r.song_id = s.id) DESC NULLS LAST, s.created_at DESC")
+		q = q.OrderExpr("(SELECT max(r.performed_on) FROM reviews r WHERE r.song_id = s.id) DESC NULLS LAST, s.created_at DESC, s.id")
 	default:
 		q = q.OrderExpr("s.title_key ASC, s.id")
 	}
