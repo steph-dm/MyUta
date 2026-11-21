@@ -59,7 +59,7 @@
     "@types/node": "^25.2.3",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^5.1.4",
+    "@vitejs/plugin-react": "^6.3.0",
     "autoprefixer": "^10.4.24",
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
