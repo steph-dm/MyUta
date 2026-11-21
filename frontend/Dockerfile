@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # --- build ----------------------------------------------------------------------------
-FROM node:22-alpine AS builder
+FROM node:26-alpine AS builder
 # npm 10 crashes resolving vitest's optional peers; the project pins npm 11 (package.json).
 RUN npm install -g npm@11.21.3
 WORKDIR /app
